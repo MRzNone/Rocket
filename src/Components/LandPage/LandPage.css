@@ -7,10 +7,10 @@ section,
 header,
 li								{ position: relative; }
 
-*								{ -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
 
 
-/* -- Text -- */
+
+/* -- Text -- */ /* regular-400 */
 
 /* Families */
 body							{ font-family: "Helvetica Neue" }
@@ -18,8 +18,8 @@ h2 								{ font-family: "Impact" }
 h3 								{ font-family: "InaiMathi" }
 
 /* Headings */
-h1 								{ background: #f08bae; color: #fff; display: inline-block; font-weight: normal; padding: 0.5em 1em; }
-h2 								{ color: #fff; font-weight: 900; /* Heavy */ font-size: 3em; letter-spacing: 1px; line-height: 1.1em; margin-top: 0.35em}
+h1 								{ font-size: 1.8em; background: #f08bae; color: #fff; display: inline-block; font-weight: normal; padding: 0.5em 1em; }
+h2 								{ color: #fff; font-weight: 900; font-size: 3em; letter-spacing: 1px; line-height: 1.1em; margin-top: 0.45em; }
 h3 								{ font-size: 2.5em; font-weight: 600; letter-spacing: 1px; line-height: 1em; padding: 0.5em 0 0.25em 0; }
 
 /* Links */
@@ -28,7 +28,7 @@ div.footer p,
 aside.function p a				{ color: #fff; }
 
 /* Paragraph styles */
-p 								{ font-size: 1em; font-weight: 400; /* Regular */ line-height: 1.5em; padding: 0.5em 0; }
+p 								{ font-size: 1em; font-weight: 400; line-height: 1.5em; padding: 0.5em 0; }
 li 								{ font-size: 1.5em; font-weight: 400; padding: 1.5em 0 0.5em 0; }
 div.footer 						{ font-size: 1.2em; font-weight: 200;}
 
@@ -39,17 +39,17 @@ html 							{ background: #9088ab; padding: 6%; }
 body 							{ background: #abb1ce; }
 div.page-wrapper 				{ z-index: 2; }
 section.title 					{ color: #fff; padding: 6%; }
-section.title div.info 			{ background: rgba(180,140,180,0.9); color: #463c50; margin: 0.5% -8.5% -3% -30%; padding: 5% 5% 5% 30%; }
-aside.sidebar 					{ background: rgba(255,255,255,0.9); padding: 6% 8% 7% 8%; }
-div.footer 						{ color: #fff; padding: 0% 5% 3% 10%; margin-top: -0.8em;}
+aside.logo   					{ background: rgba(255,255,255,0.9); padding: 6% 8% 7% 8%; }
+div.info 			            { background: rgba(180,140,180,0.9); color: #463c50; margin: 0 12% -3% -30%; padding: 5% 5% 5% 30%; }
+div.footer 						{ color: #fff; padding: 0% 5% 3% 10%; margin-top: -0.7em;}
 aside.function 					{ background: rgba(209,141,179,0.75); color: #fff; padding: 5%; z-index: -1; }
 img 							{ width: 100%; height: auto;}
 
 /* -- Decoration -- */
 div.circle 						{ width: 3%; height: auto; background: #fff; border-radius: 50%; padding-top: 3%; position: absolute; top: 5%; }
-#c1 							{ right: 25% }
-#c2 							{ right: 15% }
-#c3 							{ right: 5% }
+#c1 							{ right: 20% }
+#c2 							{ right: 30% }
+#c3 							{ right: 40% }
 
 
 /* -- Resize -- */
@@ -57,70 +57,63 @@ div.circle 						{ width: 3%; height: auto; background: #fff; border-radius: 50%
 /* 1 and up */
 @media screen and (min-width: 1px) {
 
-    h2 							{ padding-bottom: 5%}
+    h2                          { margin-bottom: 0.8em }
     body 						{ font-size: 70%; }
     aside.function 				{ padding-left: 20%; }
-
+    div.info                    { margin-right: -7%; }
 }
 
 
 /* 550 and up */
 @media screen and (min-width: 550px) {
 
-    h2 							{ font-size: 6em; padding-bottom: 13%}
+    h2 							{ font-size: 8vw; }
     section.title 				{ width: 66.6%; }
-    aside.sidebar 				{ position: absolute; bottom: 43%; right: -54%; width: 56%; }
-    aside.function				{ position: absolute; right: -62%; bottom: -15%; width: 75%; padding: 20.5% 25% 25% 26%; }
-
+    aside.logo   				{ position: absolute; top: 8.5%; right: -31%; width: 35%; }
+    aside.function				{ position: absolute; right: -62%; top: 50%; width: 46%; padding: 20.5% 25% 20% 26%; }
+    div.info                    { margin-right: 12%; }
 }
 
 /* 650 and up */
 @media screen and (min-width: 650px) {
 
     body 						{ font-size: 85%; }
-
 }
 
 /* 700 and up */
 @media screen and (min-width: 700px) {
 
     body 						{ font-size: 90%; }
-
 }
 
 /* 800 and up */
 @media screen and (min-width: 800px) {
 
     body 						{ font-size: 100%; }
-
 }
 
 /* 900 and up */
 @media screen and (min-width: 900px) {
 
     body 						{ font-size: 110%; }
-
 }
 
 /* 1500 and up */
 @media screen and (min-width: 1500px) {
 
     body 						{ font-size: 125%; }
-
 }
 
 /* 1800 and up */
 @media screen and (min-width: 1800px) {
 
     body 						{ font-size: 150%; }
-
 }
 
 /* 2100 and up */
 @media screen and (min-width: 2100px) {
 
     body 						{ font-size: 175%; }
-
 }
 
 
@@ -128,5 +121,4 @@ div.circle 						{ width: 3%; height: auto; background: #fff; border-radius: 50%
 @media screen and (min-width: 2500px) {
 
     body 						{ font-size: 200%; }
-
 }

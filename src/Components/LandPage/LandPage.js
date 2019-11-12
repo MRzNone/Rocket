@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import './LandPage.css';
+import './icon.png';
 
 /**
  * Landing page.
@@ -17,10 +18,8 @@ class LandPage extends Component {
               <div className="circle" id="c2" />
               <div className="circle" id="c3" />
             </header>
-            <aside className="sidebar">
-              <div className="logo">
-                <img alt="logo" src="icon.png" />
-              </div>
+            <aside className="logo">
+                <img alt="logo" src={require("./icon.png")} />
             </aside>
             <aside className="function">
               <h3>Start Here</h3>
