@@ -1,0 +1,213 @@
+.popup-content {
+    width: 80% !important;
+    min-width: 300px;
+    height: auto;
+}
+
+.popup_wrapper {
+    font-size: large;
+    user-select: none;
+}
+
+.popup_wrapper > header {
+    text-align: center;
+}
+
+.popup_wrapper h1 {
+    color: black;
+    background-color: white;
+}
+
+/* Close Button */
+.popup_wrapper .close {
+    position: absolute;
+    right:  -1px;
+    top:    -1px;
+    font-size: x-large;
+    padding: 0 0.25em;
+    margin: 0;
+    color: rgba(4, 4, 4, 0.2);
+    border: solid medium rgba(4, 4, 4, 0.2);
+    cursor: pointer;
+    transition: top 1s;
+}
+
+.popup_wrapper .close:hover {
+    color: rgba(4, 4, 4, 0.5);
+    border: solid medium rgba(4, 4, 4, 0.5);
+}
+
+/*------------------------------------*/
+
+.popup_wrapper form {
+    display: flex;
+    flex-flow: row wrap;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.popup_wrapper form > fieldset {
+    width: 45%;
+    padding: 10px;
+}
+
+/*------------------------------------*/
+
+.import_file {
+    border: none;
+}
+
+.import_file p {
+    margin: 0;
+}
+
+.import_file label {
+    display: inline-block;
+    text-align: center;
+    width: 100%;
+    overflow: hidden;
+    font-size: larger;
+    border-radius: 5px;
+    margin-left: -5px;
+}
+
+.import_file a {
+    display: block;
+    background: rgba(0, 0, 0, 0.2);
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+    padding: 10px;
+}
+
+.import_file a:active {
+    background: #8e8e8e;
+}
+
+#calURL {
+    line-height: 2em;
+}
+
+/*------------------------------------*/
+
+.slide {
+    background: #fff;
+    visibility: collapse;
+    transition: all .25s ease-in-out, visibility 0s;
+    line-height: 0;
+    color: transparent;
+    position:absolute;
+    width: 90%;
+    margin: 1em;
+}
+.slide:target {
+    display: block;
+    position: static;
+    visibility: visible;
+    line-height: 1.5;
+    color: black;
+}
+
+/*------------------------------------*/
+.import_option a {
+    color: darkcyan;
+    text-decoration: none;
+    font-size: smaller;
+    cursor: pointer;
+}
+
+#time_offset > label, #time_range > label {
+    margin-left: 20px;
+    font-style: italic;
+}
+
+#import_days {
+    margin: 2em 0 0 0;
+    padding: 0;
+    border: green;
+
+}
+
+#import_days input {
+    display: none;
+}
+#import_days > input + label{
+    display: inline-block;
+    background: lightblue;
+    height: 40px;
+    line-height: 40px;
+    width: 40px;
+    margin: 0 1%;
+    border-radius:5px;
+    text-align: center;
+    cursor: pointer;
+}
+#import_days > input:checked + label{
+    background: darkcyan;
+    color: white;
+}
+
+/*------------------------------------*/
+
+#import_buttons {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    margin-top: 10px;
+}
+
+#calGoogle {
+    height: 50px;
+    width: 200px;
+    background: url("./btn_google_signin_dark_normal_web@2x.png") no-repeat center;
+    background-size: contain;
+    cursor:pointer;
+    border: none;
+}
+
+#calGoogle:active{
+    background-image: url("./btn_google_signin_dark_pressed_web@2x.png");
+}
+
+#import_submit {
+    background-color: #4480af;
+    border: none;
+    color: white;
+    padding: 15px 0;
+    text-align: center;
+    text-decoration: none;
+    font-size: large;
+    cursor: pointer;
+    width: 200px;
+}
+
+#import_submit:hover {
+    background-color: #2f63af;
+
+
+}
+
+#import_reset {
+    border: none;
+    background-color: transparent;
+    padding: 15px 0;
+    text-align: center;
+    text-decoration: none;
+    font-size: smaller;
+    cursor: pointer;
+    margin-left: 2em;
+}
+
+#import_reset:hover {
+    color: black;
+}
+
+/*------------------------------------*/
+
+@media (max-width: 850px){
+    form {
+        display: block;
+    }
+    fieldset {
+        width: 90% !important;
+    }
+}
