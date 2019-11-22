@@ -11,6 +11,7 @@ import { createStore, applyMiddleware } from 'redux';
 import reducers from './reducers';
 import thunk from 'redux-thunk';
 import Meeting from './Components/Meeting/Meeting';
+import MeetingResponse from './Components/MeetingResponse/MeetingResponse';
 import LostPage from './Components/LostPage/LostPage';
 
 
@@ -21,6 +22,7 @@ function App() {
         <Switch>
           <Route exact path="/" component={LandPage} />
           <Route path="/meeting" component={Meeting} />
+          <Route path="/meetingresponse" component={MeetingResponse} />
           <Route component={LostPage} />
         </Switch>
       </Router>
