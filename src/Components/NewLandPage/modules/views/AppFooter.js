@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
   },
   iconsWrapper: {
-    height: 120,
+    height: '-10vh',
   },
   icons: {
     display: 'flex',
@@ -79,7 +79,6 @@ export default function AppFooter() {
     <Typography component="footer" className={classes.root}>
       <Container className={classes.container}>
         <Grid container spacing={5}>
-          <Grid item xs={6} sm={4} md={3}>
             <Grid
               container
               direction="column"
@@ -88,9 +87,8 @@ export default function AppFooter() {
               spacing={0}
             >
               <Grid item>
-                <Copyright />
+                <Copyright/>
               </Grid>
-            </Grid>
           </Grid>
           <Grid item>
           </Grid>
