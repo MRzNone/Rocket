@@ -28,7 +28,7 @@ const styles = theme => ({
     marginBottom: theme.spacing(4),
     marginTop: theme.spacing(4),
     [theme.breakpoints.up('sm')]: {
-      marginTop: theme.spacing(10),
+      marginTop: theme.spacing(3),
     },
   },
   more: {
@@ -44,7 +44,7 @@ function ProductHero(props) {
       {/* Increase the network loading priority of the background image. */}
       <img style={{ display: 'none' }} src={backgroundImage} alt="increase priority" />
       <Typography color="inherit" align="center" variant="h1" marked="center">
-        OneOff
+        One Off
       </Typography>
       <Typography color="inherit" align="center" variant="h6" className={classes.h5}>
         Create a meeting today!

@@ -7,6 +7,7 @@ export default withStyles(theme => ({
     fontWeight: theme.typography.fontWeightMedium,
     fontFamily: theme.typography.fontFamilySecondary,
     padding: theme.spacing(2, 4),
+    margin: theme.spacing(1,2),
     fontSize: theme.typography.pxToRem(14),
     boxShadow: 'none',
     '&:active, &:focus': {
