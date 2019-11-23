@@ -7,6 +7,7 @@
 .popup_wrapper {
     font-size: large;
     user-select: none;
+    color: #333333;
 }
 
 .popup_wrapper > header {
@@ -14,17 +15,18 @@
 }
 
 .popup_wrapper h1 {
-    color: black;
+    color: #333333;
+    font-weight: bold;
     background-color: white;
 }
 
 /* Close Button */
 .popup_wrapper .close {
     position: absolute;
-    right:  -1px;
-    top:    -1px;
-    font-size: x-large;
-    padding: 0 0.25em;
+    right:  -8px;
+    top:    -8px;
+    font-size: xx-large;
+    padding: 0em 0.25em;
     margin: 0;
     color: rgba(4, 4, 4, 0.2);
     border: solid medium rgba(4, 4, 4, 0.2);
@@ -43,7 +45,7 @@
     display: flex;
     flex-flow: row wrap;
     width: 100%;
-    justify-content: space-between;
+    justify-content: space-evenly;
 }
 
 .popup_wrapper form > fieldset {
@@ -54,65 +56,65 @@
 /*------------------------------------*/
 
 .import_file {
+    height: 200px;
     border: none;
 }
 
-.import_file p {
-    margin: 0;
-}
-
-.import_file label {
-    display: inline-block;
-    text-align: center;
-    width: 100%;
-    overflow: hidden;
-    font-size: larger;
+.mode {
+    position: relative;
+    margin: 1% auto;
+    cursor:pointer;
+    text-decoration: none;
+    font-weight: bold;
+    background-color: #f9f6f4;
+    font-size: 22px;
     border-radius: 5px;
-    margin-left: -5px;
+    transition: all .1s ease-in-out;
+    border: solid thin black;
+    font-family: sans-serif;
+    color: #333333;
 }
 
-.import_file a {
+.mode:hover {
+    background-color: #eae7e5;
+}
+
+.mode:active {
+    background-color: #dddad8;
+    top: 2px;
+    right: -1px;
+}
+
+
+#calFile {
     display: block;
-    background: rgba(0, 0, 0, 0.2);
-    color: rgb(0, 0, 0);
-    text-decoration: none;
-    padding: 10px;
+    height: 47%;
+    width: 100%;
+    text-align: center;
+    line-height: 95px;
 }
 
-.import_file a:active {
-    background: #8e8e8e;
+#calGoogle {
+    height: 47%;
+    width: 100%;
+    /*background: url("./btn_google_signin_dark_normal_web@2x.png") no-repeat center;
+    background-size: contain;*/
+
 }
 
-#calURL {
+#calGoogle:active{
+    /*background-image: url("./btn_google_signin_dark_pressed_web@2x.png");*/
+}
+
+/*------------------------------------*/
+.import_option label {
     line-height: 2em;
+    font-weight: bold;
+    color: #333333;
 }
 
-/*------------------------------------*/
-
-.slide {
-    background: #fff;
-    visibility: collapse;
-    transition: all .25s ease-in-out, visibility 0s;
-    line-height: 0;
-    color: transparent;
-    position:absolute;
-    width: 90%;
-    margin: 1em;
-}
-.slide:target {
-    display: block;
-    position: static;
-    visibility: visible;
-    line-height: 1.5;
-    color: black;
-}
-
-/*------------------------------------*/
-.import_option a {
-    color: darkcyan;
-    text-decoration: none;
-    font-size: smaller;
-    cursor: pointer;
+.import_option output {
+    text-decoration: underline;
 }
 
 #time_offset > label, #time_range > label {
@@ -121,55 +123,61 @@
 }
 
 #import_days {
-    margin: 2em 0 0 0;
+    margin: 1em 0 0 0;
     padding: 0;
-    border: green;
-
 }
 
 #import_days input {
     display: none;
 }
+
 #import_days > input + label{
+    border: black thin solid;
     display: inline-block;
-    background: lightblue;
+    background-color: #f9f6f4;
+    font-size: 20px;
     height: 40px;
     line-height: 40px;
     width: 40px;
-    margin: 0 1%;
+    margin: 0 2%;
     border-radius:5px;
     text-align: center;
     cursor: pointer;
 }
 #import_days > input:checked + label{
-    background: darkcyan;
+    background: #6fa9cb;
     color: white;
 }
 
 /*------------------------------------*/
 
-#import_buttons {
-    width: 100%;
+#import_output {
     display: flex;
-    justify-content: space-around;
-    margin-top: 10px;
-}
-
-#calGoogle {
-    height: 50px;
-    width: 200px;
-    background: url("./btn_google_signin_dark_normal_web@2x.png") no-repeat center;
-    background-size: contain;
-    cursor:pointer;
+    flex-flow: column nowrap;
+    width: 100%;
     border: none;
 }
 
-#calGoogle:active{
-    background-image: url("./btn_google_signin_dark_pressed_web@2x.png");
+
+/* To keep or not */
+#out {
+    margin: 5px 0 0 0;
+    font-size: small;
+    font-weight: bold;
+    text-align: center;
+    overflow: hidden;
+}
+
+#import_buttons {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
 }
 
 #import_submit {
-    background-color: #4480af;
+    position: relative;
+    background-color: rgb(68,128,175);
     border: none;
     color: white;
     padding: 15px 0;
@@ -182,8 +190,16 @@
 
 #import_submit:hover {
     background-color: #2f63af;
+}
 
+#import_submit:active {
+    top: 2px;
+    right: -1px;
+}
 
+#import_submit:disabled {
+    background-color: rgba(68,128,175, 0.5);
+    pointer-events: none;
 }
 
 #import_reset {
@@ -209,5 +225,10 @@
     }
     fieldset {
         width: 90% !important;
+        margin: 5px auto;
     }
+}
+
+input[type="file"] {
+    display: none;
 }
