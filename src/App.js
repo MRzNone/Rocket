@@ -13,8 +13,8 @@ import thunk from 'redux-thunk';
 import Meeting from './Components/Meeting/Meeting';
 import LostPage from './Components/LostPage/LostPage';
 
-
 function App() {
+
   return (
     <Provider store={createStore(reducers, applyMiddleware(thunk))}>
       <Router>
