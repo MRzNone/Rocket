@@ -15,6 +15,7 @@ class MeetingResponse extends Component {
                 <DialogTitle>Create Meeting</DialogTitle>
                 <DialogContent>
                     <DialogContentText>Meeting Id: <b>123</b></DialogContentText>
+                    <DialogContentText>Host Pin: <b>??? (Not sure if we're still using this)</b></DialogContentText>
                     <DialogContentText>You'll use your meeting Id to gain access to the meeting.</DialogContentText>
                 </DialogContent>
                 <DialogActions>
