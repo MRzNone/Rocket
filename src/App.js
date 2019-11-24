@@ -15,7 +15,24 @@ import MeetingResponse from './Components/MeetingResponse/MeetingResponse';
 import LostPage from './Components/LostPage/LostPage';
 import JoinMeeting from './Components/JoinMeeting/JoinMeeting';
 import MeetingLogin from './Components/MeetingLogin/MeetingLogin';
+import { createMuiTheme } from '@material-ui/core/styles';
 
+const this.props.params.theme = createMuiTheme({
+  palette: {
+    primary: {
+      light: '#757ce8',
+      main: '#3f50b5',
+      dark: '#002884',
+      contrastText: '#fff',
+    },
+    secondary: {
+      light: '#ff7961',
+      main: '#f44336',
+      dark: '#ba000d',
+      contrastText: '#000',
+    },
+  },
+});
 
 function App() {
   return (

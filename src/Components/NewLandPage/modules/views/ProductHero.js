@@ -4,24 +4,25 @@ import { withStyles } from '@material-ui/core/styles';
 import Button from '../components/Button';
 import Typography from '../components/Typography';
 import ProductHeroLayout from './ProductHeroLayout';
+import blue from '@material-ui/core/colors/blue';
+import red from '@material-ui/core/colors/red';
+
 
 const backgroundImage =
   'https://images.unsplash.com/photo-1534854638093-bada1813ca19?auto=format&fit=crop&w=1400&q=80';
+
+const primary = blue[300];
+const secondary = red[500];
 
 const styles = theme => ({
   background: {
     // backgroundImage: `url(${backgroundImage})`,
     // backgroundColor: '#7fc7d9', // Average color of the background image.
-    backgroundColor: '#976ffc', // Average color of the background image.
+    backgroundColor: primary, // Average color of the background image.
     backgroundPosition: 'center',
   },
   button: {
     width: 250,
-  },
-  h1: {
-
-    // Format Title here
-
   },
 
   h5: {
@@ -43,11 +44,11 @@ function ProductHero(props) {
     <ProductHeroLayout backgroundClassName={classes.background}>
       {/* Increase the network loading priority of the background image. */}
       <img style={{ display: 'none' }} src={backgroundImage} alt="increase priority" />
-      <Typography color="inherit" align="center" variant="h1" marked="center">
+      <Typography color="inherit" align="center" variant="h1" marked="center" style={{ fontSize: '100px'}}>
         One Off
       </Typography>
-      <Typography color="inherit" align="center" variant="h6" className={classes.h5}>
-        Create a meeting today!
+      <Typography color="inherit" align="center" variant="h6" className={classes.h5} style= {{marginBottom: '7%'}}>
+        Create a meeting today
       </Typography>
       <div>
         <Button
@@ -60,7 +61,6 @@ function ProductHero(props) {
         >
           Create Meeting
         </Button>
-        <div style={{height:20 + "%"}}></div>
         <Button
           color="secondary"
           variant="contained"
