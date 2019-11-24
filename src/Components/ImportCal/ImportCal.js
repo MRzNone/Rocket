@@ -39,7 +39,7 @@ const ImportCal = ({close}) => {
 
     const loadClient = () => {
         return gapi.client.load("https://content.googleapis.com/discovery/v1/apis/calendar/v3/rest")
-            .then(function() { console.log("GAPI client loaded for API"); },
+            .then(function() { console.log("GAPI client loaded"); },
                 function(err) { console.error("Error loading GAPI client for API", err); });
     }
     const loadGapi = (script) => {
@@ -103,8 +103,10 @@ const ImportCal = ({close}) => {
     const handleGoogle = (callback) => {
 
         let glist = [];
-        let allday = document.getElementById("all_day").checked;
         let out = document.getElementById("out");
+        let allowAllDay = document.getElementById("all_day").checked;
+
+
 
         gapi.client.calendar.events.list({
             "calendarId": "primary",
@@ -117,7 +119,6 @@ const ImportCal = ({close}) => {
             "prettyPrint": true
         }).then(function (data) {
 
-            console.log(data.result);
             // Process Data
 
             let events = data.result.items;
@@ -130,14 +131,11 @@ const ImportCal = ({close}) => {
                 block = events[i];
 
                 //let title = block.summary;     // Event Name
-                start= block.start.dateTime;    // Start Datetime
-                end = block.end.dateTime;       // End Datetime
+                start= block.start.dateTime;     // Start Datetime
+                end = block.end.dateTime;        // End Datetime
 
                 // IF exclude all day && isAllDay
-                if (allday && !start) {
-                    continue;
-                }
-                else if (!start) {
+                if (!start) {
                     start = block.start.date;
                     end = block.end.date;
                 }
@@ -149,12 +147,11 @@ const ImportCal = ({close}) => {
                 if (!startMoment.isValid() || !endMoment.isValid())
                     continue;
 
-                // Add moment to output list if valid
-                obj.startMoment = startMoment;
-                obj.endMoment = startMoment;
+                // General all day event spanning more than 24hr
+                else if (!allowAllDay && (startMoment.diff(endMoment, "hours") >= 12 || startMoment.isSame(endMoment)))
+                    continue;
 
-                // Store results
-                glist[i] = obj;
+                glist = [...glist, ...splitDates(startMoment, endMoment, allowAllDay)];
             }
             callback(glist);
 
@@ -213,6 +210,7 @@ const ImportCal = ({close}) => {
 
         let out = document.getElementById("out");
         let submit_btn = document.getElementById("import_submit");
+        let allowAllDay = document.getElementById("all_day").checked;
 
         let dateList = [];
         let fr = new FileReader();
@@ -235,13 +233,11 @@ const ImportCal = ({close}) => {
                     if (!startMoment.isValid() || !endMoment.isValid())
                         continue;
 
-                    // Split into day
-                    // TODO
+                    // General all day event spanning more than 24hr
+                    else if (!allowAllDay && (endMoment.diff(startMoment, "hours") >= 12 || startMoment.isSame(endMoment)))
+                        continue;
 
-                    obj.startMoment = startMoment;
-                    obj.endMoment = endMoment;
-
-                    dateList[i] = obj;
+                    dateList = [...dateList, ...splitDates(startMoment, endMoment, allowAllDay)];
                 }
                 callback(dateList);
             } catch (err) {
@@ -264,8 +260,59 @@ const ImportCal = ({close}) => {
 
     /********** Functions to process data **********/
 
+    const splitDates = (s,e, allowAllDay) => {
+
+        // Split event into dates and process them
+
+        let dates = [];
+        let obj = {};
+        let start = s;
+        let end = e;
+
+        let i = 0;
+
+
+        if (start.isSame(end)) {
+            obj.debug = i++;
+            obj.startMoment = start;
+            obj.endMoment = moment(start).endOf("day");
+            dates.push(obj);
+
+            return dates;
+        }
+
+        while (start.isBefore(end, 'day')) {
+            obj = {};
+            obj.debug = i++;
+            obj.startMoment = start;
+            obj.endMoment = moment(start).endOf("day");
+            dates.push(obj);
+            start = moment(start).add(1, 'day').startOf("day");
+
+        }
+
+        if (!start.isSame(end)) {
+            obj = {};
+            obj.debug = i++;
+            obj.startMoment = start;
+            obj.endMoment = end;
+            dates.push(obj);
+        }
+
+        /*
+        for (let i = 0; i < dates.length; ++i) {
+            console.log(dates[i].startMoment.format("YYYY-MM-DD_HH:mm") +
+                " & " + dates[i].endMoment.format("YYYY-MM-DD_HH:mm"));
+        }
+        */
+
+        return dates;
+    };
+
+
     const handleImport = (event) => {
         event.preventDefault();
+
 
         if(mode === "file") {
             handleUpload(processData);
@@ -281,13 +328,11 @@ const ImportCal = ({close}) => {
 
         /* Process Data */
         function processData (mList) {
-            console.log("GOT " + mList);
-            console.log("MEETING DAYS: " + meetingDates);
 
             // Check if specific days were selected
-            let isAnyDay = days.every(n => n === 0);
-            let key, block, start, end, eventList;
-            let mod_start, mod_end;
+            let enable_anyday = days.every(n => n === 0);
+            let time_offset = (document.getElementById("toff").checked) ? offset : 0;
+            let key, block, start, end, eventList, date;
             let outList = [];
 
             // Create map for meeting days
@@ -296,8 +341,8 @@ const ImportCal = ({close}) => {
             // Default values are user earliest/latest availability
             for (let j = 0; j < meetingDates.length; ++j) {
                 meetingMap.set(meetingDates[j],
-                    [[ meetingDates[j], "00:00:00", startTime + ":00" ],
-                        [ meetingDates[j], endTime + ":00", "23:59:59" ]]);
+                    [[ meetingDates[j], "00:00", startTime ],
+                        [ meetingDates[j], endTime , "23:59" ]]);
             }
 
             // Loop through every event block
@@ -305,40 +350,38 @@ const ImportCal = ({close}) => {
                 block = mList[i];
                 start = block.startMoment;
                 end = block.endMoment;
+                date = start.format("YYYY-MM-DD");
                 key = start.format("YYYY-MM-DD");
 
                 // Skip irrelevant date
                 if (!meetingMap.has(key)) {
                     continue;
                 }
-
                 eventList = meetingMap.get(key);
-                console.log(eventList);
 
-                // Choose days specified by user
-                if (isAnyDay || days[start.day()]) {
 
-                    mod_end = end;
+                // Filter out non-selected days
+                if (enable_anyday || days[start.day()]) {
 
-                    // ADD OFFSET (POTENTIAL DATE CHANGE)
-                    mod_start = start.subtract(offset, 'minutes');
-                    mod_end = end.add(offset, 'minutes');
+                    // Apply offset values
+                    start = moment.max(moment(start).subtract(time_offset, 'minutes'), moment(start).startOf("day"));
+                    end = moment.min(moment(end).add(time_offset, 'minutes'), moment(end).endOf("day"));
 
                     // Output Formatting    MAP containing (Date) LIST containing (Event) LIST
                     eventList.push([
-                        start.format("YYYY-MM-DD"),       // start date
-                        end.format("YYYY-MM-DD"),         // end date
-                        mod_start.format("HH:mm:ss"),     // start time
-                        mod_end.format("HH:mm:ss"),       // end time
-                        //start.format("+-HH:mm")         // time zone
+                        date,                           // date
+                        start.format("HH:mm"),          // start time
+                        end.format("HH:mm"),            // end time
+                        //start.format("+-HH:mm")       // time zone
                     ]);
-                    console.log(eventList);
                 }
             }
 
             // Convert Map to list
             outList = Array.from(meetingMap.values());
             setEventList(outList);
+
+            console.log(outList);
 
             // Imported X events
             console.log("Imported " + outList.length + " events");
@@ -427,26 +470,26 @@ const ImportCal = ({close}) => {
     {offset}</output>
     <br/>
     <div id="time_offset" hidden>
-    <label htmlFor="ntoff"> Offset Value (min): </label>
+    <label htmlFor="ntoff"> Change Value (min): </label>
     <input id="ntoff" type="text" name="offset" pattern="\d*" maxLength="3" onChange={(e) => setValue(e, setOffset, 30)}/>
     </div>
 
     <input type="checkbox" id="tran" name="time_range" value={[startTime,endTime]} onClick={() => toggleHidden("time_range","hide")}/>
-    <label htmlFor="tran"> Restrict time range: &ensp;&nbsp;</label>
+    <label htmlFor="tran"> Only free between: &nbsp;</label>
     <output onClick={() => toggleHidden("time_range")}>
     {startTime} - {endTime}</output>
     <br/>
     <div id="time_range" hidden>
-    <label> Start Time: <input type="time" onChange={(e) => setValue(e, setStartTime, "09:00")} /></label><br/>
-    <label> End Time : <input type="time" onChange={(e) => setValue(e, setEndTime, "17:00")} /></label>
+    <label> Free after:&nbsp;&nbsp;<input type="time" onChange={(e) => setValue(e, setStartTime, "09:00")} /></label><br/>
+    <label> Free before:&nbsp;<input type="time" onChange={(e) => setValue(e, setEndTime, "17:00")} /></label>
     </div>
 
     <input type="checkbox" id="all_day" name="all_day" />
-        <label htmlFor="all_day"> Exclude all day events </label><br />
+        <label htmlFor="all_day"> Include all day events (+12hrs)</label><br />
 
     <input type="checkbox" id="days" name="day_selection"
     onClick={() => {toggleHidden("import_days"); resetDays();}}/>
-    <label htmlFor="days"> Import specific days </label>
+    <label htmlFor="days"> Only specific day of week </label>
     <div id="import_days" hidden>
     <input id="day_su" type="checkbox" name="sunday" onClick={()=>updateDays(0)} /><label htmlFor="day_su">SU</label>
     <input id="day_m"type="checkbox" name="monday" onClick={()=>updateDays(1)} /><label htmlFor="day_m">M</label>
