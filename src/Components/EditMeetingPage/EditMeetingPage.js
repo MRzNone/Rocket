@@ -6,7 +6,7 @@ import Selects from './Selects'
 import Grid from '@material-ui/core/Grid';
 import Button from "@material-ui/core/Button";
 import 'date-fns';
-import SendResult from "./SendResult";
+//import SendResult from "./SendResult";
 
 class EditMeetingPage extends React.Component {
 
