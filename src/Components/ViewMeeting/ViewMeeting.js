@@ -7,12 +7,14 @@ import { Button } from '@material-ui/core';
 import { util } from 'node-forge';
 import CalendarSelectTable from '../CalendarTable/CalendarSelectTable';
 import CalendarDispTable from '../CalendarTable/CalendarDispTable';
+import { Member } from '../../EarthBase/Member';
 
 export class ViewMeeting extends Component {
   constructor(props) {
     super(props);
 
     this.meetingDB = new Meeting();
+    this.memberDB = new Member();
 
     this.state = {
       userId: undefined,
@@ -29,10 +31,17 @@ export class ViewMeeting extends Component {
     }
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.fetchData();
   }
+
   componentDidUpdate() {
+    if ("status" in this.props.meeting) {
+      console.error("Invlid meeting");
+      this.props.history.push('/');
+      return;
+    }
+
     if (Object.entries(this.props.meeting).length !== 0 && this.state.calInit === false) {
       this.initCalendar();
     }
@@ -43,6 +52,12 @@ export class ViewMeeting extends Component {
     const params = queryString.parse(this.props.location.search);
     const meetingID = params.meetingId;
     const userId = params.userId;
+
+    if (meetingID === undefined || userId === undefined) {
+      console.error("Invlid parameters");
+      this.props.history.push("/");
+      return;
+    }
 
     this.setState({
       meetingID: meetingID,
@@ -210,9 +225,16 @@ export class ViewMeeting extends Component {
   }
 
   initCalendar() {
-    const { colNum, rowNum, dates,
+    const { rowNum, dates,
       timeWindow, members } = this.props.meeting;
 
+    if (!(this.state.userId in members)) {
+      console.error("Invalid user");
+      this.props.history.push("/");
+      return;
+    }
+
+    const colNum = dates.length;
     // prepare colTitles
     const colTitles = dates.map(
       date => date.getMonth() + "/" + date.getDate()
@@ -234,11 +256,15 @@ export class ViewMeeting extends Component {
     const datafromOthers = [];
 
     for (let [userId, memberData] of Object.entries(members)) {
-      const tData = memberData.timeSlots !== null ? memberData.timeSlots : undefined;
+      const rawData = memberData.timeSlots;
+      const tData = rawData !== null && rawData !== "" ? rawData : undefined;
+
       if (userId === this.state.userId) {
         initData = tData;
       } else {
-        datafromOthers.push(tData);
+        if (tData !== undefined) {
+          datafromOthers.push(tData);
+        }
       }
     }
 
@@ -253,7 +279,7 @@ export class ViewMeeting extends Component {
   updateSelectCalData(data) {
     const userId = this.state.userId;
     if (userId !== undefined) {
-      this.meetingDB.updateMemberSelection(userId, data);
+      this.memberDB.updateMemberSelection(userId, data);
     }
   }
 
@@ -273,23 +299,26 @@ export class ViewMeeting extends Component {
     // your component
     return (
       <div style={{ flexDirection: 'row', display: 'flex' }}>
-        <div>
+        <div style={{ flex: 1 }} >
           <div style={{ textAlign: 'center' }}>
             <p>Select</p>
           </div>
-          <CalendarSelectTable {...selectTableParams}
-            // optional
-            tableObservSetter={this.updateSelectCalData.bind(this)}
-          />
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <CalendarSelectTable {...selectTableParams}
+              tableObservSetter={this.updateSelectCalData.bind(this)}
+            />
+          </div>
         </div>
 
         <div style={{ width: 30, height: 100 }} />
 
-        <div>
+        <div style={{ flex: 1 }} >
           <div style={{ textAlign: 'center' }}>
             <p>Display</p>
           </div>
-          <CalendarDispTable {...displayTableParams} />
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <CalendarDispTable {...displayTableParams} />
+          </div>
         </div>
       </div>
     )
@@ -297,6 +326,10 @@ export class ViewMeeting extends Component {
 
 
   render() {
+    if ("status" in this.props.meeting) {
+      return (<div></div>);
+    }
+
     if (Object.entries(this.props.meeting).length === 0) {
       return (<div />);
     }

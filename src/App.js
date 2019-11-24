@@ -17,14 +17,14 @@ import * as firebase from "firebase";
 
 function App() {
   const firebaseConfig = {
-    apiKey: "AIzaSyB2PVFQS5VRClqybChAazdYIn7fk3g3W7g",
-    authDomain: "cse110firebase-b653b.firebaseapp.com",
-    databaseURL: "https://cse110firebase-b653b.firebaseio.com",
-    projectId: "cse110firebase-b653b",
-    storageBucket: "cse110firebase-b653b.appspot.com",
-    messagingSenderId: "494039804036",
-    appId: "1:494039804036:web:550ac5388459573150bad1",
-    measurementId: "G-KC1CX6P03G"
+    apiKey: "AIzaSyBj8CmEsvlDHyjbd74-kNfrAVeXDc3ZjfQ",
+    authDomain: "cse110project-8d6be.firebaseapp.com",
+    databaseURL: "https://cse110project-8d6be.firebaseio.com",
+    projectId: "cse110project-8d6be",
+    storageBucket: "cse110project-8d6be.appspot.com",
+    messagingSenderId: "24482060507",
+    appId: "1:24482060507:web:ab018bc0415a3250a854fe",
+    measurementId: "G-Q7P86Y5NGR"
   };
 
   // init firebase

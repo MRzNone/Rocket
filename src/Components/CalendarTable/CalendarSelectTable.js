@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { updateSelectCal } from '../../action';
 
-const CELL_WIDTH = 30;
-const CELL_HEIGHT = 15;
+const CELL_WIDTH = 55;
+const CELL_HEIGHT = 25;
 
 class CalendarSelectTable extends Component {
   /**
