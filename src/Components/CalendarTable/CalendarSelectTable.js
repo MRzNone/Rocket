@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { updateSelectCal } from '../../action';
 
-const CELL_WIDTH = 30;
-const CELL_HEIGHT = 10;
+const CELL_WIDTH = 55;
+const CELL_HEIGHT = 25;
 
-class CalendarTable extends Component {
+class CalendarSelectTable extends Component {
   /**
      * Propos needs:
      * colNum: int, # of columns
@@ -12,42 +14,21 @@ class CalendarTable extends Component {
      *                      evenly layout vertically
      * rowTitles: [String], title of row column (on the left, vertical layout)
      *                      evenly layout horizontally.
-     * tableSetter: Function, optional, a setter to update data.
-     * 
-     * 
-     * Example:
-     *   tableSetter(table) {
-     *    this.table = table;
-     *  }
-     *
-     *  render() {
-     *    let p = {
-     *      colNum: 3,
-     *      rowNum: 24,
-     *      colTitles: ["colA", "colB", "colC"],
-     *      rowTitles: ["rowA", "rowB", "rowC"],
-     *    };
-     *
-     *    return (
-     *      // <div> LandPage </div>
-     *      <div>
-     *        <CalendarTable
-     *          {...p}
-     *          tableSetter={this.tableSetter.bind(this)}
-     *        />
-     *        <Button
-     *          onClick={e => console.log(this.table)}
-     *        >Click</Button>
-     *      </div>
-     *    );
-     *  }
+     * initData: String     The string data to init.
+     * tableObservSetter: function program will call this function to pass in most-up-toDate string
      */
   constructor(props) {
     super(props);
 
-    const { colNum, rowNum } = this.props;
+    const { colNum, rowNum, initData } = this.props;
 
-    const fillGrid = [...Array(rowNum)].map(e => Array(colNum).fill(false));
+    var fillGrid = undefined;
+    if (initData === undefined) {
+      fillGrid = [...Array(rowNum)].map(e => Array(colNum).fill(0));
+    }
+    else {
+      fillGrid = initData;
+    }
 
     this.state = {
       fillGrid,
@@ -57,6 +38,8 @@ class CalendarTable extends Component {
       endDrag: undefined,
       targetVal: undefined,
     };
+
+    this.updateTableDateToOther();
   }
 
   copyGrid(grid) {
@@ -73,7 +56,7 @@ class CalendarTable extends Component {
       // render the row
       const rowCells = row.map((ifFilled, j) => {
         let cellStyle = Object.assign({}, Style.baseCellStyle);
-        cellStyle['backgroundColor'] = ifFilled ? "rgb(30, 153,25)" : "rgba(0, 0, 0, 0)";
+        cellStyle['backgroundColor'] = ifFilled === 1 ? "rgb(30, 153,25)" : "rgba(0, 0, 0, 0)";
 
         // deal last row
         if (i + 1 === rowNum) {
@@ -95,7 +78,7 @@ class CalendarTable extends Component {
                 startDrag: [i, j],
                 endDrag: [i, j],
                 startDragging: true,
-                targetVal: !ifFilled,
+                targetVal: 1 - ifFilled,
                 tempGrid: this.copyGrid(this.state.fillGrid),
               });
             }}
@@ -157,11 +140,15 @@ class CalendarTable extends Component {
   }
 
   renderColTitle() {
-    const { colTitles, colNum } = this.props;
+    const { colTitles } = this.props;
+
+    if (colTitles === undefined) {
+      return;
+    }
 
     const titles = [];
 
-    for (let i = 0; i < colNum; i++) {
+    for (let i = 0; i < colTitles.length; i++) {
       titles.push(
         <div
           key={"col-title-" + i}
@@ -181,6 +168,10 @@ class CalendarTable extends Component {
 
   renderRowTitle() {
     const { rowTitles, rowNum } = this.props;
+
+    if (rowTitles === undefined) {
+      return;
+    }
 
     const titles = [];
 
@@ -207,29 +198,33 @@ class CalendarTable extends Component {
 
   exportToTable() {
     const grid = this.state.fillGrid;
-    const { colNum, rowNum } = this.props;
 
-    const table = [...Array(colNum)].map(e => Array(rowNum));
+    return JSON.stringify(grid);
+  }
 
-    for (let i = 0; i < colNum; i++) {
-      for (let j = 0; j < rowNum; j++) {
-        table[i][j] = grid[j][i];
-      }
+  updateTableDateToOther() {
+    const { tableObservSetter } = this.props;
+
+    this.props.updateSelectTableData(this.state.fillGrid);
+    if (tableObservSetter !== undefined) {
+      tableObservSetter(this.exportToTable());
     }
-
-    return table;
   }
 
   render() {
+
     // update data through setter
-    if (this.props.tableSetter !== undefined) {
-      this.props.tableSetter(this.exportToTable());
+    if (!this.state.startDrag) {
+      this.updateTableDateToOther();
     }
+
+
 
     return (
       <div style={{
         display: 'flex',
         flexDirection: 'row',
+        WebkitUserSelect: 'none',
       }}>
         <div style={{
           paddingTop: CELL_HEIGHT + 1,
@@ -272,10 +267,11 @@ const Style = {
     flexDirection: 'row',
   },
   colTitleCell: {
-    width: CELL_WIDTH,
+    maxWidth: CELL_WIDTH,
     marginRight: 1,
     fontSize: 10,
     textAlign: 'center',
+    flex: 1,
   },
   colTitleContainer: {
     display: 'flex',
@@ -294,4 +290,12 @@ const Style = {
   },
 };
 
-export default CalendarTable;
+const mapDispatchToProps = dispatch => {
+  return {
+    updateSelectTableData: data => {
+      dispatch(updateSelectCal(data));
+    }
+  }
+}
+
+export default connect(undefined, mapDispatchToProps)(CalendarSelectTable);
