@@ -20,7 +20,7 @@ const styles = theme => ({
   },
   h1: {
 
-    // Format Title here
+    size: 100,
 
   },
 
@@ -46,7 +46,7 @@ function ProductHero(props) {
       <Typography color="inherit" align="center" variant="h1" marked="center">
         One Off
       </Typography>
-      <Typography color="inherit" align="center" variant="h6" className={classes.h5}>
+      <Typography color="inherit" align="center" variant="h6" className={classes.h5} >
         Create a meeting today!
       </Typography>
       <div>

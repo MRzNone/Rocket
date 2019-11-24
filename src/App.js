@@ -15,6 +15,7 @@ import MeetingResponse from './Components/MeetingResponse/MeetingResponse';
 import LostPage from './Components/LostPage/LostPage';
 import JoinMeeting from './Components/JoinMeeting/JoinMeeting';
 import MeetingLogin from './Components/MeetingLogin/MeetingLogin';
+import CreateNewUser from './Components/CreateNewUser/CreateNewUser';
 
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
           <Route path="/meetingresponse" component={MeetingResponse} />
           <Route path="/joinmeeting" component={JoinMeeting} />
           <Route path="/meetinglogin" component={MeetingLogin} />
+          <Route path="/createnewuser" component={CreateNewUser} />
           <Route component={LostPage} />
         </Switch>
       </Router>
