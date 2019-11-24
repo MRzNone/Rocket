@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import Calendar from "./CalendarSelect";
-import './CreateMeeting.css';
+import Calendar from "./CalendarSelect/CalendarSelect";
+import '../CreateMeeting/CreateMeeting.css';
 
 class CreateMeeting extends Component {
     render() {
@@ -13,7 +13,7 @@ class CreateMeeting extends Component {
                             <label>Earliest Time:</label>
                             <select name="EarliestTime">
                                 <option>Select a time:</option>
-                                <option value="12">12 am</option>
+                                <option value="0">12 am</option>
                                 <option value="1">1 am</option>
                                 <option value="2">2 am</option>
                                 <option value="3">3 am</option>
@@ -26,22 +26,22 @@ class CreateMeeting extends Component {
                                 <option value="10">10 am</option>
                                 <option value="11">11 am</option>
                                 <option value="12">12 pm</option>
-                                <option value="1">1 pm</option>
-                                <option value="2">2 pm</option>
-                                <option value="3">3 pm</option>
-                                <option value="4">4 pm</option>
-                                <option value="5">5 pm</option>
-                                <option value="6">6 pm</option>
-                                <option value="7">7 pm</option>
-                                <option value="8">8 pm</option>
-                                <option value="9">9 pm</option>
-                                <option value="10">10 pm</option>
-                                <option value="11">11 pm</option>
+                                <option value="13">1 pm</option>
+                                <option value="14">2 pm</option>
+                                <option value="15>3 pm</option>
+                                <option value="16">4 pm</option>
+                                <option value="17">5 pm</option>
+                                <option value="18">6 pm</option>
+                                <option value="19">7 pm</option>
+                                <option value="20">8 pm</option>
+                                <option value="21">9 pm</option>
+                                <option value="22">10 pm</option>
+                                <option value="23">11 pm</option>
                             </select><br />
                             <label>Latest Time:</label>
                             <select name="LatestTime">
                                 <option>Select a time:</option>
-                                <option value="12">12 am</option>
+                                <option value="0">12 am</option>
                                 <option value="1">1 am</option>
                                 <option value="2">2 am</option>
                                 <option value="3">3 am</option>
@@ -54,17 +54,17 @@ class CreateMeeting extends Component {
                                 <option value="10">10 am</option>
                                 <option value="11">11 am</option>
                                 <option value="12">12 pm</option>
-                                <option value="1">1 pm</option>
-                                <option value="2">2 pm</option>
-                                <option value="3">3 pm</option>
-                                <option value="4">4 pm</option>
-                                <option value="5">5 pm</option>
-                                <option value="6">6 pm</option>
-                                <option value="7">7 pm</option>
-                                <option value="8">8 pm</option>
-                                <option value="9">9 pm</option>
-                                <option value="10">10 pm</option>
-                                <option value="11">11 pm</option>
+                                <option value="13">1 pm</option>
+                                <option value="14">2 pm</option>
+                                <option value="15">3 pm</option>
+                                <option value="16">4 pm</option>
+                                <option value="17">5 pm</option>
+                                <option value="18">6 pm</option>
+                                <option value="19">7 pm</option>
+                                <option value="20">8 pm</option>
+                                <option value="21">9 pm</option>
+                                <option value="22">10 pm</option>
+                                <option value="23">11 pm</option>
                             </select><br />
                             <label>Time interval:</label>
                             <select name="timeInterval">
