@@ -48,9 +48,11 @@ function AppAppBar(props) {
             underline="none"
             color="inherit"
             className={classes.title}
-            href="/premium-themes/onepirate/"
+            href="/"
           >
-            {/* {'OneOff'} */}
+            {
+              <img src={"Users/sniradi/Documents/ucsd/110/Rocket/src/rocket.jpg"} alt="FIXME: Kunal is stupid"/>
+            }
           </Link>
           <div className={classes.right}>
             <Link
