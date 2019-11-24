@@ -1,6 +1,6 @@
 import React from 'react';
 import moment from 'moment';
-import './calendar.css';
+import './CalendarSelect.css';
 
 class Calendar extends React.Component {
     constructor(props) {
