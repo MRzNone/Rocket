@@ -12,6 +12,8 @@ import reducers from './reducers';
 import thunk from 'redux-thunk';
 import Meeting from './Components/Meeting/Meeting';
 import LostPage from './Components/LostPage/LostPage';
+import EditMeetingPage from './Components/EditMeetingPage/EditMeetingPage';
+
 
 function App() {
 
@@ -21,6 +23,8 @@ function App() {
         <Switch>
           <Route exact path="/" component={LandPage} />
           <Route path="/meeting" component={Meeting} />
+          <Route path="/edit" component={EditMeetingPage} />
+
           <Route component={LostPage} />
         </Switch>
       </Router>

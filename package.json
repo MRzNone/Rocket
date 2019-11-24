@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^4.7.0",
     "antd": "^3.25.0",
+    "emailjs-com": "^2.4.1",
     "firebase": "^7.2.3",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
