@@ -12,6 +12,7 @@ import reducers from './reducers';
 import thunk from 'redux-thunk';
 import Meeting from './Components/Meeting/Meeting';
 import LostPage from './Components/LostPage/LostPage';
+import CreateMeeting from './Components/CreateMeeting/CreateMeeting'
 
 
 function App() {
@@ -21,6 +22,10 @@ function App() {
         <Switch>
           <Route exact path="/" component={LandPage} />
           <Route path="/meeting" component={Meeting} />
+          <Route path="/CreateMeeting" component={CreateMeeting} />
+          {/* <Route path="/meeting" component={CreateMeeting} /> */}
+
+          {/* <Route path='' */}
           <Route component={LostPage} />
         </Switch>
       </Router>

@@ -51,7 +51,7 @@ function AppAppBar(props) {
             href="/"
           >
             {
-              <img src={"Users/sniradi/Documents/ucsd/110/Rocket/src/rocket.jpg"} alt="FIXME: Kunal is stupid"/>
+              <img src={"Users/sniradi/Documents/ucsd/110/Rocket/src/rocket.jpg"} alt="FIXME: Kunal is doing the demo"/>
             }
           </Link>
           <div className={classes.right}>
