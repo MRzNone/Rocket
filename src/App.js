@@ -18,6 +18,8 @@ import MeetingLogin from './Components/MeetingLogin/MeetingLogin';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { MuiThemeProvider } from 'material-ui/styles';
 
+import 'typeface-roboto';
+
 const theme = createMuiTheme({
   palette: {
     primary: {
