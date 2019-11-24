@@ -279,23 +279,26 @@ export class ViewMeeting extends Component {
     // your component
     return (
       <div style={{ flexDirection: 'row', display: 'flex' }}>
-        <div>
+        <div style={{ flex: 1 }} >
           <div style={{ textAlign: 'center' }}>
             <p>Select</p>
           </div>
-          <CalendarSelectTable {...selectTableParams}
-            // optional
-            tableObservSetter={this.updateSelectCalData.bind(this)}
-          />
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <CalendarSelectTable {...selectTableParams}
+              tableObservSetter={this.updateSelectCalData.bind(this)}
+            />
+          </div>
         </div>
 
         <div style={{ width: 30, height: 100 }} />
 
-        <div>
+        <div style={{ flex: 1 }} >
           <div style={{ textAlign: 'center' }}>
             <p>Display</p>
           </div>
-          <CalendarDispTable {...displayTableParams} />
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <CalendarDispTable {...displayTableParams} />
+          </div>
         </div>
       </div>
     )
