@@ -29,9 +29,10 @@ export class ViewMeeting extends Component {
     }
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.fetchData();
   }
+
   componentDidUpdate() {
     if (Object.entries(this.props.meeting).length !== 0 && this.state.calInit === false) {
       this.initCalendar();
@@ -234,11 +235,15 @@ export class ViewMeeting extends Component {
     const datafromOthers = [];
 
     for (let [userId, memberData] of Object.entries(members)) {
-      const tData = memberData.timeSlots !== null ? memberData.timeSlots : undefined;
+      const rawData = memberData.timeSlots;
+      const tData = rawData !== null && rawData !== "" ? rawData : undefined;
+
       if (userId === this.state.userId) {
         initData = tData;
       } else {
-        datafromOthers.push(tData);
+        if (tData !== undefined) {
+          datafromOthers.push(tData);
+        }
       }
     }
 
