@@ -6,6 +6,8 @@ import Link from '@material-ui/core/Link';
 import AppBar from '../components/AppBar';
 import Toolbar, { styles as toolbarStyles } from '../components/Toolbar';
 
+import logo from '../../../../logo.png'
+
 const styles = theme => ({
   title: {
     fontSize: 24,
@@ -48,9 +50,9 @@ function AppAppBar(props) {
             underline="none"
             color="inherit"
             className={classes.title}
-            href="/premium-themes/onepirate/"
+            href="/"
           >
-            {/* {'OneOff'} */}
+            <img src={logo} alt="FIXME"/>
           </Link>
           <div className={classes.right}>
             <Link
