@@ -7,7 +7,6 @@ import ProductHeroLayout from './ProductHeroLayout';
 import blue from '@material-ui/core/colors/blue';
 import red from '@material-ui/core/colors/red';
 
-
 const backgroundImage =
   'https://images.unsplash.com/photo-1534854638093-bada1813ca19?auto=format&fit=crop&w=1400&q=80';
 
@@ -43,7 +42,7 @@ function ProductHero(props) {
   return (
     <ProductHeroLayout backgroundClassName={classes.background}>
       {/* Increase the network loading priority of the background image. */}
-      <img style={{ display: 'none' }} src={backgroundImage} alt="increase priority" />
+      {/* <img style={{ display: 'none' }} src={backgroundImage} alt="increase priority" /> */}
       <Typography color="inherit" align="center" variant="h1" marked="center" style={{ fontSize: '100px'}}>
         One Off
       </Typography>

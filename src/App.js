@@ -16,8 +16,9 @@ import LostPage from './Components/LostPage/LostPage';
 import JoinMeeting from './Components/JoinMeeting/JoinMeeting';
 import MeetingLogin from './Components/MeetingLogin/MeetingLogin';
 import { createMuiTheme } from '@material-ui/core/styles';
+import { MuiThemeProvider } from 'material-ui/styles';
 
-const this.props.params.theme = createMuiTheme({
+const theme = createMuiTheme({
   palette: {
     primary: {
       light: '#757ce8',
@@ -36,18 +37,20 @@ const this.props.params.theme = createMuiTheme({
 
 function App() {
   return (
+    <MuiThemeProvider theme={theme}>
     <Provider store={createStore(reducers, applyMiddleware(thunk))}>
       <Router>
         <Switch>
-          <Route exact path="/" component={LandPage} />
-          <Route path="/meeting" component={Meeting} />
-          <Route path="/meetingresponse" component={MeetingResponse} />
-          <Route path="/joinmeeting" component={JoinMeeting} />
-          <Route path="/meetinglogin" component={MeetingLogin} />
-          <Route component={LostPage} />
+            <Route exact path="/" component={LandPage} />
+            <Route path="/meeting" component={Meeting} />
+            <Route path="/meetingresponse" component={MeetingResponse} />
+            <Route path="/joinmeeting" component={JoinMeeting} />
+            <Route path="/meetinglogin" component={MeetingLogin} />
+            <Route component={LostPage} />
         </Switch>
       </Router>
     </Provider>
+    </MuiThemeProvider>
   );
 }
 
