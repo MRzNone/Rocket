@@ -145,7 +145,6 @@ class CalendarDispTable extends Component {
 
     for (let i = 0; i < R; i++) {
       for (let j = 0; j < H; j++) {
-
         c[i][j] = a[i][j] + b[i][j];
       }
     }
