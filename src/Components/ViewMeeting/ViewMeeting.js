@@ -7,12 +7,14 @@ import { Button } from '@material-ui/core';
 import { util } from 'node-forge';
 import CalendarSelectTable from '../CalendarTable/CalendarSelectTable';
 import CalendarDispTable from '../CalendarTable/CalendarDispTable';
+import { Member } from '../../EarthBase/Member';
 
 export class ViewMeeting extends Component {
   constructor(props) {
     super(props);
 
     this.meetingDB = new Meeting();
+    this.memberDB = new Member();
 
     this.state = {
       userId: undefined,
@@ -34,6 +36,11 @@ export class ViewMeeting extends Component {
   }
 
   componentDidUpdate() {
+    if ("status" in this.props.meeting) {
+      this.props.history.push('/404');
+      return;
+    }
+
     if (Object.entries(this.props.meeting).length !== 0 && this.state.calInit === false) {
       this.initCalendar();
     }
@@ -259,7 +266,7 @@ export class ViewMeeting extends Component {
   updateSelectCalData(data) {
     const userId = this.state.userId;
     if (userId !== undefined) {
-      this.meetingDB.updateMemberSelection(userId, data);
+      this.memberDB.updateMemberSelection(userId, data);
     }
   }
 
@@ -306,6 +313,10 @@ export class ViewMeeting extends Component {
 
 
   render() {
+    if ("status" in this.props.meeting) {
+      return (<div></div>);
+    }
+
     if (Object.entries(this.props.meeting).length === 0) {
       return (<div />);
     }
