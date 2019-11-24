@@ -37,7 +37,8 @@ export class ViewMeeting extends Component {
 
   componentDidUpdate() {
     if ("status" in this.props.meeting) {
-      this.props.history.push('/404');
+      console.error("Invlid meeting");
+      this.props.history.push('/');
       return;
     }
 
@@ -51,6 +52,12 @@ export class ViewMeeting extends Component {
     const params = queryString.parse(this.props.location.search);
     const meetingID = params.meetingId;
     const userId = params.userId;
+
+    if (meetingID === undefined || userId === undefined) {
+      console.error("Invlid parameters");
+      this.props.history.push("/");
+      return;
+    }
 
     this.setState({
       meetingID: meetingID,
@@ -220,6 +227,12 @@ export class ViewMeeting extends Component {
   initCalendar() {
     const { rowNum, dates,
       timeWindow, members } = this.props.meeting;
+
+    if (!(this.state.userId in members)) {
+      console.error("Invalid user");
+      this.props.history.push("/");
+      return;
+    }
 
     const colNum = dates.length;
     // prepare colTitles
