@@ -211,9 +211,10 @@ export class ViewMeeting extends Component {
   }
 
   initCalendar() {
-    const { colNum, rowNum, dates,
+    const { rowNum, dates,
       timeWindow, members } = this.props.meeting;
 
+    const colNum = dates.length;
     // prepare colTitles
     const colTitles = dates.map(
       date => date.getMonth() + "/" + date.getDate()
