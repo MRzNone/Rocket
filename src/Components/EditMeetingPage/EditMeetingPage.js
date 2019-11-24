@@ -37,7 +37,7 @@ class EditMeetingPage extends React.Component {
                         Save Changes
                     </Button>
 
-                    <Button variant="outlined" color="default" onClick={SendResult} style={{margin:'5%'}}>
+                    <Button variant="outlined" color="default" /*onClick={SendResult}*/ style={{margin:'5%'}}>
                         Share Meeting Results
                     </Button>
 
