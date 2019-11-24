@@ -1,23 +1,32 @@
 import React, { Component } from 'react';
-import { Dialog, DialogContentText, DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
+import { Dialog, DialogContentText, DialogTitle, DialogContent, DialogActions, TextField } from '@material-ui/core';
 import { connect } from 'react-redux';
 import Button from '../NewLandPage/modules/components/Button';
-class MeetingResponse extends Component {
+
+class JoinMeeting extends Component {
     render(){
         return(
             <Dialog open="true"  className="box">
-                <DialogTitle>Create Meeting</DialogTitle>
+                <DialogTitle>Join Meeting</DialogTitle>
                 <DialogContent>
-                    <DialogContentText>Meeting Id: <b>123</b></DialogContentText>
-                    <DialogContentText>Host Pin: <b>??? (Not sure if we're still using this)</b></DialogContentText>
-                    <DialogContentText>You'll use your meeting Id to gain access to the meeting.</DialogContentText>
+                    <DialogContentText>Please enter the Meeting Id of the meeting you're trying to view</DialogContentText>
+                    <TextField
+                        required
+                        autoFocus
+                        margin="dense"
+                        id="meeting-id"
+                        label="Meeting ID"
+                        type="number"
+                        fullWidth
+                        variant="outlined" 
+                    />
                 </DialogContent>
                 <DialogActions>
                     <Button color="secondary"
                     href="/">
-                        Cancel Meeting Creation
+                        Back
                     </Button>
-                    <Button color="primary" href="/" autoFocus>
+                    <Button color="primary" href="/MeetingLogin" autoFocus>
                         {/* This button should redirect to meeting page */}
                         Next
                     </Button>
@@ -40,5 +49,5 @@ const mapStateToProps = (state, ownProps) => {
   export default connect(
     mapStateToProps,
     mapDispatchToProps
-  )(MeetingResponse);
+  )(JoinMeeting);
   

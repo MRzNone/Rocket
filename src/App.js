@@ -13,6 +13,8 @@ import thunk from 'redux-thunk';
 import Meeting from './Components/Meeting/Meeting';
 import MeetingResponse from './Components/MeetingResponse/MeetingResponse';
 import LostPage from './Components/LostPage/LostPage';
+import JoinMeeting from './Components/JoinMeeting/JoinMeeting';
+import MeetingLogin from './Components/MeetingLogin/MeetingLogin';
 
 
 function App() {
@@ -23,6 +25,8 @@ function App() {
           <Route exact path="/" component={LandPage} />
           <Route path="/meeting" component={Meeting} />
           <Route path="/meetingresponse" component={MeetingResponse} />
+          <Route path="/joinmeeting" component={JoinMeeting} />
+          <Route path="/meetinglogin" component={MeetingLogin} />
           <Route component={LostPage} />
         </Switch>
       </Router>
