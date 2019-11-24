@@ -28,7 +28,7 @@ class CreateMeeting extends Component {
                                 <option value="12">12 pm</option>
                                 <option value="13">1 pm</option>
                                 <option value="14">2 pm</option>
-                                <option value="15>3 pm</option>
+                                <option value="15">3 pm</option>
                                 <option value="16">4 pm</option>
                                 <option value="17">5 pm</option>
                                 <option value="18">6 pm</option>
