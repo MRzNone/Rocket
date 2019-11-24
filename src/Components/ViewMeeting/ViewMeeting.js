@@ -15,7 +15,7 @@ export class ViewMeeting extends Component {
     this.meetingDB = new Meeting();
 
     this.state = {
-      userId: undefined,
+      notes: undefined,
       meetingID: undefined,
       tableParams: {
         colNum: 7,
