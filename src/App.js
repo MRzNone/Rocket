@@ -38,6 +38,7 @@ const theme = createMuiTheme({
 });
 
 function App() {
+
   return (
     <MuiThemeProvider theme={theme}>
     <Provider store={createStore(reducers, applyMiddleware(thunk))}>
