@@ -6,6 +6,8 @@ import Selects from './Selects'
 import Grid from '@material-ui/core/Grid';
 import Button from "@material-ui/core/Button";
 import 'date-fns';
+import {Meeting} from "../../EarthBase";
+
 //import SendResult from "./SendResult";
 
 class EditMeetingPage extends React.Component {
@@ -16,7 +18,7 @@ class EditMeetingPage extends React.Component {
                 <div style={{
                     marginTop: '15vh',
                     marginLeft: '10vh',
-                    marginRight: '10vh'
+                    marginRight: '10vh',
                 }}>
                     <Grid container spacing={3}>
                         <Grid item xs={4}>
