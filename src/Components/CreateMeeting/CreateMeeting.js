@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import Calendar from "./calendar";
+import Calendar from "./CalendarSelect";
 import './CreateMeeting.css';
 
 class CreateMeeting extends Component {
