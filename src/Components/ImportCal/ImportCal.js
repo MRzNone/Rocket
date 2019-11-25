@@ -5,25 +5,31 @@ import {GoogleLogin, GoogleLogout} from 'react-google-login';
 /* global gapi */
 
 const ImportCal = ({close}) => {
+
+    // TODO: RETRIEVE FROM DATABASE (dates, timeWindow, rowNum)
+    const meetingDates = ["2019-06-02","2019-06-03","2019-06-05","2019-06-06"];     // GET dates FROM DATABASE
+    const firstDate = new Date(meetingDates[0]).toISOString();                      // Assuming first is earliest
+    const lastDate = new Date(meetingDates[-1]).toDateString();                     // Assuming last is latest
+    const minTime = new Date(300*60000).toISOString().substr(11, 5);                // GET timeWindow[0]       // 300
+    const maxTime = new Date(900*60000).toISOString().substr(11, 5);                // GET timeWindow[1]       // 900
+    const rowNum = 46;                                                              // GET rowNum
+
+
+    // TODO: SEND TO DATABASE (timeSlots)
+    const [timeSlots, setTimeSlots] = useState([]);                                 // SEND timeSlots TO DATABASE
+
+
+    
+    const ical = require('ical.js');
+    const moment = require('moment');
+
     const [offset, setOffset] = useState(30);
-    const [startTime, setStartTime] = useState("09:00");
-    const [endTime, setEndTime] = useState("17:00");
+    const [startTime, setStartTime] = useState(minTime);
+    const [endTime, setEndTime] = useState(maxTime);
     const [days, setDays] = useState([0,0,0,0,0,0,0]);
     const [mode, setMode] = useState("none");
     const [auth, setAuth] = useState(undefined);
     const [uploadFile, setUploadFile] = useState(undefined);
-
-    const ical = require('ical.js');
-    const moment = require('moment');
-
-
-    // TODO: RETRIEVE FROM DATABASE
-    const firstDate = "2019-06-02T00:00:00Z";
-    const lastDate = "2019-06-06T00:00:00Z";
-    const meetingDates = ["2019-06-02","2019-06-03","2019-06-05","2019-06-06"];
-
-    // TODO: SEND TO DATABASE
-    const [eventList, setEventList] = useState([]);             // FINAL OUTPUT
 
     /****************** Initialization *******************/
 
@@ -37,10 +43,11 @@ const ImportCal = ({close}) => {
         })();
     },[]);
 
+    // Needed for Google Calendar API
     const loadClient = () => {
         return gapi.client.load("https://content.googleapis.com/discovery/v1/apis/calendar/v3/rest")
             .then(function() { console.log("GAPI client loaded"); },
-                function(err) { console.error("Error loading GAPI client for API", err); });
+                function(err) { console.error("Error loading GAPI client", err); });
     }
     const loadGapi = (script) => {
         if(!script.getAttribute('gapi_processed')){
@@ -99,35 +106,29 @@ const ImportCal = ({close}) => {
         alert("Log out failed");
     };
 
-
+    // Fetch Event Data using Calendar API
     const handleGoogle = (callback) => {
 
         let glist = [];
         let out = document.getElementById("out");
         let allowAllDay = document.getElementById("all_day").checked;
 
-
-
         gapi.client.calendar.events.list({
             "calendarId": "primary",
             "orderBy": "startTime",
             "showDeleted": false,
             "singleEvents": true,
-            "timeMin": firstDate,           // WARNING: exclusive    must end after
-            "timeMax": lastDate,            // WARNING: exclusive    must start before
+            "timeMin": firstDate,
+            "timeMax": lastDate,
             "alt": "json",
             "prettyPrint": true
         }).then(function (data) {
 
             // Process Data
-
             let events = data.result.items;
             let start, end, block;
-            let obj;
-
 
             for (let i = 0; i < events.length; i++) {
-                obj = {};
                 block = events[i];
 
                 //let title = block.summary;     // Event Name
@@ -147,7 +148,7 @@ const ImportCal = ({close}) => {
                 if (!startMoment.isValid() || !endMoment.isValid())
                     continue;
 
-                // General all day event spanning more than 24hr
+                // General all day event spanning more than 12hr
                 else if (!allowAllDay && (startMoment.diff(endMoment, "hours") >= 12 || startMoment.isSame(endMoment)))
                     continue;
 
@@ -172,6 +173,11 @@ const ImportCal = ({close}) => {
             event.preventDefault();
 
             let file = event.target.files[0];
+
+            if (!file) {
+                // Cancel
+                return;
+            }
 
             // Reset background color
             let upload_btn = document.getElementById('calFile');
@@ -268,9 +274,7 @@ const ImportCal = ({close}) => {
         let obj = {};
         let start = s;
         let end = e;
-
         let i = 0;
-
 
         if (start.isSame(end)) {
             obj.debug = i++;
@@ -313,7 +317,6 @@ const ImportCal = ({close}) => {
     const handleImport = (event) => {
         event.preventDefault();
 
-
         if(mode === "file") {
             handleUpload(processData);
         }
@@ -340,9 +343,10 @@ const ImportCal = ({close}) => {
 
             // Default values are user earliest/latest availability
             for (let j = 0; j < meetingDates.length; ++j) {
-                meetingMap.set(meetingDates[j],
-                    [[ meetingDates[j], "00:00", startTime ],
-                        [ meetingDates[j], endTime , "23:59" ]]);
+                meetingMap.set(meetingDates[j], [
+                    [ meetingDates[j], minTime, startTime ],
+                    [ meetingDates[j], endTime , maxTime ]
+                ]);
             }
 
             // Loop through every event block
@@ -375,11 +379,17 @@ const ImportCal = ({close}) => {
                         //start.format("+-HH:mm")       // time zone
                     ]);
                 }
+                block = null;
             }
 
             // Convert Map to list
             outList = Array.from(meetingMap.values());
-            setEventList(outList);
+            setTimeSlots(outList);
+
+            //Time
+
+            // Create TimeSlot Table
+
 
             console.log(outList);
 
@@ -432,96 +442,96 @@ const ImportCal = ({close}) => {
 
     return(
         <div className="popup_wrapper">
-        <header>
-        <h1>Import Calendar</h1>
-    <a className="close" onClick={close} title={"Close"}>&#10006;</a>
-    </header>
-    <main>
-    <form onSubmit={handleImport}>
-        <fieldset className="import_file">
+            <header>
+                <h1>Import Calendar</h1>
+                <a className="close" onClick={close} title={"Close"}>&#10006;</a>
+            </header>
+            <main>
+                <form onSubmit={handleImport}>
+                    <fieldset className="import_file">
 
-        <label htmlFor="uploadFile" className="mode" id="calFile" >
-        Upload File
-    <input type="file" id="uploadFile" accept=".ics" onChange={(e)=>{selectUpload(e)}}/>
-    </label>
+                        <label htmlFor="uploadFile" className="mode" id="calFile" >
+                            Upload File
+                            <input type="file" id="uploadFile" accept=".ics" onChange={(e)=>{selectUpload(e)}}/>
+                        </label>
 
-    <GoogleLogin
-    render={renderProps => (
-    <button className="mode" id="calGoogle" onClick={renderProps.onClick}
-    disabled={renderProps.disabled}>Import Google Calendar</button>)}
-    clientId="926207137800-ogujdec6vo9oo1fun7mreedha60l7ude.apps.googleusercontent.com"
-    discoveryDocs="https://content.googleapis.com/discovery/v1/apis/calendar/v3/rest"
-    buttonText="Login"
-    scope="https://www.googleapis.com/auth/calendar.readonly"
-    theme="dark"
-    responseType="token"
-    onRequest={loadClient}
-    onSuccess={loginSuccess}
-    onFailure={loginFailure}
-    cookiePolicy={'single_host_origin'} />
-    </fieldset>
+                        <GoogleLogin
+                            render={renderProps => (
+                                <button className="mode" id="calGoogle" onClick={renderProps.onClick}
+                                        disabled={renderProps.disabled}>Import Google Calendar</button>)}
+                            clientId="926207137800-ogujdec6vo9oo1fun7mreedha60l7ude.apps.googleusercontent.com"
+                            discoveryDocs="https://content.googleapis.com/discovery/v1/apis/calendar/v3/rest"
+                            buttonText="Login"
+                            scope="https://www.googleapis.com/auth/calendar.readonly"
+                            theme="dark"
+                            responseType="token"
+                            onRequest={loadClient}
+                            onSuccess={loginSuccess}
+                            onFailure={loginFailure}
+                            cookiePolicy={'single_host_origin'} />
+                    </fieldset>
 
-    <fieldset className="import_option">
-        <legend>Import Options</legend>
+                    <fieldset className="import_option">
+                        <legend>Import Options</legend>
 
-    <input type="checkbox" id="toff" name="time_offset" value={offset} onClick={() => toggleHidden("time_offset","hide")}/>
-    <label htmlFor="toff"> Add offset time (min): </label>
-    <output onClick={() => toggleHidden("time_offset")}>
-    {offset}</output>
-    <br/>
-    <div id="time_offset" hidden>
-    <label htmlFor="ntoff"> Change Value (min): </label>
-    <input id="ntoff" type="text" name="offset" pattern="\d*" maxLength="3" onChange={(e) => setValue(e, setOffset, 30)}/>
-    </div>
+                        <input type="checkbox" id="toff" name="time_offset" value={offset} onClick={() => toggleHidden("time_offset","hide")}/>
+                        <label htmlFor="toff"> Add offset time (min): </label>
+                        <output onClick={() => toggleHidden("time_offset")}>
+                            {offset}</output>
+                        <br/>
+                        <div id="time_offset" hidden>
+                            <label htmlFor="ntoff"> Change Value (min): </label>
+                            <input id="ntoff" type="text" name="offset" pattern="\d*" maxLength="3" onChange={(e) => setValue(e, setOffset, 30)}/>
+                        </div>
 
-    <input type="checkbox" id="tran" name="time_range" value={[startTime,endTime]} onClick={() => toggleHidden("time_range","hide")}/>
-    <label htmlFor="tran"> Only free between: &nbsp;</label>
-    <output onClick={() => toggleHidden("time_range")}>
-    {startTime} - {endTime}</output>
-    <br/>
-    <div id="time_range" hidden>
-    <label> Free after:&nbsp;&nbsp;<input type="time" onChange={(e) => setValue(e, setStartTime, "09:00")} /></label><br/>
-    <label> Free before:&nbsp;<input type="time" onChange={(e) => setValue(e, setEndTime, "17:00")} /></label>
-    </div>
+                        <input type="checkbox" id="tran" name="time_range" value={[startTime,endTime]} onClick={() => toggleHidden("time_range","hide")}/>
+                        <label htmlFor="tran"> Only free between: &nbsp;</label>
+                        <output onClick={() => toggleHidden("time_range")}>
+                            {startTime} - {endTime}</output>
+                        <br/>
+                        <div id="time_range" hidden>
+                            <label> Free after:&nbsp;&nbsp;<input type="time" min={minTime} max={maxTime} onChange={(e) => setValue(e, setStartTime, minTime)} /></label><br/>
+                            <label> Free before:&nbsp;<input type="time" min={minTime} max={maxTime} onChange={(e) => setValue(e, setEndTime, maxTime)} /></label>
+                        </div>
 
-    <input type="checkbox" id="all_day" name="all_day" />
-        <label htmlFor="all_day"> Include all day events (+12hrs)</label><br />
+                        <input type="checkbox" id="all_day" name="all_day" />
+                        <label htmlFor="all_day"> Include all day events (+12hrs)</label><br />
 
-    <input type="checkbox" id="days" name="day_selection"
-    onClick={() => {toggleHidden("import_days"); resetDays();}}/>
-    <label htmlFor="days"> Only specific day of week </label>
-    <div id="import_days" hidden>
-    <input id="day_su" type="checkbox" name="sunday" onClick={()=>updateDays(0)} /><label htmlFor="day_su">SU</label>
-    <input id="day_m"type="checkbox" name="monday" onClick={()=>updateDays(1)} /><label htmlFor="day_m">M</label>
-    <input id="day_tu" type="checkbox" name="tuesday" onClick={()=>updateDays(2)} /><label htmlFor="day_tu">TU</label>
-    <input id="day_w" type="checkbox" name="wednesday" onClick={()=>updateDays(3)} /><label htmlFor="day_w">W</label>
-    <input id="day_th" type="checkbox" name="thursday" onClick={()=>updateDays(4)} /><label htmlFor="day_th">TH</label>
-    <input id="day_f" type="checkbox" name="friday" onClick={()=>updateDays(5)} /><label htmlFor="day_f">F</label>
-    <input id="day_sa" type="checkbox" name="saturday" onClick={()=>updateDays(6)} /><label htmlFor="day_sa">SA</label>
-    </div>
-    </fieldset>
+                        <input type="checkbox" id="days" name="day_selection"
+                               onClick={() => {toggleHidden("import_days"); resetDays();}}/>
+                        <label htmlFor="days"> Only specific day of week </label>
+                        <div id="import_days" hidden>
+                            <input id="day_su" type="checkbox" name="sunday" onClick={()=>updateDays(0)} /><label htmlFor="day_su">SU</label>
+                            <input id="day_m"type="checkbox" name="monday" onClick={()=>updateDays(1)} /><label htmlFor="day_m">M</label>
+                            <input id="day_tu" type="checkbox" name="tuesday" onClick={()=>updateDays(2)} /><label htmlFor="day_tu">TU</label>
+                            <input id="day_w" type="checkbox" name="wednesday" onClick={()=>updateDays(3)} /><label htmlFor="day_w">W</label>
+                            <input id="day_th" type="checkbox" name="thursday" onClick={()=>updateDays(4)} /><label htmlFor="day_th">TH</label>
+                            <input id="day_f" type="checkbox" name="friday" onClick={()=>updateDays(5)} /><label htmlFor="day_f">F</label>
+                            <input id="day_sa" type="checkbox" name="saturday" onClick={()=>updateDays(6)} /><label htmlFor="day_sa">SA</label>
+                        </div>
+                    </fieldset>
 
-    <fieldset id="import_output">
-        <output id="out"></output>
-        <div id="import_buttons">
-        <button id="import_submit" type="submit" disabled={true}>Import</button>
+                    <fieldset id="import_output">
+                        <output id="out"></output>
+                        <div id="import_buttons">
+                            <button id="import_submit" type="submit" disabled={true}>Import</button>
+                        </div>
+                    </fieldset>
+
+                </form>
+
+                <GoogleLogout
+                    render={renderProps => (
+                        <button onClick={renderProps.onClick}
+                                disabled={renderProps.disabled}>LOGOUT DEBUG</button>)}
+                    clientId="658977310896-knrl3gka66fldh83dao2rhgbblmd4un9.apps.googleusercontent.com"
+                    buttonText="Logout"
+                    onLogoutSuccess={logoutSuccess}
+                    onFailure={logoutFailure}>
+                </GoogleLogout>
+
+            </main>
         </div>
-        </fieldset>
+    );};
 
-        </form>
-
-        <GoogleLogout
-    render={renderProps => (
-    <button onClick={renderProps.onClick}
-    disabled={renderProps.disabled}>LOGOUT DEBUG</button>)}
-    clientId="658977310896-knrl3gka66fldh83dao2rhgbblmd4un9.apps.googleusercontent.com"
-    buttonText="Logout"
-    onLogoutSuccess={logoutSuccess}
-    onFailure={logoutFailure}>
-        </GoogleLogout>
-
-        </main>
-        </div>
-);};
-
-    export default ImportCal;
+export default ImportCal;
