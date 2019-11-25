@@ -43,9 +43,8 @@ class EditMeetingPage extends React.Component {
                         Share Meeting Results
                     </Button>
 
-                    <Button variant="outlined" color="default" style={{margin:'5%'}}>
-                        Back to Meeting
-                    </Button>
+                    <Button id="back" variant="outlined" color="default" style={{margin:'5%'}} onClick={() => this.props.history.push("/")}
+                    > Back to Meeting </Button>
                     </div>
                 </div>
             </>
