@@ -27,6 +27,13 @@ class CreateMeeting extends Component {
         const hostId = 'newH12312321ost'; // modify this line to get real userId
         const meetingId = getRandomId();
         const { earliestTime, latestTime, timeInterval, meetingName } = this.state;
+
+
+        if (latestTime < earliestTime) {
+            alert("Latest time has to be after earliest time");
+            return;
+        }
+
         this.meetingDB.createMeeting(
             meetingId,
             meetingName,
@@ -34,8 +41,13 @@ class CreateMeeting extends Component {
             earliestTime * 60,
             latestTime * 60,
             hostId,
-            Math.floor((earliestTime - latestTime) / timeInterval)
-        );
+            Math.floor((latestTime - earliestTime) * 60 / timeInterval)
+        ).then(() => {
+            this.props.history.push({
+                pathname: '/viewMeeting',
+                search: '?meetingId=' + meetingId + "&userId=" + hostId,
+            });
+        });
     }
 
     render() {

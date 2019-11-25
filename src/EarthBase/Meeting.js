@@ -70,7 +70,7 @@ export class Meeting {
    * @param {string} hostId 
    * @param {number} rowNum
    */
-  createMeeting(id, name, dates, startTime, endTime, hostId, rowNum) {
+  async createMeeting(id, name, dates, startTime, endTime, hostId, rowNum) {
     const hostRef = this.db.collection("Member").doc(hostId);
     const data = {
       finalTime: null,
@@ -86,6 +86,6 @@ export class Meeting {
     data.dates = dates.map(
       date => firebase.firestore.Timestamp.fromDate(date));
 
-    this.db.collection("Meeting").doc(id).set(data);
+    this.db.collection("Meeting").doc(id).set(data).then(() => { return; });
   }
 }
