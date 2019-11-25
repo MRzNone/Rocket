@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Calendar from "./CalendarSelect/CalendarSelect";
 import '../CreateMeeting/CreateMeeting.css';
 import { Select, MenuItem, Button } from "@material-ui/core";
+import { Meeting, getRandomId } from '../../EarthBase';
 
 class CreateMeeting extends Component {
     constructor(props) {
@@ -12,12 +13,32 @@ class CreateMeeting extends Component {
             latestTime: 23,
             timeInterval: 30,
             meetingName: '',
-        }
+        };
+
+        this.meetingDB = new Meeting();
+        this.selectedDates = [];
+    }
+
+    updateSelected(data) {
+        this.selectedDates = data.map(d => d.date.toDate());
+    }
+
+    createMeetingDB() {
+        const hostId = 'newH12312321ost'; // modify this line to get real userId
+        const meetingId = getRandomId();
+        const { earliestTime, latestTime, timeInterval, meetingName } = this.state;
+        this.meetingDB.createMeeting(
+            meetingId,
+            meetingName,
+            this.selectedDates,
+            earliestTime * 60,
+            latestTime * 60,
+            hostId,
+            Math.floor((earliestTime - latestTime) / timeInterval)
+        );
     }
 
     render() {
-        console.log(this.state);
-
         return (
             <div>
                 <div className="forms">
@@ -110,13 +131,16 @@ class CreateMeeting extends Component {
                             </Select>
                         </div>
                         <div id="Calendar">
-                            <Calendar />
+                            <Calendar
+                                updateSelected={this.updateSelected.bind(this)}
+                            />
                         </div>
                     </form>
                     <footer>
                         <div className="buttons">
                             <Button
                                 id="next"
+                                onClick={() => this.createMeetingDB()}
                             >
                                 Next &raquo;
                             </Button>
