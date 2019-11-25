@@ -13,7 +13,9 @@ import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 
 function Selects() {
-    // The first commit of Material-UI
+
+    /* start time & end time */
+
     const [startTime, setStartTime] = React.useState(new Date('2014-08-18T21:11:54'));
     const [endTime, setEndTime] = React.useState(new Date('2014-08-18T21:11:54'));
 
@@ -27,24 +29,23 @@ function Selects() {
     /* length */
     const [length, setLength] = React.useState('');
 
-    const inputLabelL = React.useRef(null);
+    const inputLabelLength = React.useRef(null);
 
-    const handleChangeL = event => {
+    const handleChangeLength = event => {
         setLength(event.target.value);
     };
 
     /* final result */
-    const [time, setTime] = React.useState('');
+    const [time, setFinal] = React.useState('');
 
-    const inputLabelT = React.useRef(null);
+    const inputLabelFinal = React.useRef(null);
 
-    const handleChangeT = event => {
-        setTime(event.target.value);
+    const handleChangeFinal = event => {
+        setFinal(event.target.value);
     };
 
     return (
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
-
             <KeyboardTimePicker
                 margin="normal"
                 id="time-picker"
@@ -54,7 +55,7 @@ function Selects() {
                 KeyboardButtonProps={{
                     'aria-label': 'change start time',
                 }}
-                style={{width: 150, margin:10}}
+                style={{width: 150, margin:15}}
             />
             <KeyboardTimePicker
                 margin="normal"
@@ -65,15 +66,15 @@ function Selects() {
                 KeyboardButtonProps={{
                     'aria-label': 'change end time',
                 }}
-                style={{width: 150, margin:10}}
+                style={{width: 150, margin:15}}
             />
-            <FormControl style={{width:150, margin:10,  marginTop: 10}}>
+            <FormControl style={{width:150, margin:15,  marginTop: 15}}>
                 <InputLabel shrink id="length-label" >Length</InputLabel>
                 <Select
                     labelId="length-label"
                     id="length"
                     value={length}
-                    onChange={handleChangeL}
+                    onChange={handleChangeLength}
                 >
                     <MenuItem value="">
                         <em>None</em>
@@ -86,13 +87,13 @@ function Selects() {
                     <MenuItem value={60}>3 hr</MenuItem>
                 </Select>
             </FormControl>
-            <FormControl  style={{width:150, margin:10, marginTop: 10, marginBottom:27}}>
+            <FormControl  style={{width:150, margin:15, marginTop: 15, marginBottom:22}}>
                 <InputLabel shrink id="result-label" >Final Result</InputLabel>
                 <Select
                     labelId="result-label"
                     id="result"
                     value={time}
-                    onChange={handleChangeT}
+                    onChange={handleChangeFinal}
                 >
                     <MenuItem value="">
                         <em>None</em>

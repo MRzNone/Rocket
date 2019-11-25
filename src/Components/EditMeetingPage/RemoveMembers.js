@@ -9,7 +9,7 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
-
+import Container from "@material-ui/core/Container";
 import FormHelperText from '@material-ui/core/FormHelperText';
 
 /**
@@ -19,9 +19,17 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 
 const RemoveMembers = () => {
     const [state, setState] = React.useState({
-        gilad: true,
-        jason: false,
-        antoine: false,
+        Amy: false,
+        Bee: false,
+        Cat: false,
+        Dog: false,
+        Each: false,
+        Fat: false,
+        Good: false,
+        Hit: false,
+        Ice: false,
+        Job: false,
+        Kit: false
     });
 
     const handleChange = name => event => {
@@ -33,83 +41,93 @@ const RemoveMembers = () => {
 
     return (
         <div>
+
+
             <Paper style={{
                 height: '59.5vh',
-                overflow: "scroll"
+                overflow: "scroll",
             }}>
+                <Container maxWidth="xl">
                 <FormControl component="fieldset" style={{
                     marginTop: '3vh',
                     marginLeft: '5vh',
                     paddingTop: '2vh'
                 }}>
                     <FormLabel component="legend" style={{
-                        textAlign: 'right'
+                        textAlign: 'right',
+                        fontSize: 25,
                     }}>Members</FormLabel>
 
-                    <FormGroup>
+                    <FormGroup style={{textAlign:'center', width: '100%'}}>
                         <FormControlLabel
-                            value="start"
-                            control={<Checkbox color="primary"/>}
-                            label="Start"
-                            labelPlacement="start"
-                        />
-
-                        <FormControlLabel
-                            value="start"
-                            control={<Checkbox color="primary"/>}
-                            label="Start"
+                            value="Amy"
+                            control={<Checkbox color="primary" onChange={handleChange('Amy')}/>}
+                            label="Amy"
                             labelPlacement="start"
                         />
                         <FormControlLabel
-                            value="xxxxxxxxxxxxxxxx"
-                            control={<Checkbox color="primary"/>}
-                            label="xxxxxxxxxxxxxxxx"
+                            value="Bob"
+                            control={<Checkbox color="primary" onChange={handleChange('Bob')}/>}
+                            label="Bob"
                             labelPlacement="start"
                         />
                         <FormControlLabel
-                            value="start"
-                            control={<Checkbox color="primary"/>}
-                            label="Start"
+                            value="Cat"
+                            control={<Checkbox color="primary" onChange={handleChange('Cat')}/>}
+                            label="Cat"
                             labelPlacement="start"
                         />
                         <FormControlLabel
-                            value="start"
-                            control={<Checkbox color="primary"/>}
-                            label="Start"
+                            value="Dog"
+                            control={<Checkbox color="primary" onChange={handleChange('Dog')}/>}
+                            label="Dog"
                             labelPlacement="start"
                         />
                         <FormControlLabel
-                            value="start"
-                            control={<Checkbox color="primary"/>}
-                            label="Start"
+                            value="Each"
+                            control={<Checkbox color="primary" onChange={handleChange('Each')}/>}
+                            label="Each"
                             labelPlacement="start"
                         />
                         <FormControlLabel
-                            value="start"
-                            control={<Checkbox color="primary"/>}
-                            label="Start"
+                            value="Fat"
+                            control={<Checkbox color="primary" onChange={handleChange('Fat')}/>}
+                            label="Fat"
                             labelPlacement="start"
                         />
                         <FormControlLabel
-                            value="start"
-                            control={<Checkbox color="primary"/>}
-                            label="Start"
+                            value="Good"
+                            control={<Checkbox color="primary" onChange={handleChange('Good')}/>}
+                            label="Good"
                             labelPlacement="start"
                         />
                         <FormControlLabel
-                            value="start"
-                            control={<Checkbox color="primary"/>}
-                            label="Start"
+                            value="Hit"
+                            control={<Checkbox color="primary" onChange={handleChange('Hit')}/>}
+                            label="Hit"
                             labelPlacement="start"
                         />
                         <FormControlLabel
-                            value="start"
-                            control={<Checkbox color="primary"/>}
-                            label="Start"
+                            value="Ice"
+                            control={<Checkbox color="primary" onChange={handleChange('Ice')}/>}
+                            label="Ice"
+                            labelPlacement="start"
+                        />
+                        <FormControlLabel
+                            value="Job"
+                            control={<Checkbox color="primary" onChange={handleChange('Job')}/>}
+                            label="Job"
+                            labelPlacement="start"
+                        />
+                        <FormControlLabel
+                            value="Kit"
+                            control={<Checkbox color="primary" onChange={handleChange('Kit')}/>}
+                            label="Kit"
                             labelPlacement="start"
                         />
                     </FormGroup>
                 </FormControl>
+                </Container>
             </Paper>
 
         </div>
