@@ -1,70 +1,69 @@
-import React, {useEffect, useState} from "react";
+import React, {Component} from "react";
 import "./ImportCal.css";
 import {GoogleLogin, GoogleLogout} from 'react-google-login';
-import fetchMeetingData from "../Meeting/Meeting"
+import {Member} from "../../EarthBase/Member.js";
+import {Meeting} from "../../EarthBase/Meeting.js";
+import queryString from 'query-string';
+import moment from "moment";
 
 /* global gapi */
 
-const ImportCal = ({close}) => {
+export class ImportCal extends Component {
+    constructor(props) {
+        super(props);
 
-    // TODO: RETRIEVE FROM DATABASE (dates, timeWindow, rowNum)
-    const meetingDates = ["2019-06-02","2019-06-03","2019-06-05","2019-06-06"];     // GET dates FROM DATABASE
-    const firstDate = new Date(meetingDates[0]).toISOString();                      // Assuming first is earliest
-    const lastDate = new Date(meetingDates[-1]).toDateString();                     // Assuming last is latest
-    const minTime = new Date(300*60000).toISOString().substr(11, 5);                // GET timeWindow[0]       // 300
-    const maxTime = new Date(900*60000).toISOString().substr(11, 5);                // GET timeWindow[1]       // 900
-    const rowNum = 46;                                                              // GET rowNum
+//        this.meetingDB = new Meeting();
+//        this.memberDB = new Member();
 
+        this.state = {
+            memberId: undefined,
+            meetingID: undefined,
+            meetingDates: ["2019-06-02", "2019-06-03", "2019-06-05", "2019-06-06"],     // GET dates FROM DATABASE
+            firstDate: undefined,
+            lastDate: undefined,
+            minTime: undefined,     // meeting specified min
+            maxTime: undefined,     // meeting specified max
+            rowNum: undefined,
+            offset: 30,
+            startTime: undefined,   // user specified min
+            endTime: undefined,     // user specified max
+            days: [0, 0, 0, 0, 0, 0, 0],
+            mode: "none",
+            auth: undefined,
+            uploadFile: "n/a",
+            timeSlots: [],          // TODO: SEND TO DATABASE (timeSlots)
+            date: null
+        }
 
-    // TODO: SEND TO DATABASE (timeSlots)
-    const [timeSlots, setTimeSlots] = useState([]);                                 // SEND timeSlots TO DATABASE
-
-
-    const ical = require('ical.js');
-    const moment = require('moment');
-
-    const [offset, setOffset] = useState(30);
-    const [startTime, setStartTime] = useState(minTime);
-    const [endTime, setEndTime] = useState(maxTime);
-    const [days, setDays] = useState([0,0,0,0,0,0,0]);
-    const [mode, setMode] = useState("none");
-    const [auth, setAuth] = useState(undefined);
-    const [uploadFile, setUploadFile] = useState(undefined);
+        this.close = props.close.bind(this);
+    }
 
 
     // TODO: Function that needs to send output to database
-    // Input is date as key, array of events as value      date: [[start1_s, end1_s],[start2_s, end2_s]...]
-    const convertToTimeSlots = (eventMap) => {
+    convertToTimeSlots = (eventMap) => {
 
-        // TESTING
+        // TEST
         const timeWindow = [300, 900];
-        let start_index, end_index, i=0;
-
-
-
-
-        console.log("OK: " + Array.from(eventMap.values()));
+        let start_index, end_index, i = 0;
 
         // rowNum x meetingDates.length, Default value 1
-        let timeTable = Array(rowNum).fill().map(() => Array(meetingDates.length).fill(1));
-
-        console.log("EVENT MAP: " + JSON.stringify(eventMap));
+        let timeTable = Array(this.state.rowNum).fill().map(() => Array(this.state.meetingDates.length).fill(1));
 
         for (const [date, events] of eventMap.entries()) {              // For each key in eventMap
-            console.log("DATE: " + date);
+            //console.log("DATE: " + date);
 
             for (const event of events) {
-                console.log("EVENT: " + event);
-                start_index = Math.floor((event[0]-timeWindow[0])/rowNum);
-                end_index = Math.ceil((event[1]-timeWindow[0])/rowNum);
+                //console.log("EVENT: " + event);
+                //console.log("TIME WINDOW: " + timeWindow);
+                start_index = Math.floor((event[0] - timeWindow[0]) / this.state.rowNum);
+                end_index = Math.ceil((event[1] - timeWindow[0]) / this.state.rowNum);
 
                 console.log(start_index + "," + end_index);
 
                 // Set to 0 : busy for slots between start index and end_index
-                for (let j=start_index; j < end_index; ++j) {
+                for (let j = start_index; j < end_index; ++j) {
                     timeTable[j][i] = 0;
                 }
-
             }
             ++i;
         }
@@ -72,53 +71,86 @@ const ImportCal = ({close}) => {
         console.log(JSON.stringify(timeTable));
 
         // TODO: OUTPUT
-        setTimeSlots(JSON.stringify(timeTable));
-
+        this.setState({timeSlots : JSON.stringify(timeTable)});
 
         // SEND TO DATABASE
+
+
+
+
 
     };
 
 
-
-
-
-
-
-
-
-
     /****************** Initialization *******************/
 
-    // Run when page load
-    useEffect (() => {
-        (function () {
-            const script = document.createElement("script");
-            script.src = "https://apis.google.com/js/api:client.js";
-            document.body.appendChild(script);
-            script.onload = () => { loadGapi(script);};
-        })();
-    },[]);
-
     // Needed for Google Calendar API
-    const loadClient = () => {
+    loadClient () {
         return gapi.client.load("https://content.googleapis.com/discovery/v1/apis/calendar/v3/rest")
-            .then(function() { console.log("GAPI client loaded"); },
-                function(err) { console.error("Error loading GAPI client", err); });
+            .then(function () {
+                    console.log("GAPI client loaded");
+                },
+                function (err) {
+                    console.error("Error loading GAPI client", err);
+                });
     }
-    const loadGapi = (script) => {
-        if(!script.getAttribute('gapi_processed')){
-            setTimeout(() => {loadGapi(script)}, 100);
+
+    loadGapi (script) {
+        if (!script.getAttribute('gapi_processed')) {
+            setTimeout(() => {
+                this.loadGapi(script)
+            }, 100);
         }
     }
 
+    componentDidMount() {
+
+        // TODO: Get meeting data (timeWindow, rowNum, dates)
+        //
+        //
+        //
+        //
+        //
+        //
+
+
+        // Assuming first is earliest, Assuming last is latest
+        let td = new Date(this.state.meetingDates.slice(-1)[0]);
+        td.setDate(td.getDate() + 1);
+        const lastDate =td.toISOString().split('.')[0]+"Z";
+        const firstDate = new Date(this.state.meetingDates[0]).toISOString().split('.')[0]+"Z";
+
+        const minTime = new Date(300 * 60000).toISOString().substr(11, 5);             // GET timeWindow[0]     // 300
+        const maxTime = new Date(900 * 60000).toISOString().substr(11, 5);             // GET timeWindow[1]     // 900
+        const rowNum = 46;
+
+        this.setState({
+            firstDate: firstDate,
+            lastDate: lastDate,
+            startTime: minTime,
+            endTime: maxTime,
+            maxTime: maxTime,
+            minTime: minTime,
+            rowNum: rowNum
+        });
+
+        // Prepare Google API
+        const script = document.createElement("script");
+        script.src = "https://apis.google.com/js/api:client.js";
+        document.body.appendChild(script);
+        script.onload = () => {
+            this.loadGapi(script);
+        };
+    }
+
+
     /********** Functions to import from Google **********/
 
-    const loginSuccess = (response) => {
-        setAuth(response.getAuthResponse());
-
-        // Change mode
-        setMode("google");
+    loginSuccess = (response) => {
+        this.setState({
+            auth : response.getAuthResponse(),
+            mode : "google"
+        });
 
         // Change Page
         document.getElementById('calGoogle').style.backgroundColor = "#BEF990";
@@ -128,15 +160,16 @@ const ImportCal = ({close}) => {
         let out = document.getElementById("out");
         out.innerHTML = "Import from Account: " + response.getBasicProfile().getEmail();
         out.style.color = "green";
-    };
-    const loginFailure = (response) => {
+    }
 
-        if (mode === "google") {
-            setMode("none");
+    loginFailure = (response) => {
+
+        if (this.state.mode === "google") {
+            this.setState({mode : "none"});
             document.getElementById('calGoogle').style.backgroundColor = "#f9f6f4";
         }
 
-        if (mode !== "file")
+        if (this.state.mode !== "file")
             document.getElementById("import_submit").disabled = true;
 
         let out = document.getElementById("out");
@@ -152,31 +185,34 @@ const ImportCal = ({close}) => {
             // "access_denied" 	        Do nothing
             // "immediate_failed"       Do nothing
         }
-    };
+    }
 
     // DEBUG
-    const logoutSuccess = (response) => {
+    logoutSuccess = (response) => {
         alert("Log out successful");
-    };
-    // DEBUG
-    const logoutFailure = (response) => {
-        alert("Log out failed");
-    };
+    }
 
     // Fetch Event Data using Calendar API
-    const handleGoogle = (callback) => {
+    handleGoogle = (callback) => {
 
         let glist = [];
         let out = document.getElementById("out");
         let allowAllDay = document.getElementById("all_day").checked;
+
+        let timeMax = this.state.lastDate;
+        let timeMin = this.state.firstDate;
+
+        console.log(timeMin);
+        console.log(timeMax);
+
 
         gapi.client.calendar.events.list({
             "calendarId": "primary",
             "orderBy": "startTime",
             "showDeleted": false,
             "singleEvents": true,
-            "timeMin": firstDate,
-            "timeMax": lastDate,
+            "timeMin": timeMin,     // Earliest start time (inclusive)
+            "timeMax": timeMax,     // Latetst start time (exclusive
             "alt": "json",
             "prettyPrint": true
         }).then(function (data) {
@@ -189,7 +225,7 @@ const ImportCal = ({close}) => {
                 block = events[i];
 
                 //let title = block.summary;     // Event Name
-                start= block.start.dateTime;     // Start Datetime
+                start = block.start.dateTime;     // Start Datetime
                 end = block.end.dateTime;        // End Datetime
 
                 // IF exclude all day && isAllDay
@@ -198,8 +234,8 @@ const ImportCal = ({close}) => {
                     end = block.end.date;
                 }
 
-                let startMoment = moment(start, ['YYYY-MM-DDTHH:mm:ssZ', 'YYYY-MM-DDTHH:mm:ss+-HH:mm', 'YYYY-MM-DD' ], true);
-                let endMoment = moment(end, ['YYYY-MM-DDTHH:mm:ssZ', 'YYYY-MM-DDTHH:mm:ss+-HH:mm', 'YYYY-MM-DD' ], true);
+                let startMoment = moment(start, ['YYYY-MM-DDTHH:mm:ssZ', 'YYYY-MM-DDTHH:mm:ss+-HH:mm', 'YYYY-MM-DD'], true);
+                let endMoment = moment(end, ['YYYY-MM-DDTHH:mm:ssZ', 'YYYY-MM-DDTHH:mm:ss+-HH:mm', 'YYYY-MM-DD'], true);
 
                 // If invalid format, skip
                 if (!startMoment.isValid() || !endMoment.isValid())
@@ -209,8 +245,9 @@ const ImportCal = ({close}) => {
                 else if (!allowAllDay && (startMoment.diff(endMoment, "hours") >= 12 || startMoment.isSame(endMoment)))
                     continue;
 
-                glist = [...glist, ...splitDates(startMoment, endMoment, allowAllDay)];
+                glist = [...glist, ...ImportCal.splitDates(startMoment, endMoment)];
             }
+
             callback(glist);
 
         }, function (err) {
@@ -221,55 +258,57 @@ const ImportCal = ({close}) => {
 
         });
         return glist;
-    };
+    }
 
     /********** Functions to import from upload **********/
 
-        // If succeed close window and go back to meeting page, if fail stay on page and display error
-    const selectUpload = (event) => {
-            event.preventDefault();
+    selectUpload = (event) => {
+        event.preventDefault();
 
-            let file = event.target.files[0];
+        let file = event.target.files[0];
 
-            if (!file) {
-                // Cancel
-                return;
-            }
+        if (!file) {
+            // Cancel
+            return;
+        }
 
-            // Reset background color
-            let upload_btn = document.getElementById('calFile');
-            let out = document.getElementById("out");
-            let submit_btn = document.getElementById("import_submit");
-            upload_btn.style.backgroundColor = "#f9f6f4";
+        // Reset background color
+        let upload_btn = document.getElementById('calFile');
+        let out = document.getElementById("out");
+        let submit_btn = document.getElementById("import_submit");
+        upload_btn.style.backgroundColor = "#f9f6f4";
 
-            // TODO: CHECK FILE TYPE (MIME type, magic number)
-            let isValid = true;
+        // TODO: CHECK FILE TYPE (MIME type, magic number)
+        let isValid = true;
 
 
-            if(isValid) {
-                setUploadFile(file);
-                setMode("file");
+        if (isValid) {
+            this.setState({
+                uploadFile : file,
+                mode : "file"
+            });
 
-                document.getElementById("calFile").style.backgroundColor = "#BEF990";
-                document.getElementById('calGoogle').style.backgroundColor = "#f9f6f4";
-                submit_btn.disabled = false;
+            document.getElementById("calFile").style.backgroundColor = "#BEF990";
+            document.getElementById('calGoogle').style.backgroundColor = "#f9f6f4";
+            submit_btn.disabled = false;
 
-                // Output Message
-                out.innerHTML = "Import from File: " + file.name;
-                out.style.color = "green";
+            // Output Message
+            out.innerHTML = "Import from File: " + file.name;
+            out.style.color = "green";
 
-            } else {
-                if (mode === "file")
-                    setMode("none");
+        } else {
+            if (this.state.mode === "file")
+                this.setState({mode : "none"});
 
-                if (mode !== "google")
-                    submit_btn.disabled = true;
+            if (this.state.mode !== "google")
+                submit_btn.disabled = true;
 
-                out.innerHTML = "Not valid ics file: " + file.name;
-                out.style.color = "red";
-            }
-        };
-    const handleUpload = (callback)=> {
+            out.innerHTML = "Not valid ics file: " + file.name;
+            out.style.color = "red";
+        }
+    }
+
+    handleUpload = (callback) => {
 
         let out = document.getElementById("out");
         let submit_btn = document.getElementById("import_submit");
@@ -280,6 +319,7 @@ const ImportCal = ({close}) => {
         fr.onload = (e) => {
             try {
                 let content = fr.result;
+                const ical = require('ical.js');
                 let data_parsed = ical.parse(content);
                 let obj, start, end, startMoment, endMoment;
 
@@ -296,34 +336,34 @@ const ImportCal = ({close}) => {
                     if (!startMoment.isValid() || !endMoment.isValid())
                         continue;
 
-                    // General all day event spanning more than 24hr
+                    // General all day event spanning more than 12hr
                     else if (!allowAllDay && (endMoment.diff(startMoment, "hours") >= 12 || startMoment.isSame(endMoment)))
                         continue;
 
-                    dateList = [...dateList, ...splitDates(startMoment, endMoment, allowAllDay)];
+                    dateList = [...dateList, ...this.splitDates(startMoment, endMoment)];
                 }
                 callback(dateList);
             } catch (err) {
                 console.log(err);
-                setMode("none");
+                this.setState({mode : "none"});
                 submit_btn.disabled = true;
-                out.innerHTML = "Failed to process file: " + uploadFile.name;
+                out.innerHTML = "Failed to process file: " + this.state.uploadFile.name;
                 out.style.color = "red";
             }
         };
         fr.onerror = (e) => {
             console.log(e);
-            setMode("none");
+            this.setState({mode : "none"});
             submit_btn.disabled = true;
-            out.innerHTML = "Failed to process file: " + uploadFile.name;
+            out.innerHTML = "Failed to process file: " + this.state.uploadFile.name;
             out.style.color = "red";
         };
-        fr.readAsText(uploadFile);
-    };
+        fr.readAsText(this.state.uploadFile);
+    }
 
     /********** Functions to process data **********/
 
-    const splitDates = (s,e, allowAllDay) => {
+    static splitDates = (s, e) => {
 
         // Split event into dates and process them
 
@@ -360,54 +400,56 @@ const ImportCal = ({close}) => {
             dates.push(obj);
         }
 
-        /*
-        for (let i = 0; i < dates.length; ++i) {
-            console.log(dates[i].startMoment.format("YYYY-MM-DD_HH:mm") +
-                " & " + dates[i].endMoment.format("YYYY-MM-DD_HH:mm"));
-        }
-        */
-
         return dates;
-    };
-
-    const toMinutes = (time_string) => {
-        let part = time_string.split(':');          // HH:MM:ss
-        return parseInt(part[0]) * 60 + parseInt(part[1],10);
     }
 
-    const handleImport = (event) => {
+    toMinutes = (time_string) => {
+        let part = time_string.split(':');          // HH:MM:ss
+        return parseInt(part[0]) * 60 + parseInt(part[1], 10);
+    }
+
+    handleImport = (event) => {
         event.preventDefault();
 
-        if(mode === "file") {
-            handleUpload(processData);
-        }
-        else if (mode === "google") {
-            handleGoogle(processData);
-            //auth.signOut();
-            //auth.disconnect();
-        }
-        else {
-            console.log("ERROR: NO MODE SELECTED");
-        }
-
         /* Process Data */
-        function processData (mList) {
+        const processData = (mList) => {
+
+            console.log(this.state.meetingDates);
 
             // Check if specific days were selected
-            let enable_anyday = days.every(n => n === 0);
-            let time_offset = (document.getElementById("toff").checked) ? offset : 0;
+            let enable_anyday = this.state.days.every(n => n === 0);
+            let time_offset = (document.getElementById("toff").checked) ? this.state.offset : 0;
             let key, block, start, end, eventList, date;
+
+            let [min_h, min_m] = this.state.minTime.split(":");
+            let [max_h, max_m] = this.state.maxTime.split(":");
+            let min = this.toMinutes(this.state.minTime);
+            let max = this.toMinutes(this.state.maxTime);
+
+            //console.log("min_h: " + min_h + "min_m: " + min_m + "max_h: " + max_h + "max_m: " + max_m + "minMoment: " + minMoment.format("YYYY-DD-MM_HHmmss") + "maxMoment: " + maxMoment.format("YYYY-DD-MM_HHmmss"));
+
             let outList = [];
 
             // Create map for meeting days
             let meetingMap = new Map();
 
             // Default values are user earliest/latest availability
-            for (let j = 0; j < meetingDates.length; ++j) {
-                meetingMap.set(meetingDates[j], [
-                    [ toMinutes(minTime), toMinutes(startTime) ],
-                    [ toMinutes(endTime) , toMinutes(maxTime) ]
-                ]);
+            for (let j = 0; j < this.state.meetingDates.length; ++j) {
+                let content = [];
+                let start = this.toMinutes(this.state.startTime);
+                let end = this.toMinutes(this.state.endTime);
+                let d = this.state.meetingDates[j];
+
+                meetingMap.set(d, content);
+
+                if (min < start) {
+                    content.push([min, start]);
+                    console.log("MIN: " + this.state.minTime + " < " + "START: " + this.state.startTime);
+                }
+                if (end < max) {
+                    content.push([end, max]);
+                    console.log("END: " + this.state.endTime + " < " + "MAX: " + this.state.maxTime);
+                }
             }
 
             // Loop through every event block
@@ -416,6 +458,8 @@ const ImportCal = ({close}) => {
                 start = block.startMoment;
                 end = block.endMoment;
                 key = start.format("YYYY-MM-DD");
+                let minMoment = moment(start).set({'hour' : min_h, 'minute' : min_m});
+                let maxMoment = moment(start).set({'hour' : max_h, 'minute' : max_m});
 
                 // Skip irrelevant date
                 if (!meetingMap.has(key)) {
@@ -425,22 +469,24 @@ const ImportCal = ({close}) => {
 
 
                 // Filter out non-selected days
-                if (enable_anyday || days[start.day()]) {
+                if (enable_anyday || this.state.days[start.day()]) {
+
 
                     // Apply offset values
-                    start = moment.max(moment(start).subtract(time_offset, 'minutes'), moment(start).startOf("day"));
-                    end = moment.min(moment(end).add(time_offset, 'minutes'), moment(end).endOf("day"));
+                    start = moment
+                        .max(moment(start).subtract(time_offset, 'minutes'), minMoment)
+                        .diff(moment(key).startOf('day'), 'minutes');
+                    end = moment.min(moment(end)
+                        .add(time_offset, 'minutes'), maxMoment)
+                        .diff(moment(key).startOf('day'), 'minutes');
 
+                    console.log("DATE: " + key + ", START: " + new Date(start * 60000).toISOString().substr(11, 5) + ", END: " + new Date(end * 60000).toISOString().substr(11, 5));
 
-                    console.log("DATE: " + key + ", START: " + start.format("HH:mm") + ", END: " + end.format("HH:mm"));
+                    //console.log(moment().startOf('day'));
 
-                    console.log(moment().startOf('day'));
-
-                    // Output Formatting
-                    eventList.push([
-                        start.diff(moment(key).startOf('day'), 'minutes'),  // start time (seconds)
-                        end.diff(moment(key).startOf('day'), 'minutes'),    // end time (seconds)
-                    ]);
+                    if (min < start && max > end) {
+                        eventList.push([ start, end ]);
+                    }
                 }
                 block = null;
             }
@@ -448,67 +494,82 @@ const ImportCal = ({close}) => {
             // Convert Map to list
             //outList = Array.from(meetingMap.values());
 
-
-
-            convertToTimeSlots(meetingMap);
+            this.convertToTimeSlots(meetingMap);
 
             // Close Popup
-            close();
+            this.close();
         }
-    };
+
+        if (this.state.mode === "file") {
+            this.handleUpload(processData);
+        }
+        else if (this.state.mode === "google") {
+            this.handleGoogle(processData);
+            //this.state.auth.signOut();
+            //this.state.auth.disconnect();
+        }
+        else {
+            console.log("ERROR: NO MODE SELECTED");
+        }
+    }
 
     /******* Functions used for UI *******/
 
-        // Calls appropriate set functions
-    const setValue = (event, setter, defVal) => {
-            let el = event.target;
-            if (el.value.length !== 0 && el.checkValidity())
-                setter(el.value);
-            else
-                setter(defVal);
-        }
+    // Calls appropriate set functions
+    setValue = (event, key, defVal) => {
+        let el = event.target;
+        if (el.value.length !== 0 && el.checkValidity())
+            this.setState({[key] : el.value});
+        else
+            this.setState({[key] : defVal});
+    }
+
     // Helper function used to toggle hidden state of tags
-    const toggleHidden = (id, action) => {
+    toggleHidden = (id, action) => {
         let t = document.getElementById(id);
 
         if (action === undefined)
             t.hidden = !t.hidden;
         else
             t.hidden = (action === "hide");
-    };
-    // Helper function used to reset day selection
-    const resetDays = () => {
-        console.log(days);
-        let children = document.getElementById("import_days").children;
-        for (let i = 0; i < children.length; ++i) {
-            if(children[i].type === "checkbox")
-                children[i].checked = false;
-        }
-        setDays([0,0,0,0,0,0,0]);
     }
 
-    const updateDays = (index) => {
-        let arr = [...days];
+    // Helper function used to reset day selection
+    resetDays = () => {
+        console.log(this.state.days);
+        let children = document.getElementById("import_days").children;
+        for (let i = 0; i < children.length; ++i) {
+            if (children[i].type === "checkbox")
+                children[i].checked = false;
+        }
+        this.setState({days : [0, 0, 0, 0, 0, 0, 0]});
+    }
+
+    updateDays = (index) => {
+        let arr = [...this.state.days];
         arr[index] = arr[index] ? 0 : 1;
-        setDays([...arr]);
-        console.log(days);
-    };
+        this.setState({days : [...arr]});
+        console.log(this.state.days);
+    }
 
     /*************************************/
 
-    return(
+    render() {
+        return (
         <div className="popup_wrapper">
             <header>
                 <h1>Import Calendar</h1>
-                <a className="close" onClick={close} title={"Close"}>&#10006;</a>
+                <a className="close" onClick={this.close} title={"Close"}>&#10006;</a>
             </header>
             <main>
-                <form onSubmit={handleImport}>
+                <form onSubmit={this.handleImport}>
                     <fieldset className="import_file">
 
-                        <label htmlFor="uploadFile" className="mode" id="calFile" >
+                        <label htmlFor="uploadFile" className="mode" id="calFile">
                             Upload File
-                            <input type="file" id="uploadFile" accept=".ics" onChange={(e)=>{selectUpload(e)}}/>
+                            <input type="file" id="uploadFile" accept=".ics" onChange={(e) => {
+                                this.selectUpload(e)
+                            }}/>
                         </label>
 
                         <GoogleLogin
@@ -521,49 +582,64 @@ const ImportCal = ({close}) => {
                             scope="https://www.googleapis.com/auth/calendar.readonly"
                             theme="dark"
                             responseType="token"
-                            onRequest={loadClient}
-                            onSuccess={loginSuccess}
-                            onFailure={loginFailure}
-                            cookiePolicy={'single_host_origin'} />
+                            onRequest={this.loadClient}
+                            onSuccess={this.loginSuccess}
+                            onFailure={this.loginFailure}
+                            cookiePolicy={'single_host_origin'}/>
                     </fieldset>
 
                     <fieldset className="import_option">
                         <legend>Import Options</legend>
 
-                        <input type="checkbox" id="toff" name="time_offset" value={offset} onClick={() => toggleHidden("time_offset","hide")}/>
+                        <input type="checkbox" id="toff" name="time_offset" value={this.state.offset}
+                               onClick={() => this.toggleHidden("time_offset", "hide")}/>
                         <label htmlFor="toff"> Add offset time (min): </label>
-                        <output onClick={() => toggleHidden("time_offset")}>
-                            {offset}</output>
+                        <output onClick={() => this.toggleHidden("time_offset")}>
+                            {this.state.offset}</output>
                         <br/>
                         <div id="time_offset" hidden>
                             <label htmlFor="ntoff"> Change Value (min): </label>
-                            <input id="ntoff" type="text" name="offset" pattern="\d*" maxLength="3" onChange={(e) => setValue(e, setOffset, 30)}/>
+                            <input id="ntoff" type="text" name="offset" pattern="\d*" maxLength="3"
+                                   onChange={(e) => this.setValue(e, "offset", 30)}/>
                         </div>
 
-                        <input type="checkbox" id="tran" name="time_range" value={[startTime,endTime]} onClick={() => toggleHidden("time_range","hide")}/>
+                        <input type="checkbox" id="tran" name="time_range" value={[this.state.startTime, this.state.endTime]}
+                               onClick={() => this.toggleHidden("time_range", "hide")}/>
                         <label htmlFor="tran"> Only free between: &nbsp;</label>
-                        <output onClick={() => toggleHidden("time_range")}>
-                            {startTime} - {endTime}</output>
+                        <output onClick={() => this.toggleHidden("time_range")}>
+                            {this.state.startTime} - {this.state.endTime}</output>
                         <br/>
                         <div id="time_range" hidden>
-                            <label> Free after:&nbsp;&nbsp;<input type="time" min={minTime} max={maxTime} onChange={(e) => setValue(e, setStartTime, minTime)} /></label><br/>
-                            <label> Free before:&nbsp;<input type="time" min={minTime} max={maxTime} onChange={(e) => setValue(e, setEndTime, maxTime)} /></label>
+                            <label> Free after:&nbsp;&nbsp;<input type="time" min={this.state.minTime} max={this.state.maxTime}
+                                                                  onChange={(e) => this.setValue(e, "startTime", this.state.minTime)}/></label><br/>
+                            <label> Free before:&nbsp;<input type="time" min={this.state.minTime} max={this.state.maxTime}
+                                                             onChange={(e) => this.setValue(e, "endTime", this.state.maxTime)}/></label>
                         </div>
 
-                        <input type="checkbox" id="all_day" name="all_day" />
-                        <label htmlFor="all_day"> Include all day events (+12hrs)</label><br />
+                        <input type="checkbox" id="all_day" name="all_day"/>
+                        <label htmlFor="all_day"> Include all day events (+12hrs)</label><br/>
 
                         <input type="checkbox" id="days" name="day_selection"
-                               onClick={() => {toggleHidden("import_days"); resetDays();}}/>
+                               onClick={() => {
+                                   this.toggleHidden("import_days");
+                                   this.resetDays();
+                               }}/>
                         <label htmlFor="days"> Only specific day of week </label>
                         <div id="import_days" hidden>
-                            <input id="day_su" type="checkbox" name="sunday" onClick={()=>updateDays(0)} /><label htmlFor="day_su">SU</label>
-                            <input id="day_m"type="checkbox" name="monday" onClick={()=>updateDays(1)} /><label htmlFor="day_m">M</label>
-                            <input id="day_tu" type="checkbox" name="tuesday" onClick={()=>updateDays(2)} /><label htmlFor="day_tu">TU</label>
-                            <input id="day_w" type="checkbox" name="wednesday" onClick={()=>updateDays(3)} /><label htmlFor="day_w">W</label>
-                            <input id="day_th" type="checkbox" name="thursday" onClick={()=>updateDays(4)} /><label htmlFor="day_th">TH</label>
-                            <input id="day_f" type="checkbox" name="friday" onClick={()=>updateDays(5)} /><label htmlFor="day_f">F</label>
-                            <input id="day_sa" type="checkbox" name="saturday" onClick={()=>updateDays(6)} /><label htmlFor="day_sa">SA</label>
+                            <input id="day_su" type="checkbox" name="sunday" onClick={() => this.updateDays(0)}/><label
+                            htmlFor="day_su">SU</label>
+                            <input id="day_m" type="checkbox" name="monday" onClick={() => this.updateDays(1)}/><label
+                            htmlFor="day_m">M</label>
+                            <input id="day_tu" type="checkbox" name="tuesday" onClick={() => this.updateDays(2)}/><label
+                            htmlFor="day_tu">TU</label>
+                            <input id="day_w" type="checkbox" name="wednesday" onClick={() => this.updateDays(3)}/><label
+                            htmlFor="day_w">W</label>
+                            <input id="day_th" type="checkbox" name="thursday" onClick={() => this.updateDays(4)}/><label
+                            htmlFor="day_th">TH</label>
+                            <input id="day_f" type="checkbox" name="friday" onClick={() => this.updateDays(5)}/><label
+                            htmlFor="day_f">F</label>
+                            <input id="day_sa" type="checkbox" name="saturday" onClick={() => this.updateDays(6)}/><label
+                            htmlFor="day_sa">SA</label>
                         </div>
                     </fieldset>
 
@@ -582,12 +658,12 @@ const ImportCal = ({close}) => {
                                 disabled={renderProps.disabled}>LOGOUT DEBUG</button>)}
                     clientId="658977310896-knrl3gka66fldh83dao2rhgbblmd4un9.apps.googleusercontent.com"
                     buttonText="Logout"
-                    onLogoutSuccess={logoutSuccess}
-                    onFailure={logoutFailure}>
+                    onLogoutSuccess={this.logoutSuccess}>
                 </GoogleLogout>
 
             </main>
         </div>
-    );};
+        )};
+}
 
 export default ImportCal;
