@@ -5,6 +5,9 @@ import {Member} from "../../EarthBase/Member.js";
 import {Meeting} from "../../EarthBase/Meeting.js";
 import queryString from 'query-string';
 import moment from "moment";
+import {fetchMeetingData, updateAllOtherCal, updateSelectCal} from "../../action";
+import connect from "react-redux/es/connect/connect";
+import {ViewMeeting} from "../ViewMeeting/ViewMeeting";
 
 /* global gapi */
 
@@ -12,13 +15,14 @@ export class ImportCal extends Component {
     constructor(props) {
         super(props);
 
-//        this.meetingDB = new Meeting();
-//        this.memberDB = new Member();
+        this.meetingDB = new Meeting();
+        this.memberDB = new Member();
 
         this.state = {
-            memberId: undefined,
+            isLoaded: false,
+            userId: undefined,
             meetingID: undefined,
-            meetingDates: ["2019-06-02", "2019-06-03", "2019-06-05", "2019-06-06"],     // GET dates FROM DATABASE
+            meetingDates: [],       // GET dates FROM DATABASE "2019-06-02", "2019-06-03", "2019-06-05", "2019-06-06"
             firstDate: undefined,
             lastDate: undefined,
             minTime: undefined,     // meeting specified min
@@ -32,7 +36,7 @@ export class ImportCal extends Component {
             auth: undefined,
             uploadFile: "n/a",
             timeSlots: [],          // TODO: SEND TO DATABASE (timeSlots)
-            date: null
+            data: null
         }
 
         this.close = props.close.bind(this);
@@ -74,12 +78,14 @@ export class ImportCal extends Component {
         this.setState({timeSlots : JSON.stringify(timeTable)});
 
         // SEND TO DATABASE
-
+        this.updateSelectCalData(this.state.timeSlots);
 
 
 
 
     };
+
+
 
 
     /****************** Initialization *******************/
@@ -103,36 +109,72 @@ export class ImportCal extends Component {
         }
     }
 
-    componentDidMount() {
+    // COPIED FROM ViewMeeting.js
+    fetchData() {
+        // get meeting id
+        //const params = queryString.parse(this.props.location.search);
+        //const meetingID = params.meetingId;
+        //const userId = params.userId;
 
-        // TODO: Get meeting data (timeWindow, rowNum, dates)
-        //
-        //
-        //
-        //
-        //
-        //
+        const meetingID = "MrlY6JSG8uNlLJbU7HFv";
+        const userId = "kUu9pfWCc3CZPD5tLEMo";
 
+        if (meetingID === undefined || userId === undefined) {
+            console.error("Invlid parameters");
+            //this.props.history.push("/");
+            return;
+        }
 
-        // Assuming first is earliest, Assuming last is latest
-        let td = new Date(this.state.meetingDates.slice(-1)[0]);
-        td.setDate(td.getDate() + 1);
-        const lastDate =td.toISOString().split('.')[0]+"Z";
-        const firstDate = new Date(this.state.meetingDates[0]).toISOString().split('.')[0]+"Z";
+        this.meetingDB.fetchMeetingData(meetingID).then(data => {
+            console.log(data);
+            //this.setState(this.state);
 
-        const minTime = new Date(300 * 60000).toISOString().substr(11, 5);             // GET timeWindow[0]     // 300
-        const maxTime = new Date(900 * 60000).toISOString().substr(11, 5);             // GET timeWindow[1]     // 900
-        const rowNum = 46;
+            const timeWindow = data.timeWindow;
+            const dates = data.dates;
+            const rowNum = data.rowNum;
 
-        this.setState({
-            firstDate: firstDate,
-            lastDate: lastDate,
-            startTime: minTime,
-            endTime: maxTime,
-            maxTime: maxTime,
-            minTime: minTime,
-            rowNum: rowNum
+            if (dates.length === 0) {
+                console.err("No meeting dates");
+                this.close();
+            }
+
+            let td = new Date(dates.slice(-1)[0]);
+            td.setDate(td.getDate() + 1);
+            const lastDate =td.toISOString().split('.')[0]+"Z";
+            const firstDate = new Date(dates[0]).toISOString().split('.')[0]+"Z";
+
+            const minTime = new Date(timeWindow[0] * 60000).toISOString().substr(11, 5);             // GET timeWindow[0]     // 300
+            const maxTime = new Date(timeWindow[1] * 60000).toISOString().substr(11, 5);             // GET timeWindow[1]     // 900
+
+            this.setState({
+                isLoaded: true,
+                meetingID: meetingID,
+                userId: userId,
+                meetingDates: dates,
+                firstDate: firstDate,
+                lastDate: lastDate,
+                startTime: minTime,
+                endTime: maxTime,
+                maxTime: maxTime,
+                minTime: minTime,
+                rowNum: rowNum
+            });
         });
+    }
+
+
+    // COPIED FROM ViewMeeting.js
+    updateSelectCalData(data) {
+        const userId = this.state.userId;
+        if (userId !== undefined) {
+            this.memberDB.updateMemberSelection(userId, data);
+        }
+    }
+
+
+    componentDidMount() {
+        // TODO: Get meeting data (timeWindow, rowNum, dates)
+        this.fetchData();
 
         // Prepare Google API
         const script = document.createElement("script");
@@ -142,6 +184,7 @@ export class ImportCal extends Component {
             this.loadGapi(script);
         };
     }
+
 
 
     /********** Functions to import from Google **********/
@@ -340,7 +383,7 @@ export class ImportCal extends Component {
                     else if (!allowAllDay && (endMoment.diff(startMoment, "hours") >= 12 || startMoment.isSame(endMoment)))
                         continue;
 
-                    dateList = [...dateList, ...this.splitDates(startMoment, endMoment)];
+                    dateList = [...dateList, ...ImportCal.splitDates(startMoment, endMoment)];
                 }
                 callback(dateList);
             } catch (err) {
@@ -555,115 +598,142 @@ export class ImportCal extends Component {
     /*************************************/
 
     render() {
-        return (
-        <div className="popup_wrapper">
-            <header>
-                <h1>Import Calendar</h1>
-                <a className="close" onClick={this.close} title={"Close"}>&#10006;</a>
-            </header>
-            <main>
-                <form onSubmit={this.handleImport}>
-                    <fieldset className="import_file">
+        const {isLoaded} = this.state;
+        if (!this.state.isLoaded) {
+            return <div>Loading...</div>
+        } else {
+            return (
+            <div className="popup_wrapper">
+                <header>
+                    <h1>Import Calendar</h1>
+                    <a className="close" onClick={this.close} title={"Close"}>&#10006;</a>
+                </header>
+                <main>
+                    <form onSubmit={this.handleImport}>
+                        <fieldset className="import_file">
 
-                        <label htmlFor="uploadFile" className="mode" id="calFile">
-                            Upload File
-                            <input type="file" id="uploadFile" accept=".ics" onChange={(e) => {
-                                this.selectUpload(e)
-                            }}/>
-                        </label>
+                            <label htmlFor="uploadFile" className="mode" id="calFile">
+                                Upload File
+                                <input type="file" id="uploadFile" accept=".ics" onChange={(e) => {
+                                    this.selectUpload(e)
+                                }}/>
+                            </label>
 
-                        <GoogleLogin
-                            render={renderProps => (
-                                <button className="mode" id="calGoogle" onClick={renderProps.onClick}
-                                        disabled={renderProps.disabled}>Import Google Calendar</button>)}
-                            clientId="926207137800-ogujdec6vo9oo1fun7mreedha60l7ude.apps.googleusercontent.com"
-                            discoveryDocs="https://content.googleapis.com/discovery/v1/apis/calendar/v3/rest"
-                            buttonText="Login"
-                            scope="https://www.googleapis.com/auth/calendar.readonly"
-                            theme="dark"
-                            responseType="token"
-                            onRequest={this.loadClient}
-                            onSuccess={this.loginSuccess}
-                            onFailure={this.loginFailure}
-                            cookiePolicy={'single_host_origin'}/>
-                    </fieldset>
+                            <GoogleLogin
+                                render={renderProps => (
+                                    <button className="mode" id="calGoogle" onClick={renderProps.onClick}
+                                            disabled={renderProps.disabled}>Import Google Calendar</button>)}
+                                clientId="926207137800-ogujdec6vo9oo1fun7mreedha60l7ude.apps.googleusercontent.com"
+                                discoveryDocs="https://content.googleapis.com/discovery/v1/apis/calendar/v3/rest"
+                                buttonText="Login"
+                                scope="https://www.googleapis.com/auth/calendar.readonly"
+                                theme="dark"
+                                responseType="token"
+                                onRequest={this.loadClient}
+                                onSuccess={this.loginSuccess}
+                                onFailure={this.loginFailure}
+                                cookiePolicy={'single_host_origin'}/>
+                        </fieldset>
 
-                    <fieldset className="import_option">
-                        <legend>Import Options</legend>
+                        <fieldset className="import_option">
+                            <legend>Import Options</legend>
 
-                        <input type="checkbox" id="toff" name="time_offset" value={this.state.offset}
-                               onClick={() => this.toggleHidden("time_offset", "hide")}/>
-                        <label htmlFor="toff"> Add offset time (min): </label>
-                        <output onClick={() => this.toggleHidden("time_offset")}>
-                            {this.state.offset}</output>
-                        <br/>
-                        <div id="time_offset" hidden>
-                            <label htmlFor="ntoff"> Change Value (min): </label>
-                            <input id="ntoff" type="text" name="offset" pattern="\d*" maxLength="3"
-                                   onChange={(e) => this.setValue(e, "offset", 30)}/>
-                        </div>
+                            <input type="checkbox" id="toff" name="time_offset" value={this.state.offset}
+                                   onClick={() => this.toggleHidden("time_offset", "hide")}/>
+                            <label htmlFor="toff"> Add offset time (min): </label>
+                            <output onClick={() => this.toggleHidden("time_offset")}>
+                                {this.state.offset}</output>
+                            <br/>
+                            <div id="time_offset" hidden>
+                                <label htmlFor="ntoff"> Change Value (min): </label>
+                                <input id="ntoff" type="text" name="offset" pattern="\d*" maxLength="3"
+                                       onChange={(e) => this.setValue(e, "offset", 30)}/>
+                            </div>
 
-                        <input type="checkbox" id="tran" name="time_range" value={[this.state.startTime, this.state.endTime]}
-                               onClick={() => this.toggleHidden("time_range", "hide")}/>
-                        <label htmlFor="tran"> Only free between: &nbsp;</label>
-                        <output onClick={() => this.toggleHidden("time_range")}>
-                            {this.state.startTime} - {this.state.endTime}</output>
-                        <br/>
-                        <div id="time_range" hidden>
-                            <label> Free after:&nbsp;&nbsp;<input type="time" min={this.state.minTime} max={this.state.maxTime}
-                                                                  onChange={(e) => this.setValue(e, "startTime", this.state.minTime)}/></label><br/>
-                            <label> Free before:&nbsp;<input type="time" min={this.state.minTime} max={this.state.maxTime}
-                                                             onChange={(e) => this.setValue(e, "endTime", this.state.maxTime)}/></label>
-                        </div>
+                            <input type="checkbox" id="tran" name="time_range" value={[this.state.startTime, this.state.endTime]}
+                                   onClick={() => this.toggleHidden("time_range", "hide")}/>
+                            <label htmlFor="tran"> Only free between: &nbsp;</label>
+                            <output onClick={() => this.toggleHidden("time_range")}>
+                                {this.state.startTime} - {this.state.endTime}</output>
+                            <br/>
+                            <div id="time_range" hidden>
+                                <label> Free after:&nbsp;&nbsp;<input type="time" min={this.state.minTime} max={this.state.maxTime}
+                                                                      onChange={(e) => this.setValue(e, "startTime", this.state.minTime)}/></label><br/>
+                                <label> Free before:&nbsp;<input type="time" min={this.state.minTime} max={this.state.maxTime}
+                                                                 onChange={(e) => this.setValue(e, "endTime", this.state.maxTime)}/></label>
+                            </div>
 
-                        <input type="checkbox" id="all_day" name="all_day"/>
-                        <label htmlFor="all_day"> Include all day events (+12hrs)</label><br/>
+                            <input type="checkbox" id="all_day" name="all_day"/>
+                            <label htmlFor="all_day"> Include all day events (+12hrs)</label><br/>
 
-                        <input type="checkbox" id="days" name="day_selection"
-                               onClick={() => {
-                                   this.toggleHidden("import_days");
-                                   this.resetDays();
-                               }}/>
-                        <label htmlFor="days"> Only specific day of week </label>
-                        <div id="import_days" hidden>
-                            <input id="day_su" type="checkbox" name="sunday" onClick={() => this.updateDays(0)}/><label
-                            htmlFor="day_su">SU</label>
-                            <input id="day_m" type="checkbox" name="monday" onClick={() => this.updateDays(1)}/><label
-                            htmlFor="day_m">M</label>
-                            <input id="day_tu" type="checkbox" name="tuesday" onClick={() => this.updateDays(2)}/><label
-                            htmlFor="day_tu">TU</label>
-                            <input id="day_w" type="checkbox" name="wednesday" onClick={() => this.updateDays(3)}/><label
-                            htmlFor="day_w">W</label>
-                            <input id="day_th" type="checkbox" name="thursday" onClick={() => this.updateDays(4)}/><label
-                            htmlFor="day_th">TH</label>
-                            <input id="day_f" type="checkbox" name="friday" onClick={() => this.updateDays(5)}/><label
-                            htmlFor="day_f">F</label>
-                            <input id="day_sa" type="checkbox" name="saturday" onClick={() => this.updateDays(6)}/><label
-                            htmlFor="day_sa">SA</label>
-                        </div>
-                    </fieldset>
+                            <input type="checkbox" id="days" name="day_selection"
+                                   onClick={() => {
+                                       this.toggleHidden("import_days");
+                                       this.resetDays();
+                                   }}/>
+                            <label htmlFor="days"> Only specific day of week </label>
+                            <div id="import_days" hidden>
+                                <input id="day_su" type="checkbox" name="sunday" onClick={() => this.updateDays(0)}/><label
+                                htmlFor="day_su">SU</label>
+                                <input id="day_m" type="checkbox" name="monday" onClick={() => this.updateDays(1)}/><label
+                                htmlFor="day_m">M</label>
+                                <input id="day_tu" type="checkbox" name="tuesday" onClick={() => this.updateDays(2)}/><label
+                                htmlFor="day_tu">TU</label>
+                                <input id="day_w" type="checkbox" name="wednesday" onClick={() => this.updateDays(3)}/><label
+                                htmlFor="day_w">W</label>
+                                <input id="day_th" type="checkbox" name="thursday" onClick={() => this.updateDays(4)}/><label
+                                htmlFor="day_th">TH</label>
+                                <input id="day_f" type="checkbox" name="friday" onClick={() => this.updateDays(5)}/><label
+                                htmlFor="day_f">F</label>
+                                <input id="day_sa" type="checkbox" name="saturday" onClick={() => this.updateDays(6)}/><label
+                                htmlFor="day_sa">SA</label>
+                            </div>
+                        </fieldset>
 
-                    <fieldset id="import_output">
-                        <output id="out"></output>
-                        <div id="import_buttons">
-                            <button id="import_submit" type="submit" disabled={true}>Import</button>
-                        </div>
-                    </fieldset>
+                        <fieldset id="import_output">
+                            <output id="out"></output>
+                            <div id="import_buttons">
+                                <button id="import_submit" type="submit" disabled={true}>Import</button>
+                            </div>
+                        </fieldset>
 
-                </form>
+                    </form>
 
-                <GoogleLogout
-                    render={renderProps => (
-                        <button onClick={renderProps.onClick}
-                                disabled={renderProps.disabled}>LOGOUT DEBUG</button>)}
-                    clientId="658977310896-knrl3gka66fldh83dao2rhgbblmd4un9.apps.googleusercontent.com"
-                    buttonText="Logout"
-                    onLogoutSuccess={this.logoutSuccess}>
-                </GoogleLogout>
+                    <GoogleLogout
+                        render={renderProps => (
+                            <button onClick={renderProps.onClick}
+                                    disabled={renderProps.disabled}>LOGOUT DEBUG</button>)}
+                        clientId="658977310896-knrl3gka66fldh83dao2rhgbblmd4un9.apps.googleusercontent.com"
+                        buttonText="Logout"
+                        onLogoutSuccess={this.logoutSuccess}>
+                    </GoogleLogout>
 
-            </main>
-        </div>
-        )};
+                </main>
+            </div>
+        )}};
 }
 
-export default ImportCal;
+const mapDispatchToProps = dispatch => {
+    return {
+        updateSelectTableData: data => {
+            dispatch(updateSelectCal(data));
+        },
+        updateAllOtherData: data => {
+            dispatch(updateAllOtherCal(data));
+        },
+        fetchMeetingData: (prom) => {
+            dispatch(fetchMeetingData(prom));
+        }
+    };
+}
+
+const mapStateToProps = state => {
+    return {
+        meeting: state.meeting,
+    };
+}
+
+
+
+//export default ImportCal;
+export default connect(mapStateToProps, mapDispatchToProps)(ImportCal);
