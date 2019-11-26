@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { util } from 'node-forge';
 import { connect } from 'react-redux';
 
-const CELL_WIDTH = 30;
-const CELL_HEIGHT = 15;
+const CELL_WIDTH = 55;
+const CELL_HEIGHT = 25;
 
 const COLOR_BUF_RATIO = 0.25;
 const COLOR_REM_RATIO = 1 - COLOR_BUF_RATIO;
@@ -145,7 +145,6 @@ class CalendarDispTable extends Component {
 
     for (let i = 0; i < R; i++) {
       for (let j = 0; j < H; j++) {
-
         c[i][j] = a[i][j] + b[i][j];
       }
     }

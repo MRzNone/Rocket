@@ -2,19 +2,18 @@
  * All interaction with firebase happens here.
  * All components are exported
  */
+export * from './Meeting';
+export * from './Member';
 
-import * as firebase from "firebase";
-
-const db = firebase.initializeApp({
-    apiKey: "AIzaSyBj8CmEsvlDHyjbd74-kNfrAVeXDc3ZjfQ",
-    authDomain: "cse110project-8d6be.firebaseapp.com",
-    databaseURL: "https://cse110project-8d6be.firebaseio.com",
-    projectId: "cse110project-8d6be",
-    storageBucket: "cse110project-8d6be.appspot.com",
-    messagingSenderId: "24482060507",
-    appId: "1:24482060507:web:ab018bc0415a3250a854fe",
-    measurementId: "G-Q7P86Y5NGR"
-
-});
-
-export default db;
+/**
+  * this.updateMeetingNote('MrlY6JSG8uNlLJbU7HFv', 'newNotes');
+  */
+export function getRandomId() {
+  var dt = new Date().getTime();
+  var uuid = 'xxxxxxxx-xxxx-xxxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    var r = (dt + Math.random() * 16) % 16 | 0;
+    dt = Math.floor(dt / 16);
+    return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+  });
+  return uuid;
+}
