@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import "./ImportCal.css";
 import {GoogleLogin, GoogleLogout} from 'react-google-login';
+import fetchMeetingData from "../Meeting/Meeting"
 
 /* global gapi */
 
@@ -19,7 +20,6 @@ const ImportCal = ({close}) => {
     const [timeSlots, setTimeSlots] = useState([]);                                 // SEND timeSlots TO DATABASE
 
 
-    
     const ical = require('ical.js');
     const moment = require('moment');
 
@@ -30,6 +30,63 @@ const ImportCal = ({close}) => {
     const [mode, setMode] = useState("none");
     const [auth, setAuth] = useState(undefined);
     const [uploadFile, setUploadFile] = useState(undefined);
+
+
+    // TODO: Function that needs to send output to database
+    // Input is date as key, array of events as value      date: [[start1_s, end1_s],[start2_s, end2_s]...]
+    const convertToTimeSlots = (eventMap) => {
+
+        // TESTING
+        const timeWindow = [300, 900];
+        let start_index, end_index, i=0;
+
+
+
+
+        console.log("OK: " + Array.from(eventMap.values()));
+
+        // rowNum x meetingDates.length, Default value 1
+        let timeTable = Array(rowNum).fill().map(() => Array(meetingDates.length).fill(1));
+
+        console.log("EVENT MAP: " + JSON.stringify(eventMap));
+
+        for (const [date, events] of eventMap.entries()) {              // For each key in eventMap
+            console.log("DATE: " + date);
+
+            for (const event of events) {
+                console.log("EVENT: " + event);
+                start_index = Math.floor((event[0]-timeWindow[0])/rowNum);
+                end_index = Math.ceil((event[1]-timeWindow[0])/rowNum);
+
+                console.log(start_index + "," + end_index);
+
+                // Set to 0 : busy for slots between start index and end_index
+                for (let j=start_index; j < end_index; ++j) {
+                    timeTable[j][i] = 0;
+                }
+
+            }
+            ++i;
+        }
+
+        console.log(JSON.stringify(timeTable));
+
+        // TODO: OUTPUT
+        setTimeSlots(JSON.stringify(timeTable));
+
+
+        // SEND TO DATABASE
+
+    };
+
+
+
+
+
+
+
+
+
 
     /****************** Initialization *******************/
 
@@ -313,6 +370,10 @@ const ImportCal = ({close}) => {
         return dates;
     };
 
+    const toMinutes = (time_string) => {
+        let part = time_string.split(':');          // HH:MM:ss
+        return parseInt(part[0]) * 60 + parseInt(part[1],10);
+    }
 
     const handleImport = (event) => {
         event.preventDefault();
@@ -344,8 +405,8 @@ const ImportCal = ({close}) => {
             // Default values are user earliest/latest availability
             for (let j = 0; j < meetingDates.length; ++j) {
                 meetingMap.set(meetingDates[j], [
-                    [ meetingDates[j], minTime, startTime ],
-                    [ meetingDates[j], endTime , maxTime ]
+                    [ toMinutes(minTime), toMinutes(startTime) ],
+                    [ toMinutes(endTime) , toMinutes(maxTime) ]
                 ]);
             }
 
@@ -354,7 +415,6 @@ const ImportCal = ({close}) => {
                 block = mList[i];
                 start = block.startMoment;
                 end = block.endMoment;
-                date = start.format("YYYY-MM-DD");
                 key = start.format("YYYY-MM-DD");
 
                 // Skip irrelevant date
@@ -371,30 +431,26 @@ const ImportCal = ({close}) => {
                     start = moment.max(moment(start).subtract(time_offset, 'minutes'), moment(start).startOf("day"));
                     end = moment.min(moment(end).add(time_offset, 'minutes'), moment(end).endOf("day"));
 
-                    // Output Formatting    MAP containing (Date) LIST containing (Event) LIST
+
+                    console.log("DATE: " + key + ", START: " + start.format("HH:mm") + ", END: " + end.format("HH:mm"));
+
+                    console.log(moment().startOf('day'));
+
+                    // Output Formatting
                     eventList.push([
-                        date,                           // date
-                        start.format("HH:mm"),          // start time
-                        end.format("HH:mm"),            // end time
-                        //start.format("+-HH:mm")       // time zone
+                        start.diff(moment(key).startOf('day'), 'minutes'),  // start time (seconds)
+                        end.diff(moment(key).startOf('day'), 'minutes'),    // end time (seconds)
                     ]);
                 }
                 block = null;
             }
 
             // Convert Map to list
-            outList = Array.from(meetingMap.values());
-            setTimeSlots(outList);
-
-            //Time
-
-            // Create TimeSlot Table
+            //outList = Array.from(meetingMap.values());
 
 
-            console.log(outList);
 
-            // Imported X events
-            console.log("Imported " + outList.length + " events");
+            convertToTimeSlots(meetingMap);
 
             // Close Popup
             close();
