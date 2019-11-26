@@ -8,6 +8,8 @@ import { util } from 'node-forge';
 import CalendarSelectTable from '../CalendarTable/CalendarSelectTable';
 import CalendarDispTable from '../CalendarTable/CalendarDispTable';
 import { Member } from '../../EarthBase/Member';
+import ImportCal from "../ImportCal/ImportCal";
+import Popup from "reactjs-popup";
 
 export class ViewMeeting extends Component {
   constructor(props) {
@@ -163,13 +165,17 @@ export class ViewMeeting extends Component {
             justifyContent: 'space-between',
           }}
         >
-          <Button
-            variant="outlined"
-            color="primary"
-            size="large"
-          >
+
+          <Popup modal trigger={
+            <button
+              variant="outlined"
+              color="primary"
+              size="large">
             Import Schedule
-            </Button>
+            </button>}>
+              {close => (<ImportCal location={this.props.location} close={close}/>)}
+              </Popup>
+
 
           <Button
             variant="outlined"
