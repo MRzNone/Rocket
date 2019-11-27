@@ -115,6 +115,8 @@
 
 .import_option output {
     text-decoration: underline;
+    color: #215c88;
+    cursor: pointer;
 }
 
 #time_offset > label, #time_range > label {
@@ -161,7 +163,7 @@
 
 /* To keep or not */
 #out {
-    margin: 5px 0 0 0;
+    margin: 7px 0 0 0;
     font-size: small;
     font-weight: bold;
     text-align: center;

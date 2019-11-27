@@ -9,6 +9,12 @@ import {fetchMeetingData, updateAllOtherCal, updateSelectCal} from "../../action
 import connect from "react-redux/es/connect/connect";
 import {ViewMeeting} from "../ViewMeeting/ViewMeeting";
 
+// Material UI Stuff
+import { Checkbox } from '@material-ui/core';
+
+// -----------------
+
+
 /* global gapi */
 
 export class ImportCal extends Component {
@@ -546,7 +552,7 @@ export class ImportCal extends Component {
     render() {
         const {isLoaded} = this.state;
         if (!this.state.isLoaded) {
-            return <div>Loading...</div>
+            return <div>Loading Page ...</div>
         } else {
             return (
             <div className="popup_wrapper">
@@ -586,7 +592,8 @@ export class ImportCal extends Component {
 
                             <input type="checkbox" id="toff" name="time_offset" value={this.state.offset}
                                    onClick={() => this.toggleHidden("time_offset", "hide")}/>
-                            <label htmlFor="toff"> Add offset time (min): </label>
+                            <label htmlFor="toff" title="Add extra time before and after events">
+                                &nbsp;Add offset time (min): </label>
                             <output onClick={() => this.toggleHidden("time_offset")}>
                                 {this.state.offset}</output>
                             <br/>
@@ -598,26 +605,29 @@ export class ImportCal extends Component {
 
                             <input type="checkbox" id="tran" name="time_range" value={[this.state.startTime, this.state.endTime]}
                                    onClick={() => this.toggleHidden("time_range", "hide")}/>
-                            <label htmlFor="tran"> Only free between: &nbsp;</label>
+                            <label htmlFor="tran" title="Specify earliest and latest time available">
+                                &nbsp;Set time range: &nbsp;</label>
                             <output onClick={() => this.toggleHidden("time_range")}>
                                 {this.state.startTime} - {this.state.endTime}</output>
                             <br/>
                             <div id="time_range" hidden>
-                                <label> Free after:&nbsp;&nbsp;<input type="time" min={this.state.minTime} max={this.state.maxTime}
+                                <label> Free After:&nbsp;&nbsp;<input type="time" min={this.state.minTime} max={this.state.maxTime}
                                                                       onChange={(e) => this.setValue(e, "startTime", this.state.minTime)}/></label><br/>
-                                <label> Free before:&nbsp;<input type="time" min={this.state.minTime} max={this.state.maxTime}
+                                <label> Free Before:&nbsp;<input type="time" min={this.state.minTime} max={this.state.maxTime}
                                                                  onChange={(e) => this.setValue(e, "endTime", this.state.maxTime)}/></label>
                             </div>
 
                             <input type="checkbox" id="all_day" name="all_day"/>
-                            <label htmlFor="all_day"> Include all day events (+12hrs)</label><br/>
+                            <label htmlFor="all_day" title="Include events longer than 12 hours">
+                                &nbsp;Include all day events </label><br/>
 
                             <input type="checkbox" id="days" name="day_selection"
                                    onClick={() => {
                                        this.toggleHidden("import_days");
                                        this.resetDays();
                                    }}/>
-                            <label htmlFor="days"> Only specific day of week </label>
+                            <label htmlFor="days" title="Include events from days selected">
+                                &nbsp;Only specific day of week </label>
                             <div id="import_days" hidden>
                                 <input id="day_su" type="checkbox" name="sunday" onClick={() => this.updateDays(0)}/><label
                                 htmlFor="day_su">SU</label>

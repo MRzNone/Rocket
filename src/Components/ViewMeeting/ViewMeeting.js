@@ -3,13 +3,13 @@ import queryString from 'query-string';
 import { connect } from 'react-redux';
 import { Meeting } from '../../EarthBase';
 import { updateSelectCal, updateAllOtherCal, fetchMeetingData } from '../../action';
-import { Button, Modal } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import { util } from 'node-forge';
 import CalendarSelectTable from '../CalendarTable/CalendarSelectTable';
 import CalendarDispTable from '../CalendarTable/CalendarDispTable';
 import { Member } from '../../EarthBase/Member';
-import ImportCal from "../ImportCal/ImportCal";
 import Popup from "reactjs-popup";
+import ImportCal from "../ImportCal/ImportCal";
 
 export class ViewMeeting extends Component {
   constructor(props) {
@@ -165,17 +165,15 @@ export class ViewMeeting extends Component {
             justifyContent: 'space-between',
           }}
         >
-
-          <Popup modal trigger={
-            <button
-              variant="outlined"
-              color="primary"
-              size="large">
-            Import Schedule
-            </button>}>
-              {close => (<ImportCal location={this.props.location} close={close}/>)}
-              </Popup>
-
+            <Popup modal trigger={
+                <Button
+                    variant="outlined"
+                    color="primary"
+                    size="large">
+                    Import Schedule
+                </Button>}>
+                {close => (<ImportCal location={this.props.location} close={close}/>)}
+            </Popup>
 
           <Button
             variant="outlined"
