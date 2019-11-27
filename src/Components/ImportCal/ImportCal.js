@@ -165,7 +165,7 @@ export class ImportCal extends Component {
             document.getElementById("import_submit").disabled = true;
 
         let out = document.getElementById("out");
-        out.innerHTML = "Failed to fetch data from Google Account";
+        out.innerHTML = "Unable to connect to Google Account";
         out.style.color = "red";
 
         // Handle Error
@@ -252,6 +252,7 @@ export class ImportCal extends Component {
 
         let file = event.target.files[0];
 
+        // Cancel before upload
         if (!file) {
             return;
         }
@@ -263,34 +264,50 @@ export class ImportCal extends Component {
         upload_btn.style.backgroundColor = "#f9f6f4";
 
 
-        // TODO: FILE TYPE (MIME type, magic number)
-        let isValid = true;
+        // Validate File
+        let fr = new FileReader();
+        fr.onload = (e) => {
+            try {
+                let content = fr.result;
+                const uInts = (new Uint8Array(content)).subarray(0,8);
+                let signature = [];
+                uInts.forEach((byte) => {
+                    signature.push(byte.toString(16))
+                });
+                signature = signature.join('').toUpperCase();
 
+                if (signature === "424547494E3A5643") {     // ics
+                    this.setState({
+                        uploadFile : file,
+                        mode : "file"
+                    });
 
-        if (isValid) {
-            this.setState({
-                uploadFile : file,
-                mode : "file"
-            });
+                    document.getElementById("calFile").style.backgroundColor = "#BEF990";
+                    document.getElementById('calGoogle').style.backgroundColor = "#f9f6f4";
+                    submit_btn.disabled = false;
 
-            document.getElementById("calFile").style.backgroundColor = "#BEF990";
-            document.getElementById('calGoogle').style.backgroundColor = "#f9f6f4";
-            submit_btn.disabled = false;
+                    // Output Message
+                    out.innerHTML = "Import from File: " + file.name;
+                    out.style.color = "green";
 
-            // Output Message
-            out.innerHTML = "Import from File: " + file.name;
-            out.style.color = "green";
+                } else {
+                    if (this.state.mode === "file")
+                        this.setState({mode : "none"});
 
-        } else {
-            if (this.state.mode === "file")
-                this.setState({mode : "none"});
+                    if (this.state.mode !== "google")
+                        submit_btn.disabled = true;
 
-            if (this.state.mode !== "google")
-                submit_btn.disabled = true;
-
-            out.innerHTML = "Not valid ics file: " + file.name;
-            out.style.color = "red";
-        }
+                    out.innerHTML = "Not valid ics file: " + file.name;
+                    out.style.color = "red";
+                }
+            } catch (err) {
+                console.log(err);
+            }
+        };
+        fr.onerror = (e) => {
+            console.log(e);
+        };
+        fr.readAsArrayBuffer(file);
     }
 
     handleUpload = (callback) => {
@@ -647,7 +664,7 @@ export class ImportCal extends Component {
                         </fieldset>
 
                         <fieldset id="import_output">
-                            <output id="out"></output>
+                            <output id="out">Note: This will overwrite your current selections</output>
                             <div id="import_buttons">
                                 <button id="import_submit" type="submit" disabled={true}>Import</button>
                             </div>
