@@ -2,8 +2,21 @@ import React, { Component } from 'react';
 import { Dialog, DialogContentText, DialogTitle, DialogContent, DialogActions, TextField } from '@material-ui/core';
 import { connect } from 'react-redux';
 import Button from '../NewLandPage/modules/components/Button';
+import { Meeting } from '../../EarthBase';
 
 class JoinMeeting extends Component {
+
+    constructor(props) {
+        super(props);
+        console.log(props);
+
+        this.state = {
+            meeting_id:'',
+        }
+
+        this.meetingDB = new Meeting();
+    }
+
     render(){
         return(
             <Dialog open="true"  className="box">
@@ -14,11 +27,12 @@ class JoinMeeting extends Component {
                         required
                         autoFocus
                         margin="dense"
-                        id="meeting-id"
+                        id="meetingid"
                         label="Meeting ID"
-                        type="number"
                         fullWidth
-                        variant="outlined" 
+                        variant="outlined"
+                        value={this.state.meeting_id} 
+                        onChange={this.handleTextFieldChange}
                     />
                 </DialogContent>
                 <DialogActions>
@@ -26,7 +40,7 @@ class JoinMeeting extends Component {
                     href="/">
                         Back
                     </Button>
-                    <Button color="primary" href="/MeetingLogin" autoFocus>
+                    <Button autoFocus color="primary" onClick={this.handleNextClick}>
                         {/* This button should redirect to meeting page */}
                         Next
                     </Button>
@@ -34,17 +48,44 @@ class JoinMeeting extends Component {
             </Dialog>
         );
     }
+
+    handleTextFieldChange = (e) => {
+        this.setState({
+            meeting_id: e.target.value
+        });
+    }
+
+    handleNextClick = (e) => {
+        var that = this;
+        if(this.state.meeting_id.length > 0){
+            this.meetingDB.fetchMeetingData(this.state.meeting_id).then(function(result){
+                if(result.status){
+                    console.log("Did Not Find Meeting");
+                }
+                else{
+                    console.log("Found Meeting!");
+                    that.props.history.push('/meetinglogin?meetingId=' + that.state.meeting_id);
+                }
+            }, function(error){
+                console.log("Did Not Find Meeting");
+            });
+        }
+        
+        
+    }
 }
 
 const mapStateToProps = (state, ownProps) => {
     return {
-  
+        
     };
   };
   
-  const mapDispatchToProps = {
-  
-  };
+  const mapDispatchToProps = dispatch => {
+    return {
+        
+    };
+  }
   
   export default connect(
     mapStateToProps,

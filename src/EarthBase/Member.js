@@ -1,4 +1,5 @@
 import * as firebase from "firebase";
+import { functionTypeAnnotation } from "@babel/types";
 
 export class Member {
   constructor() {
