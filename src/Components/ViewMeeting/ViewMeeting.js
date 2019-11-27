@@ -8,6 +8,8 @@ import { util } from 'node-forge';
 import CalendarSelectTable from '../CalendarTable/CalendarSelectTable';
 import CalendarDispTable from '../CalendarTable/CalendarDispTable';
 import { Member } from '../../EarthBase/Member';
+import Popup from "reactjs-popup";
+import ImportCal from "../ImportCal/ImportCal";
 
 export class ViewMeeting extends Component {
   constructor(props) {
@@ -62,9 +64,15 @@ export class ViewMeeting extends Component {
     this.setState({
       meetingID: meetingID,
       userId: userId,
+      initData: undefined,
+      datafromOthers: undefined,
+      calInit: false,
     });
 
     this.props.fetchMeetingData(this.meetingDB.fetchMeetingData(meetingID));
+
+
+    this.setFillGrid = undefined;
   }
 
   copyToClip(url) {
@@ -163,13 +171,26 @@ export class ViewMeeting extends Component {
             justifyContent: 'space-between',
           }}
         >
-          <Button
-            variant="outlined"
-            color="primary"
-            size="large"
-          >
-            Import Schedule
-            </Button>
+          <Popup modal trigger={
+            <Button
+              variant="outlined"
+              color="primary"
+              size="large">
+              Import Schedule
+                </Button>}>
+            {close => (
+              <ImportCal
+                location={this.props.location}
+                close={() => {
+                  close();
+                  this.memberDB.getMemberTimeSlot(this.state.userId).then(newData => {
+                    this.setFillGrid(newData);
+                  })
+
+                }}
+              />
+            )}
+          </Popup>
 
           <Button
             variant="outlined"
@@ -306,6 +327,9 @@ export class ViewMeeting extends Component {
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             <CalendarSelectTable {...selectTableParams}
               tableObservSetter={this.updateSelectCalData.bind(this)}
+              setFillGrid={(func) => {
+                this.setFillGrid = func;
+              }}
             />
           </div>
         </div>
