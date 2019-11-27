@@ -36,60 +36,15 @@ export class ImportCal extends Component {
             mode: "none",
             auth: undefined,
             uploadFile: "n/a",
-            timeSlots: [],          // TODO: SEND TO DATABASE (timeSlots)
+            timeSlots: [],
             data: null
         }
 
         this.close = props.close.bind(this);
     }
 
-
-    // TODO: Function that needs to send output to database
-    convertToTimeSlots = (eventMap) => {
-
-        const timeWindow = this.state.timeWindow;
-        let start_index, end_index, i = 0;
-        let interval = (timeWindow[1]-timeWindow[0])/this.state.rowNum;
-
-        console.log("TIME WINDOWS: " + timeWindow[0] + ", " + timeWindow[1]);
-
-        // rowNum x meetingDates.length, Default value 1
-        let timeTable = Array(this.state.rowNum).fill().map(() => Array(this.state.meetingDates.length).fill(1));
-        //let timeTable = Array(this.state.meetingDates.length).fill().map(() => Array(this.state.rowNum).fill(1));
-
-        console.log("INTERVAL: " + (timeWindow[1]-timeWindow[0])/interval);
-
-        console.log("ROWS: " + timeTable.length + ", COLS: " + timeTable[0].length);
-
-        for (const [date, events] of eventMap.entries()) {              // For each key in eventMap
-            console.log("DATE: " + date + "EVENTS: " + events);
-
-            for (const event of events) {
-                console.log("EVENT: " + event);
-                //console.log("TIME WINDOW: " + timeWindow);
-                start_index = Math.floor((event[0] - timeWindow[0]) / interval);
-                end_index = Math.ceil((event[1] - timeWindow[0]) / interval);
-
-                console.log(start_index + "," + end_index);
-
-                // Set to 0 : busy for slots between start index and end_index
-                for (let j = start_index; j < end_index; ++j) {
-                    console.log("i: " + i + ", j:" + j);
-                    timeTable[j][i] = 0;
-                }
-            }
-            ++i;
-        }
-
-        // SEND TO DATABASE
-        this.updateSelectCalData(JSON.stringify(timeTable));
-
-    };
-
-
     /****************** Initialization *******************/
 
-    // Needed for Google Calendar API
     loadClient () {
         return gapi.client.load("https://content.googleapis.com/discovery/v1/apis/calendar/v3/rest")
             .then(function () {
@@ -108,9 +63,7 @@ export class ImportCal extends Component {
         }
     }
 
-
-    // COPIED FROM ViewMeeting.js
-    fetchData() {
+    fetchData() {       // NOTE: COPIED FROM ViewMeeting.js
 
         const params = queryString.parse(this.props.location.search);
         const meetingID = params.meetingId;
@@ -118,31 +71,27 @@ export class ImportCal extends Component {
 
         if (meetingID === undefined || userId === undefined) {
             console.error("Invlid parameters");
-            //this.props.history.push("/");
+            this.props.history.push("/");
             return;
         }
 
         this.meetingDB.fetchMeetingData(meetingID).then(data => {
-            console.log(data);
-            //this.setState(this.state);
 
             const timeWindow = data.timeWindow;
             const dates = data.dates;
             const rowNum = data.rowNum;
 
             if (dates.length === 0) {
-                console.err("No meeting dates");
+                console.error("No meeting dates");
                 this.close();
             }
-
 
             let td = new Date(dates.slice(-1)[0]);
             td.setDate(td.getDate() + 1);
             const lastDate =td.toISOString().split('.')[0]+"Z";
             const firstDate = new Date(dates[0]).toISOString().split('.')[0]+"Z";
-
-            const minTime = new Date(timeWindow[0] * 60000).toISOString().substr(11, 5);             // GET timeWindow[0]     // 300
-            const maxTime = new Date(timeWindow[1] * 60000).toISOString().substr(11, 5);             // GET timeWindow[1]     // 900
+            const minTime = new Date(timeWindow[0] * 60000).toISOString().substr(11, 5);
+            const maxTime = new Date(timeWindow[1] * 60000).toISOString().substr(11, 5);
 
             this.setState({
                 isLoaded: true,
@@ -150,29 +99,26 @@ export class ImportCal extends Component {
                 userId: userId,
                 timeWindow: timeWindow,
                 meetingDates: dates,
+                rowNum: rowNum,
                 firstDate: firstDate,
                 lastDate: lastDate,
                 startTime: minTime,
                 endTime: maxTime,
-                maxTime: maxTime,
                 minTime: minTime,
-                rowNum: rowNum
+                maxTime: maxTime
             });
         });
     }
 
-
-    // COPIED FROM ViewMeeting.js
-    updateSelectCalData(data) {
+    updateSelectCalData(data) {     // NOTE: COPIED FROM ViewMeeting.js
         const userId = this.state.userId;
         if (userId !== undefined) {
             this.memberDB.updateMemberSelection(userId, data);
         }
     }
 
-
     componentDidMount() {
-        // TODO: Get meeting data (timeWindow, rowNum, dates)
+
         this.fetchData();
 
         // Prepare Google API
@@ -183,8 +129,6 @@ export class ImportCal extends Component {
             this.loadGapi(script);
         };
     }
-
-
 
     /********** Functions to import from Google **********/
 
@@ -229,9 +173,8 @@ export class ImportCal extends Component {
         }
     }
 
-    // DEBUG
     logoutSuccess = (response) => {
-        alert("Log out successful");
+        console.log("Log out successful");
     }
 
     // Fetch Event Data using Calendar API
@@ -244,17 +187,13 @@ export class ImportCal extends Component {
         let timeMax = this.state.lastDate;
         let timeMin = this.state.firstDate;
 
-        console.log(timeMin);
-        console.log(timeMax);
-
-
         gapi.client.calendar.events.list({
             "calendarId": "primary",
             "orderBy": "startTime",
             "showDeleted": false,
             "singleEvents": true,
             "timeMin": timeMin,     // Earliest start time (inclusive)
-            "timeMax": timeMax,     // Latetst start time (exclusive
+            "timeMax": timeMax,     // Latest start time (exclusive)
             "alt": "json",
             "prettyPrint": true
         }).then(function (data) {
@@ -265,13 +204,11 @@ export class ImportCal extends Component {
 
             for (let i = 0; i < events.length; i++) {
                 block = events[i];
-
-                //let title = block.summary;     // Event Name
                 start = block.start.dateTime;     // Start Datetime
                 end = block.end.dateTime;        // End Datetime
 
-                // IF exclude all day && isAllDay
-                if (!start && allowAllDay) {
+                // IF dateTime is missing, use date
+                if (!start) {
                     start = block.start.date;
                     end = block.end.date;
                 }
@@ -284,7 +221,7 @@ export class ImportCal extends Component {
                     continue;
 
                 // General all day event spanning more than 12hr
-                else if (!allowAllDay && (startMoment.diff(endMoment, "hours") >= 12 || startMoment.isSame(endMoment)))
+                else if (!allowAllDay && (endMoment.diff(startMoment, "hours") >= 12 || startMoment.isSame(endMoment)))
                     continue;
 
                 glist = [...glist, ...ImportCal.splitDates(startMoment, endMoment)];
@@ -310,7 +247,6 @@ export class ImportCal extends Component {
         let file = event.target.files[0];
 
         if (!file) {
-            // Cancel
             return;
         }
 
@@ -320,7 +256,8 @@ export class ImportCal extends Component {
         let submit_btn = document.getElementById("import_submit");
         upload_btn.style.backgroundColor = "#f9f6f4";
 
-        // TODO: CHECK FILE TYPE (MIME type, magic number)
+
+        // TODO: FILE TYPE (MIME type, magic number)
         let isValid = true;
 
 
@@ -363,11 +300,10 @@ export class ImportCal extends Component {
                 let content = fr.result;
                 const ical = require('ical.js');
                 let data_parsed = ical.parse(content);
-                let obj, start, end, startMoment, endMoment;
+                let start, end, startMoment, endMoment;
 
                 // Get datetime start and end
                 for (let i = 0; i < data_parsed[2].length; ++i) {
-                    obj = {};
                     start = data_parsed[2][i][1][0][3];
                     end = data_parsed[2][i][1][1][3];
 
@@ -406,7 +342,6 @@ export class ImportCal extends Component {
     /********** Functions to process data **********/
 
     static splitDates = (s, e) => {
-
         // Split event into dates and process them
 
         let dates = [];
@@ -456,8 +391,6 @@ export class ImportCal extends Component {
         /* Process Data */
         const processData = (mList) => {
 
-            console.log(this.state.meetingDates);
-
             // Check if specific days were selected
             let enable_anyday = this.state.days.every(n => n === 0);
             let time_offset = (document.getElementById("toff").checked) ? this.state.offset : 0;
@@ -467,10 +400,6 @@ export class ImportCal extends Component {
             let [max_h, max_m] = this.state.maxTime.split(":");
             let min = this.toMinutes(this.state.minTime);
             let max = this.toMinutes(this.state.maxTime);
-
-            //console.log("min_h: " + min_h + "min_m: " + min_m + "max_h: " + max_h + "max_m: " + max_m + "minMoment: " + minMoment.format("YYYY-DD-MM_HHmmss") + "maxMoment: " + maxMoment.format("YYYY-DD-MM_HHmmss"));
-
-            let outList = [];
 
             // Create map for meeting days
             let meetingMap = new Map();
@@ -482,17 +411,13 @@ export class ImportCal extends Component {
                 let end = this.toMinutes(this.state.endTime);
                 let dt = new Date(this.state.meetingDates[j]).toISOString().substr(0, 10);
 
-                console.log("DT: " + dt);
-
                 meetingMap.set(dt, content);
 
                 if (min < start) {
                     content.push([min, start]);
-                    console.log("MIN: " + this.state.minTime + " < " + "START: " + this.state.startTime);
                 }
                 if (end < max) {
                     content.push([end, max]);
-                    console.log("END: " + this.state.endTime + " < " + "MAX: " + this.state.maxTime);
                 }
             }
 
@@ -505,11 +430,8 @@ export class ImportCal extends Component {
                 let minMoment = moment(start).set({'hour' : min_h, 'minute' : min_m});
                 let maxMoment = moment(start).set({'hour' : max_h, 'minute' : max_m});
 
-                console.log(key);
-
                 // Skip irrelevant date
                 if (!meetingMap.has(key)) {
-                    console.log("SKIPPED: " + key);
                     continue;
                 }
 
@@ -526,22 +448,13 @@ export class ImportCal extends Component {
                         .add(time_offset, 'minutes'), maxMoment)
                         .diff(moment(key).startOf('day'), 'minutes');
 
-                    console.log("DATE: " + key + ", START: " + new Date(start * 60000).toISOString().substr(11, 5) + ", END: " + new Date(end * 60000).toISOString().substr(11, 5));
 
-                    //console.log(moment().startOf('day'));
-
-                    //if (min < end && max > start) {
                     if (min <= start && max >= end) {
-                    //if (min < start && max > end) {
-                        console.log("AAA " + start + ", " + end)
                         eventList.push([ start, end ]);
                     }
                 }
                 block = null;
             }
-
-            // Convert Map to list
-            console.log(Array.from(meetingMap.values()));
 
             this.convertToTimeSlots(meetingMap);
 
@@ -559,6 +472,35 @@ export class ImportCal extends Component {
             console.log("ERROR: NO MODE SELECTED");
         }
     }
+
+    convertToTimeSlots = (eventMap) => {
+
+        const timeWindow = this.state.timeWindow;
+        let start_index, end_index, i = 0;
+        let interval = (timeWindow[1]-timeWindow[0])/this.state.rowNum;
+
+        // rowNum x meetingDates.length, Default value 1
+        let timeTable = Array(this.state.rowNum).fill().map(() => Array(this.state.meetingDates.length).fill(1));
+        //let timeTable = Array(this.state.meetingDates.length).fill().map(() => Array(this.state.rowNum).fill(1));
+
+        for (const [date, events] of eventMap.entries()) {              // For each key in eventMap
+
+            for (const event of events) {
+                start_index = Math.floor((event[0] - timeWindow[0]) / interval);
+                end_index = Math.ceil((event[1] - timeWindow[0]) / interval);
+
+                // Set to 0 : busy for slots between start index and end_index
+                for (let j = start_index; j < end_index; ++j) {
+                    timeTable[j][i] = 0;
+                }
+            }
+            ++i;
+        }
+
+        // Send to Database
+        this.updateSelectCalData(JSON.stringify(timeTable));
+
+    };
 
     /******* Functions used for UI *******/
 

@@ -3,7 +3,7 @@ import queryString from 'query-string';
 import { connect } from 'react-redux';
 import { Meeting } from '../../EarthBase';
 import { updateSelectCal, updateAllOtherCal, fetchMeetingData } from '../../action';
-import { Button } from '@material-ui/core';
+import { Button, Modal } from '@material-ui/core';
 import { util } from 'node-forge';
 import CalendarSelectTable from '../CalendarTable/CalendarSelectTable';
 import CalendarDispTable from '../CalendarTable/CalendarDispTable';
