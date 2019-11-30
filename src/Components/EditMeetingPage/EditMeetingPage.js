@@ -35,7 +35,7 @@ class EditMeetingPage extends React.Component {
                         Remove User
                     </Button>
 
-                    <Button variant="outlined" color="default" style={{margin:'5%'}}>
+                    <Button variant="outlined" color="default" onClick={EditNotes} style={{margin:'5%'}}>
                         Save Changes
                     </Button>
 

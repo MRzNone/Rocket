@@ -5,6 +5,7 @@ import {
     Switch,
     Route,
 } from "react-router-dom";
+import * as firebase from "firebase";
 import LandPage from './Components/LandPage/LandPage';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
@@ -14,7 +15,7 @@ import Meeting from './Components/Meeting/Meeting';
 import LostPage from './Components/LostPage/LostPage';
 import ViewMeeting from './Components/ViewMeeting/ViewMeeting';
 import EditMeetingPage from "./Components/EditMeetingPage/EditMeetingPage";
-import * as firebase from "firebase";
+import CreateMeeting from "./Components/CreateMeeting/CreateMeeting";
 
 function App() {
     const firebaseConfig = {
@@ -33,15 +34,16 @@ function App() {
 
     return (
         <Provider store={createStore(reducers, applyMiddleware(thunk))}>
-            <Router>
-                <Switch>
-                    <Route exact path="/" component={LandPage} />
-                    <Route path="/meeting" component={Meeting} />
-                    <Route path="/viewMeeting" component={ViewMeeting} />
-                    <Route path="/edit" component={EditMeetingPage} />
-                    <Route component={LostPage} />
-                </Switch>
-            </Router>
+          <Router>
+            <Switch>
+              <Route exact path="/" component={LandPage} />
+              <Route path="/meeting" component={Meeting} />
+              <Route path="/viewMeeting" component={ViewMeeting} />
+              <Route path="/createMeeting" component={CreateMeeting} />
+              <Route path="/edit" component={EditMeetingPage} />
+              <Route component={LostPage} />
+            </Switch>
+          </Router>
         </Provider>
     );
 }

@@ -121,6 +121,7 @@ export class ViewMeeting extends Component {
   }
 
   renderToolBar() {
+      const { meetingID } = this.state;
     return (
       <div
         style={{
@@ -175,6 +176,7 @@ export class ViewMeeting extends Component {
             variant="outlined"
             color="primary"
             size="large"
+            onClick={() => this.props.history.push('/edit')}
           >
             Edit Meeting
             </Button>
