@@ -16,6 +16,7 @@ import LostPage from './Components/LostPage/LostPage';
 import ViewMeeting from './Components/ViewMeeting/ViewMeeting';
 import EditMeetingPage from "./Components/EditMeetingPage/EditMeetingPage";
 import CreateMeeting from "./Components/CreateMeeting/CreateMeeting";
+import SendResult from "./Components/EditMeetingPage/SendResult";
 
 function App() {
     const firebaseConfig = {
@@ -41,6 +42,7 @@ function App() {
               <Route path="/viewMeeting" component={ViewMeeting} />
               <Route path="/createMeeting" component={CreateMeeting} />
               <Route path="/editMeeting" component={EditMeetingPage} />
+              <Route path="/sendResult" component={SendResult} />
               <Route component={LostPage} />
             </Switch>
           </Router>

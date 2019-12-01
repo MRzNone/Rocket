@@ -9,11 +9,14 @@ import Divider from '@material-ui/core/Divider';
 import 'date-fns';
 import {Meeting} from "../../EarthBase";
 
-//import SendResult from "./SendResult";
+import SendResult from "./SendResult";
 
-class EditMeetingPage extends React.Component {
+class EditMeetingPage extends Component {
 
     render() {
+        const params = new URLSearchParams(window.location.search);
+        const meetingID = params.get("meetingId");
+
         return (
             <>
                 <div style={{
@@ -34,9 +37,13 @@ class EditMeetingPage extends React.Component {
                     <Button variant="outlined" color="default" style={{margin:'5%'}}>
                         Remove User
                     </Button>
-                        
 
-                    <Button variant="outlined" color="default" /*onClick={SendResult}*/ style={{margin:'5%'}}>
+
+                    <Button variant="outlined" color="default" onClick={() => this.props.history.push({
+                        pathname: '/sendResult',
+                        search: '?meetingId=' + meetingID,
+                    })}
+                            style={{margin:'5%'}}>
                         Share Meeting Results
                     </Button>
 

@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import * as db from "firebase";
 import {Meeting, Member} from "../../EarthBase";
 import TextField from '@material-ui/core/TextField';
-import queryString from 'query-string';
 import Button from "@material-ui/core/Button";
 
 
@@ -12,18 +10,17 @@ import Button from "@material-ui/core/Button";
  */
 export class EditNotes extends Component{
 
-
     constructor(props) {
         super(props);
 
         this.meetingDB = new Meeting();
         this.state ={
             meetingID: undefined,
-            notes: 'none'
+            notes: ''
         };
     };
 
-    fetchData() {       // NOTE: COPIED FROM ImportCal.js and ViewMeeting.js
+    fetchData() {       // NOTE: Modified by ImportCal.js
 
         const params = new URLSearchParams(window.location.search);
         const meetingID = params.get("meetingId");
@@ -41,11 +38,11 @@ export class EditNotes extends Component{
             this.setState({
                 meetingID: meetingID,
                 notes: notes
-            });
+            })
         });
     }
 
-    updateNotes(data) {     // NOTE: COPIED FROM ImportCal.js and ViewMeeting.js
+    updateNotes(data) {     // NOTE: Modified by ImportCal.js
         const meetingID = this.state.meetingID
             this.meetingDB.updateMeetingNote(meetingID, this.state.notes);
     }
@@ -62,7 +59,7 @@ export class EditNotes extends Component{
                         id="outlined-multiline-static"
                         multiline
                         rows="16"
-                        defaultValue="Notes: "
+                        defaultValue={"Note: " + this.state.notes}
                         variant="outlined"
                         style={{
                             width:'100%',
