@@ -44,7 +44,7 @@ class CreateMeeting extends Component {
             Math.floor((latestTime - earliestTime) * 60 / timeInterval)
         ).then(() => {
             this.props.history.push({
-                pathname: '/viewMeeting',
+                pathname: '/meetingresponse',
                 search: '?meetingId=' + meetingId + "&userId=" + hostId,
             });
         });
