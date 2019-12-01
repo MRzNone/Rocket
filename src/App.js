@@ -40,7 +40,7 @@ function App() {
               <Route path="/meeting" component={Meeting} />
               <Route path="/viewMeeting" component={ViewMeeting} />
               <Route path="/createMeeting" component={CreateMeeting} />
-              <Route path="/edit" component={EditMeetingPage} />
+              <Route path="/editMeeting" component={EditMeetingPage} />
               <Route component={LostPage} />
             </Switch>
           </Router>

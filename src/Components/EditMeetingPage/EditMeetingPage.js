@@ -34,16 +34,13 @@ class EditMeetingPage extends React.Component {
                     <Button variant="outlined" color="default" style={{margin:'5%'}}>
                         Remove User
                     </Button>
-
-                    <Button variant="outlined" color="default" onClick={EditNotes} style={{margin:'5%'}}>
-                        Save Changes
-                    </Button>
+                        
 
                     <Button variant="outlined" color="default" /*onClick={SendResult}*/ style={{margin:'5%'}}>
                         Share Meeting Results
                     </Button>
 
-                    <Button id="back" variant="outlined" color="default" style={{margin:'5%'}} onClick={() => this.props.history.push("/")}
+                    <Button variant="outlined" color="default" style={{margin:'5%'}} onClick={() => this.props.history.push("/")}
                     > Back to Meeting </Button>
                     </div>
                 </div>

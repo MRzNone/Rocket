@@ -15,40 +15,65 @@ export class EditNotes extends Component{
 
     constructor(props) {
         super(props);
-        this.state ={
-            notes: 'None'
-        }
+
         this.meetingDB = new Meeting();
-        this.notes = '';
+        this.state ={
+            meetingID: undefined,
+            notes: 'none'
+        };
     };
 
-    updateNotes(note){
-        const [value, setValue] = React.useState('Controlled');
-        this.notes = note.map(event => setValue(event.target.value));
-        // get meeting id
-        const params = queryString.parse(this.props.location.search);
-        // const meetingID = params.meetingID;
-        const meetingID = "68c893a7-da81-9db0-8a8f-d35051d74db5";
-        this.props.updateMeetingNote(meetingID, value);
+    fetchData() {       // NOTE: COPIED FROM ImportCal.js and ViewMeeting.js
+
+        const params = new URLSearchParams(window.location.search);
+        const meetingID = params.get("meetingId");
+
+        if (meetingID === undefined) {
+            console.error("Invlid parameters");
+            this.props.history.push("/");
+            return;
+        }
+
+        this.meetingDB.fetchMeetingData(meetingID).then(data => {
+
+            const notes = data.notes;
+
+            this.setState({
+                meetingID: meetingID,
+                notes: notes
+            });
+        });
+    }
+
+    updateNotes(data) {     // NOTE: COPIED FROM ImportCal.js and ViewMeeting.js
+        const meetingID = this.state.meetingID
+            this.meetingDB.updateMeetingNote(meetingID, this.state.notes);
+    }
+
+    componentDidMount() {
+        this.fetchData();
     }
 
     render() {
-        const {notes} = this.notes
         return (
             <>
-            <form noValidate autoComplete="off">
-                <TextField
-                    id="outlined-multiline-static"
-                    multiline
-                    rows="16"
-                    defaultValue="Notes: "
-                    variant="outlined"
-                    style={{
-                        width:'100%',
-                        flexWrap: 'wrap',
-                    }}
-                />
-            </form>
+                <form noValidate autoComplete="off">
+                    <TextField
+                        id="outlined-multiline-static"
+                        multiline
+                        rows="16"
+                        defaultValue="Notes: "
+                        variant="outlined"
+                        style={{
+                            width:'100%',
+                            flexWrap: 'wrap',
+                        }}
+                        input onChange={(e) => this.setState({ notes: e.target.value })}
+                    />
+                </form>
+                <Button variant="outlined" color="default" onClick={this.updateNotes.bind(this)} style={{margin:'5%'}}>
+                    Save Changes
+                </Button>
             </>
         );
     }
@@ -68,3 +93,4 @@ export default connect(
     mapStateToProps,
     mapDispatchToProps
 )(EditNotes);
+

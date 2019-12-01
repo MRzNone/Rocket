@@ -14,18 +14,6 @@ import MenuItem from "@material-ui/core/MenuItem";
 
 function Selects() {
 
-    /* start time & end time */
-
-    const [startTime, setStartTime] = React.useState(new Date('2014-08-18T21:11:54'));
-    const [endTime, setEndTime] = React.useState(new Date('2014-08-18T21:11:54'));
-
-    const handleSTDateChange = date => {
-        setStartTime(date);
-    };
-    const handleEDDateChange = date => {
-        setEndTime(date);
-    };
-
     /* length */
     const [length, setLength] = React.useState('');
 
@@ -46,28 +34,6 @@ function Selects() {
 
     return (
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <KeyboardTimePicker
-                margin="normal"
-                id="time-picker"
-                label="Start Time"
-                value={startTime}
-                onChange={handleSTDateChange}
-                KeyboardButtonProps={{
-                    'aria-label': 'change start time',
-                }}
-                style={{width: 150, margin:15}}
-            />
-            <KeyboardTimePicker
-                margin="normal"
-                id="time-picker"
-                label="End Time"
-                value={endTime}
-                onChange={handleEDDateChange}
-                KeyboardButtonProps={{
-                    'aria-label': 'change end time',
-                }}
-                style={{width: 150, margin:15}}
-            />
             <FormControl style={{width:150, margin:15,  marginTop: 15}}>
                 <InputLabel shrink id="length-label" >Length</InputLabel>
                 <Select
