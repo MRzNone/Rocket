@@ -9,11 +9,6 @@ import {fetchMeetingData, updateAllOtherCal, updateSelectCal} from "../../action
 import connect from "react-redux/es/connect/connect";
 import {ViewMeeting} from "../ViewMeeting/ViewMeeting";
 
-// Material UI Stuff
-import { Checkbox } from '@material-ui/core';
-
-// -----------------
-
 
 /* global gapi */
 
@@ -28,7 +23,7 @@ export class ImportCal extends Component {
             isLoaded: false,
             userId: undefined,
             meetingID: undefined,
-            meetingDates: [],       // GET dates FROM DATABASE "2019-06-02", "2019-06-03", "2019-06-05", "2019-06-06"
+            meetingDates: [],
             timeWindow: [],
             firstDate: undefined,
             lastDate: undefined,
@@ -324,24 +319,54 @@ export class ImportCal extends Component {
                 const ical = require('ical.js');
                 let data_parsed = ical.parse(content);
                 let start, end, startMoment, endMoment;
+                let eventList = [];
+
+                var comp = new ical.Component(data_parsed);
+                const vevents = comp.getAllSubcomponents("vevent");
 
                 // Get datetime start and end
-                for (let i = 0; i < data_parsed[2].length; ++i) {
-                    start = data_parsed[2][i][1][0][3];
-                    end = data_parsed[2][i][1][1][3];
+                vevents.forEach(function (vevent) {
+                    const event = new ical.Event(vevent);
 
-                    startMoment = moment(start, ['YYYY-MM-DDTHH:mm:ssZ', 'YYYY-MM-DDTHH:mm:ss+-HH:mm', 'YYYY-MM-DD'], true);
-                    endMoment = moment(end, ['YYYY-MM-DDTHH:mm:ssZ', 'YYYY-MM-DDTHH:mm:ss+-HH:mm', 'YYYY-MM-DD'], true);
+                    if (!event.isRecurring()) {
+                        start = event.startDate.toJSDate();
+                        end = event.endDate.toJSDate();
+                        eventList.push([start, end]);
+
+                    } else {
+                        let recur = vevent.getFirstPropertyValue("rrule");
+                        let dtstart = vevent.getFirstPropertyValue("dtstart");
+                        let iter = recur.iterator(dtstart);
+                        let next = iter.next();
+                        let recLimit = 35;                      // Max 1 month
+                        let n = 0;
+                        while (next && n++ < recLimit) {
+                            eventList.push([
+                                event.getOccurrenceDetails(next).startDate.toJSDate(),
+                                event.getOccurrenceDetails(next).endDate.toJSDate()]);
+                            next = iter.next();
+                        }
+                    }
+                });
+
+                for (let i = 0; i < eventList.length; ++i) {
+
+                    startMoment = moment(eventList[i][0], ['YYYY-MM-DDTHH:mm:ss', 'YYYY-MM-DDTHH:mm:ssZ', 'YYYY-MM-DDTHH:mm:ss+-HH:mm', 'YYYY-MM-DD'], true);
+                    endMoment = moment(eventList[i][1], ['YYYY-MM-DDTHH:mm:ss', 'YYYY-MM-DDTHH:mm:ssZ', 'YYYY-MM-DDTHH:mm:ss+-HH:mm', 'YYYY-MM-DD'], true);
 
                     // If invalid format, skip
-                    if (!startMoment.isValid() || !endMoment.isValid())
+                    if (!startMoment.isValid() || !endMoment.isValid()) {
                         continue;
+                    }
 
                     // General all day event spanning more than 12hr
-                    else if (!allowAllDay && (endMoment.diff(startMoment, "hours") >= 12 || startMoment.isSame(endMoment)))
+                    else if (!allowAllDay && (endMoment.diff(startMoment, "hours") >= 12 || startMoment.isSame(endMoment))) {
                         continue;
+                    }
 
                     dateList = [...dateList, ...ImportCal.splitDates(startMoment, endMoment)];
+
+                    eventList[i] = null;
                 }
                 callback(dateList);
             } catch (err) {
@@ -527,7 +552,7 @@ export class ImportCal extends Component {
 
     /******* Functions used for UI *******/
 
-    // Calls appropriate set functions
+        // Calls appropriate set functions
     setValue = (event, key, defVal) => {
         let el = event.target;
         if (el.value.length !== 0 && el.checkValidity())
@@ -572,118 +597,118 @@ export class ImportCal extends Component {
             return <div>Loading Page ...</div>
         } else {
             return (
-            <div className="popup_wrapper">
-                <header>
-                    <h1>Import Calendar</h1>
-                    <a className="close" onClick={this.close} title={"Close"}>&#10006;</a>
-                </header>
-                <main>
-                    <form onSubmit={this.handleImport}>
-                        <fieldset className="import_file">
+                <div className="popup_wrapper">
+                    <header>
+                        <h1>Import Calendar</h1>
+                        <a className="close" onClick={this.close} title={"Close"}>&#10006;</a>
+                    </header>
+                    <main>
+                        <form onSubmit={this.handleImport}>
+                            <fieldset className="import_file">
 
-                            <label htmlFor="uploadFile" className="mode" id="calFile">
-                                Upload File
-                                <input type="file" id="uploadFile" accept=".ics" onChange={(e) => {
-                                    this.selectUpload(e)
-                                }}/>
-                            </label>
+                                <label htmlFor="uploadFile" className="mode" id="calFile">
+                                    Upload File
+                                    <input type="file" id="uploadFile" accept=".ics" onChange={(e) => {
+                                        this.selectUpload(e)
+                                    }}/>
+                                </label>
 
-                            <GoogleLogin
-                                render={renderProps => (
-                                    <button className="mode" id="calGoogle" onClick={renderProps.onClick}
-                                            disabled={renderProps.disabled}>Google Calendar</button>)}
-                                clientId="926207137800-ogujdec6vo9oo1fun7mreedha60l7ude.apps.googleusercontent.com"
-                                discoveryDocs="https://content.googleapis.com/discovery/v1/apis/calendar/v3/rest"
-                                buttonText="Login"
-                                scope="https://www.googleapis.com/auth/calendar.readonly"
-                                theme="dark"
-                                responseType="token"
-                                onRequest={this.loadClient}
-                                onSuccess={this.loginSuccess}
-                                onFailure={this.loginFailure}
-                                cookiePolicy={'single_host_origin'}/>
-                        </fieldset>
+                                <GoogleLogin
+                                    render={renderProps => (
+                                        <button className="mode" id="calGoogle" onClick={renderProps.onClick}
+                                                disabled={renderProps.disabled}>Google Calendar</button>)}
+                                    clientId="926207137800-ogujdec6vo9oo1fun7mreedha60l7ude.apps.googleusercontent.com"
+                                    discoveryDocs="https://content.googleapis.com/discovery/v1/apis/calendar/v3/rest"
+                                    buttonText="Login"
+                                    scope="https://www.googleapis.com/auth/calendar.readonly"
+                                    theme="dark"
+                                    responseType="token"
+                                    onRequest={this.loadClient}
+                                    onSuccess={this.loginSuccess}
+                                    onFailure={this.loginFailure}
+                                    cookiePolicy={'single_host_origin'}/>
+                            </fieldset>
 
-                        <fieldset className="import_option">
-                            <legend>Import Options</legend>
+                            <fieldset className="import_option">
+                                <legend>Import Options</legend>
 
-                            <input type="checkbox" id="toff" name="time_offset" value={this.state.offset}
-                                   onClick={() => this.toggleHidden("time_offset", "hide")}/>
-                            <label htmlFor="toff" title="Add extra time before and after events">
-                                &nbsp;Add offset time (min): </label>
-                            <output onClick={() => this.toggleHidden("time_offset")}>
-                                {this.state.offset}</output>
-                            <br/>
-                            <div id="time_offset" hidden>
-                                <label htmlFor="ntoff"> Change Value (min): </label>
-                                <input id="ntoff" type="text" name="offset" pattern="\d*" maxLength="3"
-                                       onChange={(e) => this.setValue(e, "offset", 30)}/>
-                            </div>
+                                <input type="checkbox" id="toff" name="time_offset" value={this.state.offset}
+                                       onClick={() => this.toggleHidden("time_offset", "hide")}/>
+                                <label htmlFor="toff" title="Add extra time before and after events">
+                                    &nbsp;Add offset time (min): </label>
+                                <output onClick={() => this.toggleHidden("time_offset")}>
+                                    {this.state.offset}</output>
+                                <br/>
+                                <div id="time_offset" hidden>
+                                    <label htmlFor="ntoff"> Change Value (min): </label>
+                                    <input id="ntoff" type="text" name="offset" pattern="\d*" maxLength="3"
+                                           onChange={(e) => this.setValue(e, "offset", 30)}/>
+                                </div>
 
-                            <input type="checkbox" id="tran" name="time_range" value={[this.state.startTime, this.state.endTime]}
-                                   onClick={() => this.toggleHidden("time_range", "hide")}/>
-                            <label htmlFor="tran" title="Specify earliest and latest time available">
-                                &nbsp;Set time range: &nbsp;</label>
-                            <output onClick={() => this.toggleHidden("time_range")}>
-                                {this.state.startTime} - {this.state.endTime}</output>
-                            <br/>
-                            <div id="time_range" hidden>
-                                <label> Free After:&nbsp;&nbsp;<input type="time" min={this.state.minTime} max={this.state.maxTime}
-                                                                      onChange={(e) => this.setValue(e, "startTime", this.state.minTime)}/></label><br/>
-                                <label> Free Before:&nbsp;<input type="time" min={this.state.minTime} max={this.state.maxTime}
-                                                                 onChange={(e) => this.setValue(e, "endTime", this.state.maxTime)}/></label>
-                            </div>
+                                <input type="checkbox" id="tran" name="time_range" value={[this.state.startTime, this.state.endTime]}
+                                       onClick={() => this.toggleHidden("time_range", "hide")}/>
+                                <label htmlFor="tran" title="Specify earliest and latest time available">
+                                    &nbsp;Set time range: &nbsp;</label>
+                                <output onClick={() => this.toggleHidden("time_range")}>
+                                    {this.state.startTime} - {this.state.endTime}</output>
+                                <br/>
+                                <div id="time_range" hidden>
+                                    <label> Free After:&nbsp;&nbsp;<input type="time" min={this.state.minTime} max={this.state.maxTime}
+                                                                          onChange={(e) => this.setValue(e, "startTime", this.state.minTime)}/></label><br/>
+                                    <label> Free Before:&nbsp;<input type="time" min={this.state.minTime} max={this.state.maxTime}
+                                                                     onChange={(e) => this.setValue(e, "endTime", this.state.maxTime)}/></label>
+                                </div>
 
-                            <input type="checkbox" id="all_day" name="all_day"/>
-                            <label htmlFor="all_day" title="Include events longer than 12 hours">
-                                &nbsp;Include all day events </label><br/>
+                                <input type="checkbox" id="all_day" name="all_day"/>
+                                <label htmlFor="all_day" title="Include events longer than 12 hours">
+                                    &nbsp;Include all day events </label><br/>
 
-                            <input type="checkbox" id="days" name="day_selection"
-                                   onClick={() => {
-                                       this.toggleHidden("import_days");
-                                       this.resetDays();
-                                   }}/>
-                            <label htmlFor="days" title="Include events from days selected">
-                                &nbsp;Only specific day of week </label>
-                            <div id="import_days" hidden>
-                                <input id="day_su" type="checkbox" name="sunday" onClick={() => this.updateDays(0)}/><label
-                                htmlFor="day_su">SU</label>
-                                <input id="day_m" type="checkbox" name="monday" onClick={() => this.updateDays(1)}/><label
-                                htmlFor="day_m">M</label>
-                                <input id="day_tu" type="checkbox" name="tuesday" onClick={() => this.updateDays(2)}/><label
-                                htmlFor="day_tu">TU</label>
-                                <input id="day_w" type="checkbox" name="wednesday" onClick={() => this.updateDays(3)}/><label
-                                htmlFor="day_w">W</label>
-                                <input id="day_th" type="checkbox" name="thursday" onClick={() => this.updateDays(4)}/><label
-                                htmlFor="day_th">TH</label>
-                                <input id="day_f" type="checkbox" name="friday" onClick={() => this.updateDays(5)}/><label
-                                htmlFor="day_f">F</label>
-                                <input id="day_sa" type="checkbox" name="saturday" onClick={() => this.updateDays(6)}/><label
-                                htmlFor="day_sa">SA</label>
-                            </div>
-                        </fieldset>
+                                <input type="checkbox" id="days" name="day_selection"
+                                       onClick={() => {
+                                           this.toggleHidden("import_days");
+                                           this.resetDays();
+                                       }}/>
+                                <label htmlFor="days" title="Include events from days selected">
+                                    &nbsp;Only specific day of week </label>
+                                <div id="import_days" hidden>
+                                    <input id="day_su" type="checkbox" name="sunday" onClick={() => this.updateDays(0)}/><label
+                                    htmlFor="day_su">SU</label>
+                                    <input id="day_m" type="checkbox" name="monday" onClick={() => this.updateDays(1)}/><label
+                                    htmlFor="day_m">M</label>
+                                    <input id="day_tu" type="checkbox" name="tuesday" onClick={() => this.updateDays(2)}/><label
+                                    htmlFor="day_tu">TU</label>
+                                    <input id="day_w" type="checkbox" name="wednesday" onClick={() => this.updateDays(3)}/><label
+                                    htmlFor="day_w">W</label>
+                                    <input id="day_th" type="checkbox" name="thursday" onClick={() => this.updateDays(4)}/><label
+                                    htmlFor="day_th">TH</label>
+                                    <input id="day_f" type="checkbox" name="friday" onClick={() => this.updateDays(5)}/><label
+                                    htmlFor="day_f">F</label>
+                                    <input id="day_sa" type="checkbox" name="saturday" onClick={() => this.updateDays(6)}/><label
+                                    htmlFor="day_sa">SA</label>
+                                </div>
+                            </fieldset>
 
-                        <fieldset id="import_output">
-                            <output id="out">Note: This will overwrite your current selections</output>
-                            <div id="import_buttons">
-                                <button id="import_submit" type="submit" disabled={true}>Import</button>
-                            </div>
-                        </fieldset>
+                            <fieldset id="import_output">
+                                <output id="out">Note: This will overwrite your current selections</output>
+                                <div id="import_buttons">
+                                    <button id="import_submit" type="submit" disabled={true}>Import</button>
+                                </div>
+                            </fieldset>
 
-                    </form>
+                        </form>
 
-                    <GoogleLogout
-                        render={renderProps => (
-                            <button onClick={renderProps.onClick}
-                                    disabled={renderProps.disabled}>LOGOUT DEBUG</button>)}
-                        clientId="658977310896-knrl3gka66fldh83dao2rhgbblmd4un9.apps.googleusercontent.com"
-                        buttonText="Logout"
-                        onLogoutSuccess={this.logoutSuccess}>
-                    </GoogleLogout>
+                        <GoogleLogout
+                            render={renderProps => (
+                                <button onClick={renderProps.onClick}
+                                        disabled={renderProps.disabled}>LOGOUT DEBUG</button>)}
+                            clientId="658977310896-knrl3gka66fldh83dao2rhgbblmd4un9.apps.googleusercontent.com"
+                            buttonText="Logout"
+                            onLogoutSuccess={this.logoutSuccess}>
+                        </GoogleLogout>
 
-                </main>
-            </div>
-        )}};
+                    </main>
+                </div>
+            )}};
 }
 
 // Copied from View Meeting
