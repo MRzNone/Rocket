@@ -45,7 +45,7 @@ class MeetingLogin extends Component {
                     href="/JoinMeeting">
                         Back
                     </Button>
-                    <Button color="primary" href="/CreateNewUser">
+                    <Button color="primary" href={"/CreateNewUser?meetingId=" + this.state.meeting_id}>
                         Create New User
                     </Button>
                     <Button color="primary" onClick={this.handleNextClick} autoFocus>
@@ -76,8 +76,7 @@ class MeetingLogin extends Component {
                     console.log("found email");
                     that.props.history.push('/viewmeeting?meetingId=' + that.state.meeting_id);
                 }
-            }
-            
+            }            
         }, function(error){
 
         });
