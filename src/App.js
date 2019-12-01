@@ -5,7 +5,9 @@ import {
   Switch,
   Route,
 } from "react-router-dom";
-import LandPage from './Components/NewLandPage/landPage';
+import * as firebase from "firebase";
+// import LandPage from './Components/LandPage/LandPage';
+import NewLandPage from './Components/NewLandPage/landPage';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import reducers from './reducers';
@@ -18,7 +20,7 @@ import JoinMeeting from './Components/JoinMeeting/JoinMeeting';
 import MeetingLogin from './Components/MeetingLogin/MeetingLogin';
 import CreateNewUser from './Components/CreateNewUser/CreateNewUser';
 import ViewMeeting from './Components/ViewMeeting/ViewMeeting';
-import * as firebase from "firebase";
+import CreateMeeting from './Components/CreateMeeting/CreateMeeting';
 
 function App() {
   const firebaseConfig = {
@@ -39,13 +41,14 @@ function App() {
     <Provider store={createStore(reducers, applyMiddleware(thunk))}>
       <Router>
         <Switch>
-          <Route exact path="/" component={LandPage} />
+          <Route exact path="/" component={NewLandPage} />
           <Route path="/meeting" component={Meeting} />
           <Route path="/meetingresponse" component={MeetingResponse} />
           <Route path="/joinmeeting" component={JoinMeeting} />
           <Route path="/meetinglogin" component={MeetingLogin} />
           <Route path="/createnewuser" component={CreateNewUser} />
-          <Route path="/viewMeeting" component={ViewMeeting} />
+          <Route path="/viewmeeting" component={ViewMeeting} />
+          <Route path="/createmeeting" component={CreateMeeting} />
           <Route component={LostPage} />
         </Switch>
       </Router>

@@ -15,6 +15,12 @@ export class Member {
     }).catch((err) => console.error(err));
   }
 
+  async getMemberTimeSlot(id) {
+    const memberRef = this.db.collection("Member").doc(id);
+
+    return JSON.parse((await memberRef.get()).data().timeSlots);
+  }
+
   /**
    * this.createMember(
    *   'fsadfasfd',

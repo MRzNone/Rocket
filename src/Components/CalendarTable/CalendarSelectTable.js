@@ -16,6 +16,7 @@ class CalendarSelectTable extends Component {
      *                      evenly layout horizontally.
      * initData: String     The string data to init.
      * tableObservSetter: function program will call this function to pass in most-up-toDate string
+     * setFillGrid: function force set fillGrid
      */
   constructor(props) {
     super(props);
@@ -28,6 +29,15 @@ class CalendarSelectTable extends Component {
     }
     else {
       fillGrid = initData;
+    }
+
+    if (this.props.setFillGrid !== undefined) {
+      this.props.setFillGrid((data) => {
+
+        this.setState({
+          fillGrid: data,
+        })
+      })
     }
 
     this.state = {
@@ -212,13 +222,10 @@ class CalendarSelectTable extends Component {
   }
 
   render() {
-
     // update data through setter
     if (!this.state.startDrag) {
       this.updateTableDateToOther();
     }
-
-
 
     return (
       <div style={{

@@ -80,7 +80,7 @@ class CreateNewUser extends Component {
         let memberId = getRandomId();
         try{
             this.memberDB.createMember(memberId, this.state.meeting_id, this.state.name, this.state.email, ' ');
-            this.props.history.push('/viewmeeting?meetingId=' + this.state.meeting_id);
+            this.props.history.push('/viewmeeting?meetingId=' + this.state.meeting_id + '&userId=' + memberId);
         }
         catch(e){
             console.log("error");

@@ -61,9 +61,6 @@ export class Meeting {
 
   /**
    * Create the meeting and the host.
-   * this.createMeeting('newMeeting', 'dumbMeetingName', [new Date()],
-   *  600, 1200, 'newH12312321ost', null, 'dumbNotes', 20, 'hostame', 
-   * null);
    * 
    * @param {string} id 
    * @param {string} name 
@@ -71,20 +68,16 @@ export class Meeting {
    * @param {number} startTime
    * @param {number} endTime
    * @param {string} hostId 
-   * @param {string} passCode 
-   * @param {string} notes 
    * @param {number} rowNum
-   * @param {string} hostName
-   * @param {string} email
    */
-  createMeeting(id, name, dates, startTime, endTime, hostId, passCode, notes, rowNum, hostName, email) {
+  async createMeeting(id, name, dates, startTime, endTime, hostId, rowNum) {
     const hostRef = this.db.collection("Member").doc(hostId);
     const data = {
       finalTime: null,
       host: hostRef,
       members: [hostRef],
       name,
-      notes,
+      notes: null,
       rowNum,
       timeWindow: [startTime, endTime]
     };
@@ -93,7 +86,6 @@ export class Meeting {
     data.dates = dates.map(
       date => firebase.firestore.Timestamp.fromDate(date));
 
-    this.db.collection("Meeting").doc(id).set(data);
-    this.memberDB.createMember(hostId, id, hostName, email, passCode);
+    this.db.collection("Meeting").doc(id).set(data).then(() => { return; });
   }
 }

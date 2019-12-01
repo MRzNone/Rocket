@@ -74,7 +74,7 @@ class MeetingLogin extends Component {
             for(var i = 0; i < memberArray.length; i++){
                 if(memberArray[i][1].email == that.state.email){
                     console.log("found email");
-                    that.props.history.push('/viewmeeting?meetingId=' + that.state.meeting_id);
+                    that.props.history.push('/viewmeeting?meetingId=' + that.state.meeting_id + '&userId=' + memberArray[i][0]);
                 }
             }            
         }, function(error){
