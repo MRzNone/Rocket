@@ -34,9 +34,6 @@ class EditMeetingPage extends Component {
                         </Grid>
                     </Grid>
                     <div >
-                    <Button variant="outlined" color="default" style={{margin:'5%'}}>
-                        Remove User
-                    </Button>
 
 
                     <Button variant="outlined" color="default" onClick={() => this.props.history.push({

@@ -13,6 +13,7 @@ import Container from "@material-ui/core/Container";
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Chip from '@material-ui/core/Chip';
 import {EditNotes} from "./EditNotes";
+import Button from "@material-ui/core/Button";
 
 /**
  * Remove Members.
@@ -28,7 +29,6 @@ export class RemoveMembers extends Component {
         this.state ={
             meetingID: undefined,
             members: [],
-            userID: undefined
         };
 
     };
@@ -50,14 +50,19 @@ export class RemoveMembers extends Component {
 
             const mem = Object.entries(data.members);
             let members = [];
-            for (const [id, value] of mem) {
-                const fields = Object.entries(value);
-                let newMem = [id]
-                for (const [key, val] of fields) {
-                    newMem.push([key, val]);
-                }
-                members.push(newMem);
 
+            if (mem !== undefined && mem !== []) {
+                for (const [id, value] of mem) {
+                    if (value !== undefined && value !== []) {
+                        const fields = Object.entries(value);
+                        let newMem = [id]
+                        for (const [key, val] of fields) {
+                            newMem.push([key, val]);
+                        }
+                        members.push(newMem);
+                    }
+
+                }
             }
 
             this.setState({
@@ -79,40 +84,52 @@ export class RemoveMembers extends Component {
         this.memberDB.deleteMember(memberID, meetingID);
     }
 
-    handleDelete (chipToDelete) {
-        console.log(chipToDelete)
-        let memArray = this.state.members.filter(mem => mem[0] !== chipToDelete.target.value);
-        this.setState({members: memArray});
-        this.removeMembers(chipToDelete);
-    }
-
     renderClips() {
         const data = this.state.members;
-        Object.keys(data).forEach(e => console.log(e));
-        Object.values(data).forEach(e => console.log(Object.values(e)));
-
-
-
 
         if (data === []) return (<div/>)
 
-        console.log(data)
+        let checked = [];
+
+        console.log(checked)
         return (
             <>
-                {data.map(d => {
-                    return (
-                        <Chip
-                            key={d[0]}
-                            label={d[2][1]}
-                            onDelete={this.handleDelete.bind(d[0])}
-                        />
+                <Container maxWidth="xl">
+                    <FormControl component="fieldset" style={{
+                        marginTop: '3vh',
+                        marginLeft: '5vh',
+                        paddingTop: '2vh'
+                    }}>
+                        <FormLabel component="legend" style={{
+                            textAlign: 'right',
+                            fontSize: 25,
+                        }}>Members</FormLabel>
 
-                    );
-                })}
-                </>
+                        <FormGroup style={{textAlign:'center', width: '100%'}}>
+                            {
+                                data.map(d => {
+                                    return (
+                                        <FormControlLabel
+                                            value={d[0]}
+                                            control={<Checkbox color="primary"/>}
+                                            label={d[2][1]}
+                                            labelPlacement="start"
+                                            onChange={checked.push(d[0])}
+                                        />
+                                    );
+                                })
+                            }
+                        </FormGroup>
+                    </FormControl>
+                </Container>
+
+                <Button variant="outlined" color="default" onClick={console.log(checked)} style={{margin:'5%'}}>
+                    Remove User
+                </Button>
+            </>
         );
     }
-
+/* removeMembers(d[0]) */
 
     render() {
 
