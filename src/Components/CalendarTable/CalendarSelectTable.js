@@ -234,7 +234,7 @@ class CalendarSelectTable extends Component {
         WebkitUserSelect: 'none',
       }}>
         <div style={{
-          paddingTop: CELL_HEIGHT + 1,
+          paddingTop: CELL_HEIGHT * 0.2,
         }}>
           {this.renderRowTitle()}
         </div>

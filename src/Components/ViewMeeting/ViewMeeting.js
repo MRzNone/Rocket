@@ -265,7 +265,7 @@ export class ViewMeeting extends Component {
     const colNum = dates.length;
     // prepare colTitles
     const colTitles = dates.map(
-      date => date.getMonth() + "/" + date.getDate()
+      date => (date.getMonth() + 1) + "/" + date.getDate()
     );
 
     // prepare rowTitles
@@ -275,7 +275,7 @@ export class ViewMeeting extends Component {
     const diffStep = (endTime - startTime) / rowNum;
 
     const rowTitles = [];
-    for (let i = 0; i < rowNum; i++) {
+    for (let i = 0; i <= rowNum; i++) {
       rowTitles.push(this.minToTimeStr(startTime + diffStep * i));
     }
 
