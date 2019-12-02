@@ -182,7 +182,7 @@ export class ViewMeeting extends Component {
           <div style={{
             left: 0
          
-        }}>>
+        }}>
               <Popup modal trigger={
             <Button
               variant="outlined"
