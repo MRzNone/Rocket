@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {Meeting, Member} from "../../EarthBase";
-import queryString from "query-string";
-import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import { Checkbox } from '@material-ui/core';
 import FormGroup from '@material-ui/core/FormGroup';
@@ -10,10 +8,9 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import Container from "@material-ui/core/Container";
-import FormHelperText from '@material-ui/core/FormHelperText';
-import Chip from '@material-ui/core/Chip';
-import {EditNotes} from "./EditNotes";
 import Button from "@material-ui/core/Button";
+import update from 'immutability-helper';
+
 
 /**
  * Remove Members.
@@ -29,6 +26,8 @@ export class RemoveMembers extends Component {
         this.state ={
             meetingID: undefined,
             members: [],
+            checked: [],
+            checkBox: []
         };
 
     };
@@ -45,8 +44,6 @@ export class RemoveMembers extends Component {
         }
 
         this.meetingDB.fetchMeetingData(meetingID).then(data => {
-
-            const hostID = data.hostId;
 
             const mem = Object.entries(data.members);
             let members = [];
@@ -65,10 +62,17 @@ export class RemoveMembers extends Component {
                 }
             }
 
+            let checkBox = {}
+            members.map(mem => {
+                checkBox[mem[0]]= false;
+            })
+            console.log(checkBox)
+            console.log(members)
+
             this.setState({
                 meetingID: meetingID,
                 members: members,
-                userID: hostID
+                checkBox: checkBox
             });
         });
 
@@ -84,16 +88,28 @@ export class RemoveMembers extends Component {
         this.memberDB.deleteMember(memberID, meetingID);
     }
 
+    checkBoxHandle(){
+        const checkBox = this.state.checkBox;
+        this.setState()
+    }
+
+    remove(){
+        const checkBox = this.state.checkBox;
+        console.log(checkBox)
+        Object.entries(checkBox).forEach(c => {
+            if (c[1] === true) {
+                this.removeMembers(c[0])
+            }
+        })
+    }
+
     renderClips() {
-        const data = this.state.members;
+        const members = this.state.members;
+        console.log(this.state.checkBox);
+        if (members === []) return (<div/>)
 
-        if (data === []) return (<div/>)
-
-        let checked = [];
-
-        console.log(checked)
         return (
-            <>
+            <div>
                 <Container maxWidth="xl">
                     <FormControl component="fieldset" style={{
                         marginTop: '3vh',
@@ -107,15 +123,20 @@ export class RemoveMembers extends Component {
 
                         <FormGroup style={{textAlign:'center', width: '100%'}}>
                             {
-                                data.map(d => {
+                                members.map(d => {
+                                    let id = d[0]
+                                    let name = d[2][1]
                                     return (
+                                        <>
                                         <FormControlLabel
-                                            value={d[0]}
-                                            control={<Checkbox color="primary"/>}
-                                            label={d[2][1]}
+                                            id={id}
+                                            value={id}
+                                            control={<Checkbox color="primary" checked={this.state.checkBox[id]} onChange={(e) => this.setState(
+                                                {checkBox: update(this.state.checkBox, {[id]: {$set: e.target.checked}})})} />}
+                                            label={name}
                                             labelPlacement="start"
-                                            onChange={checked.push(d[0])}
                                         />
+                                    </>
                                     );
                                 })
                             }
@@ -123,10 +144,10 @@ export class RemoveMembers extends Component {
                     </FormControl>
                 </Container>
 
-                <Button variant="outlined" color="default" onClick={console.log(checked)} style={{margin:'5%'}}>
+                <Button variant="outlined" color="default" onClick={this.remove.bind(this)} style={{margin:'5%'}}>
                     Remove User
                 </Button>
-            </>
+            </div>
         );
     }
 /* removeMembers(d[0]) */
