@@ -655,7 +655,7 @@ export class ImportCal extends Component {
                                         cookiePolicy={'single_host_origin'}/>
                                 </fieldset>
 
-                                <Typography>Import Options:</Typography>
+                                <Typography>Import Options</Typography>
                                 <fieldset className="import_option">
                                     <FormControlLabel
                                         control={
