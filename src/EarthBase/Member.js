@@ -29,18 +29,19 @@ export class Member {
    *   null
    * );
    */
-  createMember(memberId, meetingId, name, email, passcode) {
+  async createMember(memberId, meetingId, name, email, passcode) {
     const memberRef = this.db.collection("Member").doc(memberId);
-    memberRef.set({
+    await memberRef.set({
       name,
       email,
       passcode,
       timeSlots: null
-    }).then(() => {
-      this.db.collection("Meeting").doc(meetingId).update({
-        members: firebase.firestore.FieldValue.arrayUnion(memberRef)
-      });
     });
+    await this.db.collection("Meeting").doc(meetingId).update({
+      members: firebase.firestore.FieldValue.arrayUnion(memberRef)
+    });
+
+    return undefined;
   }
 
   /**

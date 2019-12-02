@@ -180,7 +180,7 @@ class CalendarDispTable extends Component {
         WebkitUserSelect: 'none'
       }}>
         <div style={{
-          paddingTop: CELL_HEIGHT + 1,
+          paddingTop: CELL_HEIGHT * 0.3,
         }}>
           {this.renderRowTitle()}
         </div>

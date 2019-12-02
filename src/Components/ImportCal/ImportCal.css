@@ -1,56 +1,23 @@
 .popup-content {
-    width: 80% !important;
-    min-width: 300px;
+    width: 100px !important;
     height: auto;
 }
 
-.popup_wrapper {
-    font-size: large;
-    user-select: none;
-    color: #333333;
-}
-
-.popup_wrapper > header {
-    text-align: center;
-}
-
-.popup_wrapper h1 {
-    color: #333333;
-    font-weight: bold;
-    background-color: white;
-}
-
 /* Close Button */
-.popup_wrapper .close {
+#import_close {
     position: absolute;
-    right:  -8px;
-    top:    -8px;
+    right:  0;
+    top:    0;
     font-size: xx-large;
-    padding: 0em 0.25em;
+    padding: 5px;
     margin: 0;
-    color: rgba(4, 4, 4, 0.2);
-    border: solid medium rgba(4, 4, 4, 0.2);
+    color: rgba(4, 4, 4, 0.1);
     cursor: pointer;
     transition: top 1s;
 }
 
-.popup_wrapper .close:hover {
+#import_close:hover {
     color: rgba(4, 4, 4, 0.5);
-    border: solid medium rgba(4, 4, 4, 0.5);
-}
-
-/*------------------------------------*/
-
-.popup_wrapper form {
-    display: flex;
-    flex-flow: row wrap;
-    width: 100%;
-    justify-content: space-evenly;
-}
-
-.popup_wrapper form > fieldset {
-    width: 45%;
-    padding: 10px;
 }
 
 /*------------------------------------*/
@@ -60,50 +27,16 @@
     border: none;
 }
 
-.mode {
-    position: relative;
-    margin: 1% auto;
-    cursor:pointer;
-    text-decoration: none;
-    font-weight: bold;
-    background-color: #f9f6f4;
-    font-size: 22px;
-    border-radius: 5px;
-    transition: all .1s ease-in-out;
-    border: solid thin black;
-    font-family: sans-serif;
-    color: #333333;
-}
-
-.mode:hover {
-    background-color: #eae7e5;
-}
-
-.mode:active {
-    background-color: #dddad8;
-    top: 2px;
-    right: -1px;
-}
-
-
 #calFile {
-    display: block;
     height: 47%;
     width: 100%;
-    text-align: center;
-    line-height: 95px;
+    margin-bottom: 10px;
 }
 
 #calGoogle {
     height: 47%;
     width: 100%;
-    /*background: url("./btn_google_signin_dark_normal_web@2x.png") no-repeat center;
-    background-size: contain;*/
-
-}
-
-#calGoogle:active{
-    /*background-image: url("./btn_google_signin_dark_pressed_web@2x.png");*/
+    margin-bottom: 10px;
 }
 
 /*------------------------------------*/
@@ -119,54 +52,17 @@
     cursor: pointer;
 }
 
-#time_offset > label, #time_range > label {
-    margin-left: 20px;
-    font-style: italic;
-}
-
-#import_days {
-    margin: 1em 0 0 0;
-    padding: 0;
-}
-
-#import_days input {
-    display: none;
-}
-
-#import_days > input + label{
-    border: black thin solid;
-    display: inline-block;
-    background-color: #f9f6f4;
-    font-size: 20px;
-    height: 40px;
-    line-height: 40px;
-    width: 40px;
-    margin: 0 2%;
-    border-radius:5px;
-    text-align: center;
-    cursor: pointer;
-}
-#import_days > input:checked + label{
-    background: #6fa9cb;
-    color: white;
-}
-
-/*------------------------------------*/
-
 #import_output {
-    display: flex;
-    flex-flow: column nowrap;
-    width: 100%;
+    display: block;
+    width: auto;
     border: none;
+    text-align: center;
+    padding-top: 20px;
 }
 
-
-/* To keep or not */
 #out {
-    margin: 7px 0 0 0;
-    font-size: small;
+    font-size: larger;
     font-weight: bold;
-    text-align: center;
     overflow: hidden;
 }
 
@@ -204,19 +100,16 @@
     pointer-events: none;
 }
 
-#import_reset {
+#revokebtn {
+    position: absolute;
+    bottom: 0;
+    left: 0;
     border: none;
+    text-decoration: underline;
+    padding: 10px;
     background-color: transparent;
-    padding: 15px 0;
-    text-align: center;
-    text-decoration: none;
-    font-size: smaller;
     cursor: pointer;
-    margin-left: 2em;
-}
-
-#import_reset:hover {
-    color: black;
+    color: white;
 }
 
 /*------------------------------------*/

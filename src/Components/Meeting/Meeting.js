@@ -11,7 +11,6 @@ class Meeting extends Component {
   render() {
     return (
       <div> Meeting
-
           <Popup modal trigger={<button>Import Calendar</button>}>
               {close => (<ImportCal close={close}/>)}</Popup>
       </div>

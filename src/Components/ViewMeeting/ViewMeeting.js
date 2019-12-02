@@ -55,6 +55,12 @@ export class ViewMeeting extends Component {
     const meetingID = params.meetingId;
     const userId = params.userId;
 
+    if (meetingID !== undefined && userId === undefined) {
+      console.log("HERE");
+      this.props.history.push('/meetinglogin?meetingId=' + meetingID);
+      return;
+    }
+
     if (meetingID === undefined || userId === undefined) {
       console.error("Invlid parameters");
       this.props.history.push("/");
@@ -75,7 +81,8 @@ export class ViewMeeting extends Component {
     this.setFillGrid = undefined;
   }
 
-  copyToClip(url) {
+  copyToClip() {
+    const url = window.location.origin + '/viewmeeting?meetingId=' + this.state.meetingID;
     navigator.clipboard.writeText(url);
   }
 
@@ -209,7 +216,7 @@ export class ViewMeeting extends Component {
             variant="outlined"
             color="primary"
             size="large"
-            onClick={() => this.copyToClip(window.location.href)}
+            onClick={() => this.copyToClip()}
           >
             Copy meeting link
             </Button>
@@ -255,6 +262,8 @@ export class ViewMeeting extends Component {
       timeWindow, members } = this.props.meeting;
 
     if (!(this.state.userId in members)) {
+      console.log(members);
+      console.log(this.state.userId);
       console.error("Invalid user");
       this.props.history.push("/");
       return;
@@ -263,7 +272,7 @@ export class ViewMeeting extends Component {
     const colNum = dates.length;
     // prepare colTitles
     const colTitles = dates.map(
-      date => date.getMonth() + "/" + date.getDate()
+      date => (date.getMonth() + 1) + "/" + date.getDate()
     );
 
     // prepare rowTitles
@@ -273,7 +282,7 @@ export class ViewMeeting extends Component {
     const diffStep = (endTime - startTime) / rowNum;
 
     const rowTitles = [];
-    for (let i = 0; i < rowNum; i++) {
+    for (let i = 0; i <= rowNum; i++) {
       rowTitles.push(this.minToTimeStr(startTime + diffStep * i));
     }
 
