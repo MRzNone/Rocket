@@ -18,11 +18,13 @@ import Typography from "@material-ui/core/Typography/Typography";
 
 /* global gapi */
 
+
 const theme = createMuiTheme({
     typography: {
-        fontSize: 20,
+        fontSize: 16,
     },
 });
+
 
 export class ImportCal extends Component {
     constructor(props) {
