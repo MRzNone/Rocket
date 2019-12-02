@@ -7,24 +7,24 @@ import { Meeting, Member, getRandomId } from '../../EarthBase';
 
 class CreateNewUser extends Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
         const query_values = queryString.parse(this.props.location.search);
-        console.log(query_values);
-        
+
         this.state = {
             name: '',
             email: '',
             meeting_id: query_values.meetingId,
+            memberId: query_values.userId, // undefined vs string
         }
 
         this.meetingDB = new Meeting();
         this.memberDB = new Member();
     }
 
-    render(){
-        return(
-            <Dialog open="true"  className="box">
+    render() {
+        return (
+            <Dialog open className="box">
                 <DialogTitle>Input Meeting Participant Information</DialogTitle>
                 <DialogContent>
                     <DialogContentText>Please enter your name and email.</DialogContentText>
@@ -45,14 +45,14 @@ class CreateNewUser extends Component {
                         label="Email"
                         type="email"
                         fullWidth
-                        variant="outlined" 
+                        variant="outlined"
                         onChange={this.handleEmailFieldChange}
                     />
                 </DialogContent>
-                
+
                 <DialogActions>
                     <Button color="secondary"
-                    href="/MeetingLogin">
+                        href="/MeetingLogin">
                         Back
                     </Button>
                     <Button color="primary" onClick={this.handleNextClick} autoFocus>
@@ -76,34 +76,34 @@ class CreateNewUser extends Component {
         });
     }
 
-    handleNextClick = (e) => {
-        let memberId = getRandomId();
-        try{
-            this.memberDB.createMember(memberId, this.state.meeting_id, this.state.name, this.state.email, ' ');
+    handleNextClick = async (e) => {
+        let memberId = this.state.memberId;
+
+        if (memberId === undefined) {
+            memberId = getRandomId();
+        }
+
+        try {
+            await this.memberDB.createMember(memberId, this.state.meeting_id, this.state.name, this.state.email, ' ');
             this.props.history.push('/viewmeeting?meetingId=' + this.state.meeting_id + '&userId=' + memberId);
         }
-        catch(e){
+        catch (e) {
             console.log("error");
         }
-        
-        
-        
     }
-
 }
 
 const mapStateToProps = (state, ownProps) => {
     return {
-  
+
     };
-  };
-  
-  const mapDispatchToProps = {
-  
-  };
-  
-  export default connect(
+};
+
+const mapDispatchToProps = {
+
+};
+
+export default connect(
     mapStateToProps,
     mapDispatchToProps
-  )(CreateNewUser);
-  
+)(CreateNewUser);

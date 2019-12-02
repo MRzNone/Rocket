@@ -11,15 +11,15 @@ class JoinMeeting extends Component {
         console.log(props);
 
         this.state = {
-            meeting_id:'',
+            meeting_id: '',
         }
 
         this.meetingDB = new Meeting();
     }
 
-    render(){
-        return(
-            <Dialog open="true"  className="box">
+    render() {
+        return (
+            <Dialog open className="box">
                 <DialogTitle>Join Meeting</DialogTitle>
                 <DialogContent>
                     <DialogContentText>Please enter the Meeting Id of the meeting you're trying to view</DialogContentText>
@@ -31,13 +31,13 @@ class JoinMeeting extends Component {
                         label="Meeting ID"
                         fullWidth
                         variant="outlined"
-                        value={this.state.meeting_id} 
+                        value={this.state.meeting_id}
                         onChange={this.handleTextFieldChange}
                     />
                 </DialogContent>
                 <DialogActions>
                     <Button color="secondary"
-                    href="/">
+                        href="/">
                         Back
                     </Button>
                     <Button autoFocus color="primary" onClick={this.handleNextClick}>
@@ -57,38 +57,38 @@ class JoinMeeting extends Component {
 
     handleNextClick = (e) => {
         var that = this;
-        if(this.state.meeting_id.length > 0){
-            this.meetingDB.fetchMeetingData(this.state.meeting_id).then(function(result){
-                if(result.status){
+        if (this.state.meeting_id.length > 0) {
+            this.meetingDB.fetchMeetingData(this.state.meeting_id).then(function (result) {
+                if (result.status) {
+                    alert("Cannot find meeting.");
                     console.log("Did Not Find Meeting");
                 }
-                else{
+                else {
                     console.log("Found Meeting!");
                     that.props.history.push('/meetinglogin?meetingId=' + that.state.meeting_id);
                 }
-            }, function(error){
+            }, function (error) {
                 console.log("Did Not Find Meeting");
             });
         }
-        
-        
+
+
     }
 }
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        
+
     };
-  };
-  
-  const mapDispatchToProps = dispatch => {
+};
+
+const mapDispatchToProps = dispatch => {
     return {
-        
+
     };
-  }
-  
-  export default connect(
+}
+
+export default connect(
     mapStateToProps,
     mapDispatchToProps
-  )(JoinMeeting);
-  
+)(JoinMeeting);

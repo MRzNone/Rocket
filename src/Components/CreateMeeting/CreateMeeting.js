@@ -24,7 +24,7 @@ class CreateMeeting extends Component {
     }
 
     createMeetingDB() {
-        const hostId = 'newH12312321ost'; // modify this line to get real userId
+        const hostId = getRandomId();
         const meetingId = getRandomId();
         const { earliestTime, latestTime, timeInterval, meetingName } = this.state;
 
@@ -43,8 +43,9 @@ class CreateMeeting extends Component {
             hostId,
             Math.floor((latestTime - earliestTime) * 60 / timeInterval)
         ).then(() => {
+
             this.props.history.push({
-                pathname: '/meetingresponse',
+                pathname: '/createnewuser',
                 search: '?meetingId=' + meetingId + "&userId=" + hostId,
             });
         });

@@ -55,6 +55,12 @@ export class ViewMeeting extends Component {
     const meetingID = params.meetingId;
     const userId = params.userId;
 
+    if (meetingID !== undefined && userId === undefined) {
+      console.log("HERE");
+      this.props.history.push('/meetinglogin?meetingId=' + meetingID);
+      return;
+    }
+
     if (meetingID === undefined || userId === undefined) {
       console.error("Invlid parameters");
       this.props.history.push("/");
@@ -75,7 +81,8 @@ export class ViewMeeting extends Component {
     this.setFillGrid = undefined;
   }
 
-  copyToClip(url) {
+  copyToClip() {
+    const url = window.location.origin + '/viewmeeting?meetingId=' + this.state.meetingID;
     navigator.clipboard.writeText(url);
   }
 
@@ -204,7 +211,7 @@ export class ViewMeeting extends Component {
             variant="outlined"
             color="primary"
             size="large"
-            onClick={() => this.copyToClip(window.location.href)}
+            onClick={() => this.copyToClip()}
           >
             Copy meeting link
             </Button>

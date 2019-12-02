@@ -7,11 +7,11 @@ import { Meeting, Member } from '../../EarthBase';
 
 class MeetingLogin extends Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
         const query_values = queryString.parse(this.props.location.search);
         console.log(query_values);
-        
+
         this.state = {
             email: '',
             meeting_id: query_values.meetingId,
@@ -21,9 +21,9 @@ class MeetingLogin extends Component {
         this.memberDB = new Member();
     }
 
-    render(){
-        return(
-            <Dialog open="true"  className="box">
+    render() {
+        return (
+            <Dialog open className="box">
                 <DialogTitle>Input Meeting Participant Information</DialogTitle>
                 <DialogContent>
                     <DialogContentText>Please enter the email used to join the meeting. If this is your first time joining, please click on the Create a New User button</DialogContentText>
@@ -39,10 +39,10 @@ class MeetingLogin extends Component {
                         onChange={this.handleTextFieldChange}
                     />
                 </DialogContent>
-                
+
                 <DialogActions>
                     <Button color="secondary"
-                    href="/JoinMeeting">
+                        href="/JoinMeeting">
                         Back
                     </Button>
                     <Button color="primary" href={"/CreateNewUser?meetingId=" + this.state.meeting_id}>
@@ -65,22 +65,23 @@ class MeetingLogin extends Component {
 
     handleNextClick = (e) => {
         var that = this;
-        console.log(this.state.email);
 
-        this.meetingDB.fetchMeetingData(this.state.meeting_id).then(function(result){
+        this.meetingDB.fetchMeetingData(this.state.meeting_id).then(function (result) {
             let memberArray = Object.entries(result.members);
-            let found = false;
-            console.log(memberArray);
-            for(var i = 0; i < memberArray.length; i++){
-                if(memberArray[i][1].email == that.state.email){
+            for (var i = 0; i < memberArray.length; i++) {
+                if (memberArray[i][1].email === that.state.email) {
                     console.log("found email");
                     that.props.history.push('/viewmeeting?meetingId=' + that.state.meeting_id + '&userId=' + memberArray[i][0]);
+                    return;
                 }
-            }            
-        }, function(error){
+            }
+
+            // not found
+            alert("Member does not exist. Please create a member or try a different email.");
+        }, function (error) {
 
         });
-        
+
     }
 
 
@@ -91,7 +92,7 @@ const mapStateToProps = (state, ownProps) => {
 
     };
 };
-  
+
 const mapDispatchToProps = dispatch => {
     return {
 
@@ -101,5 +102,4 @@ const mapDispatchToProps = dispatch => {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-  )(MeetingLogin);
-  
+)(MeetingLogin);
