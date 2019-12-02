@@ -13,9 +13,16 @@ import TextField from "@material-ui/core/TextField/TextField";
 import DialogTitle from "@material-ui/core/DialogTitle/DialogTitle";
 import Dialog from "@material-ui/core/Dialog/Dialog";
 import DialogContent from "@material-ui/core/DialogContent/DialogContent";
-
+import { createMuiTheme, makeStyles, ThemeProvider } from '@material-ui/core/styles';
+import Typography from "@material-ui/core/Typography/Typography";
 
 /* global gapi */
+
+const theme = createMuiTheme({
+    typography: {
+        fontSize: 20,
+    },
+});
 
 export class ImportCal extends Component {
     constructor(props) {
@@ -596,15 +603,16 @@ export class ImportCal extends Component {
             return <div>Loading Page ...</div>
         } else {
             return (
-                <div className="popup_wrapper">
-                    <Dialog id="import_schedule" onClose={this.close} open={true}>
+                <div>
+                    <ThemeProvider theme={theme}>
+                    <Dialog id="import_schedule" onClose={this.close} open={true} theme={theme}>
                         <a id="import_close" onClick={this.close} title={"Close"}>&#10006;</a>
                         <DialogTitle id="import_header" onClose={this.close}>
                             Import Schedule
                         </DialogTitle>
                         <DialogContent dividers>
                             <form onSubmit={this.handleImport}>
-                                <p>Select Import Method: </p>
+                            <Typography>Select Import Method:</Typography>
                                 <fieldset className="import_file">
                                     <label htmlFor="uploadFile">
                                         <Button
@@ -615,7 +623,7 @@ export class ImportCal extends Component {
                                             variant="outlined"
                                             color="primary"
                                             size="large"
-                                        >Upload File &nbsp;(.ics)
+                                        >Upload File (ics)
                                         </Button>
                                     </label>
                                     <input type="file" id="uploadFile" accept=".ics" onChange={(e) => {this.selectUpload(e)}}/>
@@ -637,8 +645,8 @@ export class ImportCal extends Component {
                                         cookiePolicy={'single_host_origin'}/>
                                 </fieldset>
 
+                                <Typography>Import Options:</Typography>
                                 <fieldset className="import_option">
-                                    <legend>Import Options</legend>
                                     <FormControlLabel
                                         control={
                                             <Checkbox
@@ -647,9 +655,11 @@ export class ImportCal extends Component {
                                                 value={this.state.offset}
                                                 color="primary"
                                             />}
-                                        label=" Add offset time (min): "
+                                        label="Add offset time (min): "
                                     />
-                                    <output onClick={() => this.toggleHidden("time_offset")}>{this.state.offset}</output>
+                                    <Typography style={{display: 'inline-block'}}>
+                                        <output onClick={() => this.toggleHidden("time_offset")}>{this.state.offset}</output>
+                                    </Typography>
                                     <br/>
 
                                     <div id="time_offset" hidden>
@@ -680,8 +690,8 @@ export class ImportCal extends Component {
                                         label="Include all day events "
                                     />
                                     <br />
-
                                 </fieldset>
+
                                 <fieldset id="import_output">
                                     <output id="out">Note: This will overwrite your current selections</output>
                                     <div id="import_buttons">
@@ -689,8 +699,18 @@ export class ImportCal extends Component {
                                     </div>
                                 </fieldset>
                             </form>
+
+                            <GoogleLogout
+                                render={renderProps => (
+                                    <button id="revokebtn" onClick={renderProps.onClick}
+                                            disabled={renderProps.disabled}>Revoke</button>)}
+                                clientId="658977310896-knrl3gka66fldh83dao2rhgbblmd4un9.apps.googleusercontent.com"
+                                buttonText="Logout"
+                                onLogoutSuccess={this.logoutSuccess}>
+                            </GoogleLogout>
                         </DialogContent>
                     </Dialog>
+                    </ThemeProvider>
                 </div>
             )}};
 }
