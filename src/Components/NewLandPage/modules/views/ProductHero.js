@@ -56,7 +56,7 @@ function ProductHero(props) {
           size="large"
           className={classes.button}
           component="a"
-          href="../../../MeetingResponse/"
+          href="../../../createmeeting"
         >
           Create Meeting
         </Button>

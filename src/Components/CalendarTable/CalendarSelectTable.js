@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { updateSelectCal } from '../../action';
 
-const CELL_WIDTH = 30;
-const CELL_HEIGHT = 15;
+const CELL_WIDTH = 55;
+const CELL_HEIGHT = 25;
 
 class CalendarSelectTable extends Component {
   /**
@@ -16,6 +16,7 @@ class CalendarSelectTable extends Component {
      *                      evenly layout horizontally.
      * initData: String     The string data to init.
      * tableObservSetter: function program will call this function to pass in most-up-toDate string
+     * setFillGrid: function force set fillGrid
      */
   constructor(props) {
     super(props);
@@ -28,6 +29,15 @@ class CalendarSelectTable extends Component {
     }
     else {
       fillGrid = initData;
+    }
+
+    if (this.props.setFillGrid !== undefined) {
+      this.props.setFillGrid((data) => {
+
+        this.setState({
+          fillGrid: data,
+        })
+      })
     }
 
     this.state = {
@@ -212,13 +222,10 @@ class CalendarSelectTable extends Component {
   }
 
   render() {
-
     // update data through setter
     if (!this.state.startDrag) {
       this.updateTableDateToOther();
     }
-
-
 
     return (
       <div style={{
@@ -227,7 +234,7 @@ class CalendarSelectTable extends Component {
         WebkitUserSelect: 'none',
       }}>
         <div style={{
-          paddingTop: CELL_HEIGHT + 1,
+          paddingTop: CELL_HEIGHT * 0.2,
         }}>
           {this.renderRowTitle()}
         </div>

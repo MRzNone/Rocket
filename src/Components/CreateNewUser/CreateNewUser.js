@@ -3,18 +3,19 @@ import { Dialog, DialogContentText, DialogTitle, DialogContent, DialogActions, T
 import { connect } from 'react-redux';
 import Button from '../NewLandPage/modules/components/Button';
 import queryString from 'query-string'
-import { Meeting, Member } from '../../EarthBase';
+import { Meeting, Member, getRandomId } from '../../EarthBase';
 
-class MeetingLogin extends Component {
+class CreateNewUser extends Component {
 
     constructor(props) {
         super(props);
         const query_values = queryString.parse(this.props.location.search);
-        console.log(query_values);
 
         this.state = {
+            name: '',
             email: '',
             meeting_id: query_values.meetingId,
+            memberId: query_values.userId, // undefined vs string
         }
 
         this.meetingDB = new Meeting();
@@ -26,27 +27,33 @@ class MeetingLogin extends Component {
             <Dialog open className="box">
                 <DialogTitle>Input Meeting Participant Information</DialogTitle>
                 <DialogContent>
-                    <DialogContentText>Please enter the email used to join the meeting. If this is your first time joining, please click on the Create a New User button</DialogContentText>
+                    <DialogContentText>Please enter your name and email.</DialogContentText>
                     <TextField
                         required
                         autoFocus
                         margin="dense"
-                        id="meeting-id"
+                        id="name-id"
+                        label="Name"
+                        fullWidth
+                        variant="outlined"
+                        onChange={this.handleNameFieldChange}
+                    />
+                    <TextField
+                        required
+                        margin="dense"
+                        id="email-id"
                         label="Email"
                         type="email"
                         fullWidth
                         variant="outlined"
-                        onChange={this.handleTextFieldChange}
+                        onChange={this.handleEmailFieldChange}
                     />
                 </DialogContent>
 
                 <DialogActions>
                     <Button color="secondary"
-                        href="/JoinMeeting">
+                        href="/MeetingLogin">
                         Back
-                    </Button>
-                    <Button color="primary" href={"/CreateNewUser?meetingId=" + this.state.meeting_id}>
-                        Create New User
                     </Button>
                     <Button color="primary" onClick={this.handleNextClick} autoFocus>
                         {/* This button should redirect to meeting page */}
@@ -57,34 +64,33 @@ class MeetingLogin extends Component {
         );
     }
 
-    handleTextFieldChange = (e) => {
+    handleNameFieldChange = (e) => {
+        this.setState({
+            name: e.target.value
+        });
+    }
+
+    handleEmailFieldChange = (e) => {
         this.setState({
             email: e.target.value
         });
     }
 
-    handleNextClick = (e) => {
-        var that = this;
+    handleNextClick = async (e) => {
+        let memberId = this.state.memberId;
 
-        this.meetingDB.fetchMeetingData(this.state.meeting_id).then(function (result) {
-            let memberArray = Object.entries(result.members);
-            for (var i = 0; i < memberArray.length; i++) {
-                if (memberArray[i][1].email === that.state.email) {
-                    console.log("found email");
-                    that.props.history.push('/viewmeeting?meetingId=' + that.state.meeting_id + '&userId=' + memberArray[i][0]);
-                    return;
-                }
-            }
+        if (memberId === undefined) {
+            memberId = getRandomId();
+        }
 
-            // not found
-            alert("Member does not exist. Please create a member or try a different email.");
-        }, function (error) {
-
-        });
-
+        try {
+            await this.memberDB.createMember(memberId, this.state.meeting_id, this.state.name, this.state.email, ' ');
+            this.props.history.push('/viewmeeting?meetingId=' + this.state.meeting_id + '&userId=' + memberId);
+        }
+        catch (e) {
+            console.log("error");
+        }
     }
-
-
 }
 
 const mapStateToProps = (state, ownProps) => {
@@ -93,13 +99,11 @@ const mapStateToProps = (state, ownProps) => {
     };
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
+const mapDispatchToProps = {
 
-    };
 };
 
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(MeetingLogin);
+)(CreateNewUser);
