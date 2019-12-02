@@ -257,6 +257,8 @@ export class ViewMeeting extends Component {
       timeWindow, members } = this.props.meeting;
 
     if (!(this.state.userId in members)) {
+      console.log(members);
+      console.log(this.state.userId);
       console.error("Invalid user");
       this.props.history.push("/");
       return;
