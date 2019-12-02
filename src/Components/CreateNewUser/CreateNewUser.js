@@ -78,32 +78,37 @@ class CreateNewUser extends Component {
     }
 
     handleNextClick = (e) => {
-        if(this.state.user_id == null || this.state.user_id == undefined){
-            let memberId = getRandomId();
-            var that = this;
-            try{
-                this.memberDB.createMember(memberId, this.state.meeting_id, this.state.name, this.state.email, ' ').then(
-                    function(result){
-                        that.props.history.push('/viewmeeting?meetingId=' + that.state.meeting_id + '&userId=' + memberId);
-                    },
-                    function(error){
-                        console.log("error");
-                    }
-                );
-                
+        if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.state.email)){
+            if(this.state.user_id == null || this.state.user_id == undefined){
+                let memberId = getRandomId();
+                var that = this;
+                try{
+                    this.memberDB.createMember(memberId, this.state.meeting_id, this.state.name, this.state.email, ' ').then(
+                        function(result){
+                            that.props.history.push('/viewmeeting?meetingId=' + that.state.meeting_id + '&userId=' + memberId);
+                        },
+                        function(error){
+                            console.log("error");
+                        }
+                    );
+                    
+                }
+                catch(e){
+                    console.log("error");
+                }
             }
-            catch(e){
-                console.log("error");
+            else{
+                try{
+                    this.memberDB.createMember(this.state.user_id, this.state.meeting_id, this.state.name, this.state.email, ' ');
+                    this.props.history.push('/viewmeeting?meetingId=' + this.state.meeting_id + '&userId=' + this.state.user_id);
+                }
+                catch(e){
+                    console.log("error");
+                }
             }
         }
         else{
-            try{
-                this.memberDB.createMember(this.state.user_id, this.state.meeting_id, this.state.name, this.state.email, ' ');
-                this.props.history.push('/viewmeeting?meetingId=' + this.state.meeting_id + '&userId=' + this.state.user_id);
-            }
-            catch(e){
-                console.log("error");
-            }
+            alert("Not a valid email address!");
         }
         
         

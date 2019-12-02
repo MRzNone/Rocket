@@ -64,25 +64,30 @@ class MeetingLogin extends Component {
     }
 
     handleNextClick = (e) => {
-        var that = this;
+        if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.state.email)){
+            var that = this;
 
-        this.meetingDB.fetchMeetingData(this.state.meeting_id).then(function (result) {
-            let memberArray = Object.entries(result.members);
-            for (var i = 0; i < memberArray.length; i++) {
-                if (memberArray[i][1].email === that.state.email) {
-                    console.log("found email");
-                    that.props.history.push('/viewmeeting?meetingId=' + that.state.meeting_id + '&userId=' + memberArray[i][0]);
-                    return;
+            this.meetingDB.fetchMeetingData(this.state.meeting_id).then(function (result) {
+                let memberArray = Object.entries(result.members);
+                for (var i = 0; i < memberArray.length; i++) {
+                    if (memberArray[i][1].email === that.state.email) {
+                        console.log("found email");
+                        that.props.history.push('/viewmeeting?meetingId=' + that.state.meeting_id + '&userId=' + memberArray[i][0]);
+                        return;
+                    }
                 }
-            }
 
-            // not found
-            alert("Member does not exist. Please create a member or try a different email.");
-        }, function (error) {
+                // not found
+                alert("Member does not exist. Please create a member or try a different email.");
+            }, function (error) {
 
-        });
+            });
+        }
+        else{
+            alert("Not a valid email!");
+        }
 
-    }
+        }
 
 
 }
