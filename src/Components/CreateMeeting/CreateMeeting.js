@@ -53,10 +53,10 @@ class CreateMeeting extends Component {
 
     render() {
         return (
-            <div>
+            <div style={{padding:'35px'}}>
                 <div className="forms">
                     <form id="inputs">
-                        <div id="times">
+                        <div id="times" style={{margin:'auto'}}>
                             <input
                                 type="text"
                                 id="titleName"
