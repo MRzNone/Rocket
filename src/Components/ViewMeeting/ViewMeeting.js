@@ -11,6 +11,7 @@ import { Member } from '../../EarthBase/Member';
 import Popup from "reactjs-popup";
 import ImportCal from "../ImportCal/ImportCal";
 
+
 export class ViewMeeting extends Component {
   constructor(props) {
     super(props);
@@ -95,6 +96,7 @@ export class ViewMeeting extends Component {
         flexDirection: 'row',
         display: 'flex',
         justifyContent: 'space-between',
+        background: '#28282a',
         marginBottom: 50,
       }}>
         <div style={{
@@ -104,13 +106,18 @@ export class ViewMeeting extends Component {
         }}>
           <div style={{
             marginRight: 50,
+            marginLeft: 10,
             alignSelf: 'center',
+            color: 'white',
+            fontSize: 25
           }}>
             <h4>Meeting: {meeting.name}</h4>
           </div>
 
           <div style={{
             alignSelf: 'center',
+            color: 'white',
+            fontSize: 15
           }}>
             <h4>Id: {meetingID}</h4>
           </div>
@@ -121,17 +128,22 @@ export class ViewMeeting extends Component {
           justifyContent: 'flex-end',
           display: 'flex'
         }}>
+
           <Button
-            variant="outlined"
-            color="primary"
-            size="large"
-            style={{ marginRight: 70 }}
+            color="default"
+            style={{ marginRight: 70,
+            fontSize: 20,
+            color: '#ff3366'}}
             onClick={() => this.props.history.push("/")}
           >
             Back to Main
-            </Button>
+          </Button>
+
         </div>
+
+
       </div>
+      
     );
   }
 
@@ -143,46 +155,45 @@ export class ViewMeeting extends Component {
           flexDirection: 'row',
         }}
       >
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            flex: 0.4,
-          }}
-        >
-          <div style={{
-            flex: 0.4,
-          }}>
-            <Button
+        <div style={{
+          display: 'flex',
+          flexDirection: 'row',
+          flex: 0.9,
+          marginLeft: 80
+         
+        }}>
+         <Button
               variant="outlined"
-              color="primary"
               size="large"
+              style={{
+                backgroundColor: "#ff3366",
+                color:'white',
+                marginRight:10
+               
+              }}
             >
               Notes
               </Button>
-          </div>
+              <h4>Results:</h4>
 
+
+
+          </div>
           <div style={{
-            flex: 0.6,
-            alignSelf: 'center',
-          }}>
-            <h4>Results:</h4>
-          </div>
-        </div>
-
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            flex: 0.6,
-            justifyContent: 'space-between',
-          }}
-        >
-          <Popup modal trigger={
+            left: 0
+         
+        }}>>
+              <Popup modal trigger={
             <Button
               variant="outlined"
-              color="primary"
-              size="large">
+              size="large" 
+              style={{
+                backgroundColor: "#ff3366",
+                color:'white',
+                marginRight:10
+              }}
+
+              >
               Import Schedule
                 </Button>}>
             {close => (
@@ -198,19 +209,28 @@ export class ViewMeeting extends Component {
               />
             )}
           </Popup>
-
           <Button
             variant="outlined"
-            color="primary"
             size="large"
+            style={{
+              backgroundColor: "#ff3366",
+              color:'white',
+              marginRight:10
+            }}
           >
             Edit Meeting
             </Button>
 
           <Button
             variant="outlined"
-            color="primary"
-            size="large"
+              size="large"
+              style={{
+                backgroundColor: "#ff3366",
+                color:'white',
+                marginRight:10
+              }}
+
+
             onClick={() => this.copyToClip()}
           >
             Copy meeting link
@@ -369,6 +389,7 @@ export class ViewMeeting extends Component {
 
 
     return (
+      
       <div>
         {/* Header */}
         {this.renderHeader()}

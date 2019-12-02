@@ -28,9 +28,18 @@ class CreateMeeting extends Component {
         const meetingId = getRandomId();
         const { earliestTime, latestTime, timeInterval, meetingName } = this.state;
 
-
+        console.log(this.state);
+        
         if (latestTime < earliestTime) {
             alert("Latest time has to be after earliest time");
+            return;
+        }
+        if(this.selectedDates.length == 0){
+            alert("Please select a date");
+            return;
+        }
+        if(meetingName.length === 0 || !meetingName.trim() ){
+            alert("Please enter a meeting name");
             return;
         }
 

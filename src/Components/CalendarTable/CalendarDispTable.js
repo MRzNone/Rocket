@@ -8,9 +8,9 @@ const CELL_HEIGHT = 25;
 const COLOR_BUF_RATIO = 0.25;
 const COLOR_REM_RATIO = 1 - COLOR_BUF_RATIO;
 const TARGET_COLOR = {
-  'r': 30,
-  'g': 153,
-  'b': 25,
+  'r': 70,
+  'g': 130,
+  'b': 180,
 };
 
 class CalendarDispTable extends Component {
