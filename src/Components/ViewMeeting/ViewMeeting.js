@@ -136,7 +136,7 @@ export class ViewMeeting extends Component {
   }
 
   renderToolBar() {
-      const { meetingID } = this.state;
+      const { meetingID, userId } = this.state;
     return (
       <div
         style={{
@@ -206,7 +206,7 @@ export class ViewMeeting extends Component {
             size="large"
             onClick={() => this.props.history.push({
               pathname: '/editMeeting',
-              search: '?meetingId=' + meetingID,
+              search: '?meetingId=' + meetingID + "&userId=" + userId,
             })}
           >
             Edit Meeting

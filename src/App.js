@@ -59,23 +59,6 @@ function App() {
     // init firebase
     firebase.initializeApp(firebaseConfig);
 
-<<<<<<< HEAD
-    return (
-        <Provider store={createStore(reducers, applyMiddleware(thunk))}>
-          <Router>
-            <Switch>
-              <Route exact path="/" component={LandPage} />
-              <Route path="/meeting" component={Meeting} />
-              <Route path="/viewMeeting" component={ViewMeeting} />
-              <Route path="/createMeeting" component={CreateMeeting} />
-              <Route path="/editMeeting" component={EditMeetingPage} />
-              <Route path="/sendResult" component={SendResult} />
-              <Route component={LostPage} />
-            </Switch>
-          </Router>
-        </Provider>
-    );
-=======
   return (
     // <MuiThemeProvider theme={theme}>
     <Provider store={createStore(reducers, applyMiddleware(thunk))}>
@@ -89,13 +72,14 @@ function App() {
           <Route path="/createnewuser" component={CreateNewUser} />
           <Route path="/viewmeeting" component={ViewMeeting} />
           <Route path="/createmeeting" component={CreateMeeting} />
+            <Route path="/editMeeting" component={EditMeetingPage} />
+            <Route path="/sendResult" component={SendResult} />
           <Route component={LostPage} />
         </Switch>
       </Router>
     </Provider>
     // </MuiThemeProvider>
   );
->>>>>>> faa49c7587090482d7cb884a251902f3645e860e
 }
 
 export default App;
