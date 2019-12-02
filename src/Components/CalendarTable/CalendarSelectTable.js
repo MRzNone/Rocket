@@ -66,7 +66,7 @@ class CalendarSelectTable extends Component {
       // render the row
       const rowCells = row.map((ifFilled, j) => {
         let cellStyle = Object.assign({}, Style.baseCellStyle);
-        cellStyle['backgroundColor'] = ifFilled === 1 ? "rgb(30, 153,25)" : "rgba(0, 0, 0, 0)";
+        cellStyle['backgroundColor'] = ifFilled === 1 ? "rgb(70, 130,180)" : "rgba(0, 0, 0, 0)";
 
         // deal last row
         if (i + 1 === rowNum) {
