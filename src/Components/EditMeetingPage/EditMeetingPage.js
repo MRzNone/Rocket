@@ -28,21 +28,21 @@ class EditMeetingPage extends Component {
                         </Grid>
                         <Grid item xs={8}>
                             <Selects/>
-                            <EditNotes/>
                             <Button variant="outlined" color="default" onClick={() => this.props.history.push({
                                 pathname: '/sendResult',
                                 search: '?meetingId=' + meetingID + "&userId=" + userID,
-                            })}
-                                    style={{margin:'5%'}}>
+                            })}>
                                 Share Meeting Results
                             </Button>
 
-                            <Button variant="outlined" color="default" style={{margin:'5%'}} onClick={() => this.props.history.push({
+                            <Button variant="outlined" color="default" style={{margin:'2%'}} onClick={() => this.props.history.push({
                                 pathname: '/viewMeeting',
                                 search: '?meetingId=' + meetingID + "&userId=" + userID,
                             })}
                             > Back to Meeting
                             </Button>
+                            <EditNotes/>
+
                         </Grid>
                     </Grid>
                 </div>

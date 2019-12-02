@@ -72,12 +72,11 @@ export class EditNotes extends Component{
                         input onChange={(e) => this.setState({ notes: e.target.value })}
                     />
                 </form>
-                <div style={{margin: -10, marginTop:0}}>
+
                 <Button variant="outlined" color="default" onClick={this.updateNotes.bind(this)} style={{margin:'5%'}}>
                     Save Changes
                 </Button>
 
-                </div>
             </div>
         );
     }
