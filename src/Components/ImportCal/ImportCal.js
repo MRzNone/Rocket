@@ -704,7 +704,7 @@ export class ImportCal extends Component {
                                 render={renderProps => (
                                     <button id="revokebtn" onClick={renderProps.onClick}
                                             disabled={renderProps.disabled}>Revoke</button>)}
-                                clientId="658977310896-knrl3gka66fldh83dao2rhgbblmd4un9.apps.googleusercontent.com"
+                                clientId="926207137800-ogujdec6vo9oo1fun7mreedha60l7ude.apps.googleusercontent.com"
                                 buttonText="Logout"
                                 onLogoutSuccess={this.logoutSuccess}>
                             </GoogleLogout>
