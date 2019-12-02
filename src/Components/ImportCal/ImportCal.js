@@ -18,11 +18,13 @@ import Typography from "@material-ui/core/Typography/Typography";
 
 /* global gapi */
 
+
 const theme = createMuiTheme({
     typography: {
-        fontSize: 20,
+        fontSize: 16,
     },
 });
+
 
 export class ImportCal extends Component {
     constructor(props) {
@@ -99,10 +101,12 @@ export class ImportCal extends Component {
                 this.close();
             }
 
-            let td = new Date(dates.slice(-1)[0]);
-            td.setDate(td.getDate() + 1);
-            const lastDate =td.toISOString().split('.')[0]+"Z";
-            const firstDate = new Date(dates[0]).toISOString().split('.')[0]+"Z";
+            let latest=new Date(Math.max.apply(null, dates));
+            let earliest=new Date(Math.min.apply(null, dates));
+
+            latest.setDate(latest.getDate() + 1);
+            const lastDate =latest.toISOString().split('.')[0]+"Z";
+            const firstDate = earliest.toISOString().split('.')[0]+"Z";
             const minTime = new Date(timeWindow[0] * 60000).toISOString().substr(11, 5);
             const maxTime = new Date(timeWindow[1] * 60000).toISOString().substr(11, 5);
 
@@ -325,6 +329,8 @@ export class ImportCal extends Component {
                 const ical = require('ical.js');
                 let data_parsed = ical.parse(content);
                 let start, end, startMoment, endMoment;
+                let earliest = new Date(this.state.firstDate).getTime();    // Inclusive
+                let latest = new Date(this.state.lastDate).getTime();       // Exclusive
                 let eventList = [];
 
                 var comp = new ical.Component(data_parsed);
@@ -345,12 +351,18 @@ export class ImportCal extends Component {
                         let iter = recur.iterator(dtstart);
                         let next = iter.next();
                         let recLimit = 35;                      // Max 1 month
-                        let n = 0;
-                        while (next && n++ < recLimit) {
-                            eventList.push([
-                                event.getOccurrenceDetails(next).startDate.toJSDate(),
-                                event.getOccurrenceDetails(next).endDate.toJSDate()]);
+                        let n = 1;
+                        while (next && n < recLimit) {
+                            let rstart = event.getOccurrenceDetails(next).startDate.toJSDate();
+                            let estart = event.getOccurrenceDetails(next).endDate.toJSDate();
                             next = iter.next();
+                            if (rstart.getTime() < earliest) {
+                                continue;
+                            } else if (rstart.getTime() >= latest) {
+                                break;
+                            }
+                            eventList.push([ rstart, estart]);
+                            ++n;
                         }
                     }
                 });
@@ -579,7 +591,6 @@ export class ImportCal extends Component {
 
     // Helper function used to reset day selection
     resetDays = () => {
-        console.log(this.state.days);
         let children = document.getElementById("import_days").children;
         for (let i = 0; i < children.length; ++i) {
             if (children[i].type === "checkbox")
@@ -592,7 +603,6 @@ export class ImportCal extends Component {
         let arr = [...this.state.days];
         arr[index] = arr[index] ? 0 : 1;
         this.setState({days : [...arr]});
-        console.log(this.state.days);
     }
 
     /*************************************/
