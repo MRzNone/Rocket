@@ -160,18 +160,22 @@ class CreateMeeting extends Component {
                     </form>
                     <footer>
                         <div className="buttons">
-                            <Button
-                                id="next"
-                                onClick={() => this.createMeetingDB()}
-                            >
-                                Next &raquo;
-                            </Button>
-                            <Button
-                                id="back"
-                                onClick={() => this.props.history.push("/")}
-                            >
-                                &laquo; Back
-                            </Button>
+                            <div className="nextButton">
+                                <Button
+                                    id="next"
+                                    onClick={() => this.createMeetingDB()}
+                                >
+                                    Next &raquo;
+                                </Button>
+                            </div>
+                            <div className="backButton">
+                                <Button
+                                    id="back"
+                                    onClick={() => this.props.history.push("/")}
+                                >
+                                    &laquo; Back
+                                </Button>
+                            </div>
                         </div>
                     </footer>
                 </div>

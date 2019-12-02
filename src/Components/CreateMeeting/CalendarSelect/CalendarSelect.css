@@ -5,7 +5,7 @@
     align-items: center;
 }
 html {
-    /* font-size: 62.5%; */
+    font-size: 62.5%;
 }
 body {
     background: #EFEFEF;
@@ -17,9 +17,9 @@ body {
 .calendar {
     display: block;
     background: #FFFFFF;
-    height: 560px;
+    /* height: 560px; */
     border: solid 1px #CCCCCC;
-    /*margin: 10px auto;*/
+    margin: 10px auto;
     font-size: 1.3rem;
     text-align: center;
 }
@@ -42,7 +42,7 @@ body {
     align-items: center;
     height: 40px;
     /*background: #2875C7;*/
-    background: dodgerblue;
+    background: #28282a;
 }
 .calendar header .month-label {
     flex: 1;
@@ -59,7 +59,7 @@ body {
     align-items: center;
 }
 .calendar header .arrow:hover {
-    background: #1f5c9d;
+    /* background: #1f5c9d; */
 }
 .calendar .week {
     border-top: solid 1px #CCCCCC;
@@ -68,7 +68,7 @@ body {
     border-top: none;
 }
 .calendar .day-names {
-    color: #2875C7;
+    color: #28282a;
     font-weight: bold;
     cursor: default;
     font-size: 1.2rem;
@@ -103,10 +103,68 @@ body {
 }
 .calendar .day.selected {
     /*background: #2875C7;*/
-    background: dodgerblue;
+    background: #2f63af;
     color: #FFFFFF;
 }
 
 .row.week span{
     height: 95px;
 }
+
+
+/* .arrow.fa.fa-angle-left {
+    position: absolute;
+    border: solid transparent;
+    border-width: 0 0 35px 35px;
+    transition: -24s;
+    padding: 10px;
+    box-shadow: 1px -1px 0 1px plum inset;
+    transform: rotate(45deg);
+    }    */
+    
+    /* position: absolute; */
+    /* position: relative; */
+    /* align-content: flex-start;
+    border: solid transparent; */
+
+    /* border-width: 0 0 35px 35px; */
+    /* transition: -24s; */
+    /* width: 5px; */
+    /* height: 1px; */
+    /* float: left; */
+    /* padding: 10px; */
+    /* left: 0; */
+
+    /* box-shadow: 1px -1px 0 1px plum inset;
+    transform: rotate(45deg); */
+
+
+
+
+/* .arrow.fa.fa-angle-left:hover {
+    box-shadow: 2px -2px 0 2px lavender inset;
+}  */
+
+.arrow.fa.fa-angle-right {
+    
+    position: absolute;
+    border: solid transparent;
+    border-width: 0 0 35px 35px;
+    transition: -24s;
+    width: 1px;
+    height: 1px;
+    float:right;
+    /* float: left; */
+    padding: 10px;
+    right: 0; 
+
+    box-shadow: 1px -1px 0 1px white inset;
+    /* transform: rotate(45deg); */
+    transform: rotate(225deg);
+
+
+}
+
+/* .arrow.fa.fa-angle-right:hover {
+    box-shadow: 2px -2px 0 2px lavender inset;
+}  */
