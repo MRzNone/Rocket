@@ -30,6 +30,7 @@ export class RemoveMembers extends Component {
             members: [],
             userID: undefined
         };
+
     };
 
     fetchData() {       // NOTE: Modified by ImportCal.js
@@ -45,8 +46,19 @@ export class RemoveMembers extends Component {
 
         this.meetingDB.fetchMeetingData(meetingID).then(data => {
 
-            const members = data.members;
             const hostID = data.hostId;
+
+            const mem = Object.entries(data.members);
+            let members = [];
+            for (const [id, value] of mem) {
+                const fields = Object.entries(value);
+                let newMem = [id]
+                for (const [key, val] of fields) {
+                    newMem.push([key, val]);
+                }
+                members.push(newMem);
+
+            }
 
             this.setState({
                 meetingID: meetingID,
@@ -54,6 +66,8 @@ export class RemoveMembers extends Component {
                 userID: hostID
             });
         });
+
+
     }
 
     componentDidMount() {
@@ -66,31 +80,44 @@ export class RemoveMembers extends Component {
     }
 
     handleDelete (chipToDelete) {
-        let memArray = this.state.members.filter(chip => chip.key !== chipToDelete.key);
+        console.log(chipToDelete)
+        let memArray = this.state.members.filter(mem => mem[0] !== chipToDelete.target.value);
         this.setState({members: memArray});
+        this.removeMembers(chipToDelete);
     }
 
     renderClips() {
-        const {data} = this.state.members;
-        if (data === undefined) return (<div />)
-        else {data.map(d => {
-            return (
-                <>
-                    <Chip
-                        key={d.id}
-                        label={d.name}
-                        onDelete={this.handleDelete.bind(d)}
-                        style={{margin: 5}}
-                    />
+        const data = this.state.members;
+        Object.keys(data).forEach(e => console.log(e));
+        Object.values(data).forEach(e => console.log(Object.values(e)));
+
+
+
+
+        if (data === []) return (<div/>)
+
+        console.log(data)
+        return (
+            <>
+                {data.map(d => {
+                    return (
+                        <Chip
+                            key={d[0]}
+                            label={d[2][1]}
+                            onDelete={this.handleDelete.bind(d[0])}
+                        />
+
+                    );
+                })}
                 </>
-            );
-        })}
+        );
     }
+
 
     render() {
 
         return (
-            <>
+            <div>
                 <Paper style={{
                     display: 'flex',
                     justifyContent: 'center',
@@ -99,7 +126,7 @@ export class RemoveMembers extends Component {
                 }}>
                     {this.renderClips()}
                 </Paper>
-            </>
+            </div>
         );
     }
 }

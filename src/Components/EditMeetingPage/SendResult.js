@@ -38,10 +38,21 @@ export class SendResult extends Component{
         this.meetingDB.fetchMeetingData(meetingID).then(data => {
 
             const hostID = data.hostId;
-            const members = data.members;
             const notes = data.notes;
             const time = data.finalTime;
             const name = data.name;
+
+            const mem = Object.entries(data.members);
+            let members = [];
+            for (const [id, value] of mem) {
+                const fields = Object.entries(value);
+                let newMem = [id]
+                for (const [key, val] of fields) {
+                    newMem.push([key, val]);
+                }
+                members.push(newMem);
+
+            }
 
             this.setState({
                 meetingID: meetingID,
@@ -65,7 +76,7 @@ export class SendResult extends Component{
             to_name: name,
             meeting_time: this.state.time,
             message_note: this.state.notes,
-        }
+        };
 
         emailjs.send('rocket', 'rocket', templateParams, 'user_IenZPlJja0a5wyeaWq2WJ')
             .then((response) => {
@@ -78,10 +89,13 @@ export class SendResult extends Component{
     render() {
         const params = new URLSearchParams(window.location.search);
         const meetingID = params.get("meetingId");
+        const members = this.state.members;
 
         return (
             <>
-                {this.send('ailsafan@hotmail.com', 'Ailsa')}
+                {members.map(e => {
+                    this.send(e[1][1], e[2][1])
+                })}
                 <Button variant="outlined" color="default" style={{margin:'5%'}} onClick={() => this.props.history.push({
                     pathname: '/editMeeting',
                     search: '?meetingId=' + meetingID,
@@ -91,9 +105,6 @@ export class SendResult extends Component{
         );
     }
 }
-
-
-
 
 
 const mapStateToProps = state => {

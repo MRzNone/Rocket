@@ -53,7 +53,7 @@ export class EditNotes extends Component{
 
     render() {
         return (
-            <>
+            <div>
                 <form noValidate autoComplete="off">
                     <TextField
                         id="outlined-multiline-static"
@@ -71,7 +71,7 @@ export class EditNotes extends Component{
                 <Button variant="outlined" color="default" onClick={this.updateNotes.bind(this)} style={{margin:'5%'}}>
                     Save Changes
                 </Button>
-            </>
+            </div>
         );
     }
 }
