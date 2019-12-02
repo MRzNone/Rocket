@@ -101,9 +101,12 @@
 }
 
 #revokebtn {
+    position: absolute;
+    bottom: 0;
+    left: 0;
     border: none;
     text-decoration: underline;
-    font-size: xx-small;
+    padding: 10px;
     background-color: transparent;
     cursor: pointer;
     color: white;
