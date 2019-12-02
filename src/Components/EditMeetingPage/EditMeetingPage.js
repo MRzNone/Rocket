@@ -4,12 +4,9 @@ import RemoveMembers from './RemoveMembers';
 import EditNotes from './EditNotes';
 import Selects from './Selects'
 import Grid from '@material-ui/core/Grid';
-import Button from "@material-ui/core/Button";
 import Divider from '@material-ui/core/Divider';
 import 'date-fns';
-import {Meeting, Member} from "../../EarthBase";
-
-import SendResult from "./SendResult";
+import Button from "@material-ui/core/Button";
 
 class EditMeetingPage extends Component {
 
@@ -19,7 +16,7 @@ class EditMeetingPage extends Component {
         const userID = params.get("userId");
 
         return (
-            <>
+            <div>
                 <div style={{
                     marginTop: '15vh',
                     marginLeft: '10vh',
@@ -32,36 +29,33 @@ class EditMeetingPage extends Component {
                         <Grid item xs={8}>
                             <Selects/>
                             <EditNotes/>
+                            <Button variant="outlined" color="default" onClick={() => this.props.history.push({
+                                pathname: '/sendResult',
+                                search: '?meetingId=' + meetingID + "&userId=" + userID,
+                            })}
+                                    style={{margin:'5%'}}>
+                                Share Meeting Results
+                            </Button>
+
+                            <Button variant="outlined" color="default" style={{margin:'5%'}} onClick={() => this.props.history.push({
+                                pathname: '/viewMeeting',
+                                search: '?meetingId=' + meetingID + "&userId=" + userID,
+                            })}
+                            > Back to Meeting
+                            </Button>
                         </Grid>
                     </Grid>
-                    <div >
-
-
-                    <Button variant="outlined" color="default" onClick={() => this.props.history.push({
-                        pathname: '/sendResult',
-                        search: '?meetingId=' + meetingID + "&userId=" + userID,
-                    })}
-                            style={{margin:'5%'}}>
-                        Share Meeting Results
-                    </Button>
-
-                    <Button variant="outlined" color="default" style={{margin:'5%'}} onClick={() => this.props.history.push({
-                        pathname: '/viewMeeting',
-                        search: '?meetingId=' + meetingID + "&userId=" + userID,
-                    })}
-                    > Back to Meeting </Button>
-                    </div>
                 </div>
-            </>
+            </div>
         );
     }
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = state => {
     return {
-
+        meeting: state.meeting,
     };
-};
+}
 
 const mapDispatchToProps = {
 

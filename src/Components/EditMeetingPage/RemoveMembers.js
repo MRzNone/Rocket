@@ -66,8 +66,6 @@ export class RemoveMembers extends Component {
             members.map(mem => {
                 checkBox[mem[0]]= false;
             })
-            console.log(checkBox)
-            console.log(members)
 
             this.setState({
                 meetingID: meetingID,
@@ -105,7 +103,6 @@ export class RemoveMembers extends Component {
 
     renderClips() {
         const members = this.state.members;
-        console.log(this.state.checkBox);
         if (members === []) return (<div/>)
 
         return (
@@ -117,7 +114,7 @@ export class RemoveMembers extends Component {
                         paddingTop: '2vh'
                     }}>
                         <FormLabel component="legend" style={{
-                            textAlign: 'right',
+                            textAlign: 'center',
                             fontSize: 25,
                         }}>Members</FormLabel>
 

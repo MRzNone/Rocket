@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import {Meeting, Member} from "../../EarthBase";
 import TextField from '@material-ui/core/TextField';
 import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
 
 
 /**
@@ -16,7 +17,8 @@ export class EditNotes extends Component{
         this.meetingDB = new Meeting();
         this.state ={
             meetingID: undefined,
-            notes: ''
+            userID: undefined,
+            notes: '',
         };
     };
 
@@ -24,6 +26,7 @@ export class EditNotes extends Component{
 
         const params = new URLSearchParams(window.location.search);
         const meetingID = params.get("meetingId");
+        const userID = params.get("userId");
 
         if (meetingID === undefined) {
             console.error("Invlid parameters");
@@ -37,7 +40,8 @@ export class EditNotes extends Component{
 
             this.setState({
                 meetingID: meetingID,
-                notes: notes
+                userID: userID,
+                notes: notes,
             })
         });
     }
@@ -68,9 +72,12 @@ export class EditNotes extends Component{
                         input onChange={(e) => this.setState({ notes: e.target.value })}
                     />
                 </form>
+                <div style={{margin: -10, marginTop:0}}>
                 <Button variant="outlined" color="default" onClick={this.updateNotes.bind(this)} style={{margin:'5%'}}>
                     Save Changes
                 </Button>
+
+                </div>
             </div>
         );
     }

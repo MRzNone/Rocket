@@ -10,6 +10,7 @@ import CalendarDispTable from '../CalendarTable/CalendarDispTable';
 import { Member } from '../../EarthBase/Member';
 import Popup from "reactjs-popup";
 import ImportCal from "../ImportCal/ImportCal";
+import { Alert } from 'react-alert'
 
 export class ViewMeeting extends Component {
   constructor(props) {
@@ -77,8 +78,19 @@ export class ViewMeeting extends Component {
 
     this.props.fetchMeetingData(this.meetingDB.fetchMeetingData(meetingID));
 
-
     this.setFillGrid = undefined;
+  }
+
+  redirectToEdit = () => {
+    const { userId, meetingID } = this.state;
+    const { meeting } = this.props;
+    if(userId === meeting.hostId) {this.props.history.push({
+    pathname: '/editMeeting',
+    search: '?meetingId=' + meetingID + "&userId=" + userId,
+    })}
+    else {
+        alert("Sorry, you don't have the permission to edit this meeting.")
+    }
   }
 
   copyToClip() {
@@ -204,10 +216,7 @@ export class ViewMeeting extends Component {
             variant="outlined"
             color="primary"
             size="large"
-            onClick={() => this.props.history.push({
-              pathname: '/editMeeting',
-              search: '?meetingId=' + meetingID + "&userId=" + userId,
-            })}
+            onClick={this.redirectToEdit.bind(this)}
           >
             Edit Meeting
             </Button>
