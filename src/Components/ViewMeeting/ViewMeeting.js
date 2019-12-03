@@ -10,7 +10,7 @@ import CalendarDispTable from '../CalendarTable/CalendarDispTable';
 import { Member } from '../../EarthBase/Member';
 import Popup from "reactjs-popup";
 import ImportCal from "../ImportCal/ImportCal";
-import { Alert } from 'react-alert'
+import CopyToClipboard from 'react-copy-to-clipboard';
 
 
 export class ViewMeeting extends Component {
@@ -238,20 +238,19 @@ export class ViewMeeting extends Component {
             Edit Meeting
             </Button>
 
-          <Button
-            variant="outlined"
-            size="large"
-            style={{
-              backgroundColor: "#ff3366",
-              color: 'white',
-              marginRight: 10
-            }}
-
-
-            onClick={() => this.copyToClip()}
-          >
-            Copy meeting link
+          <CopyToClipboard text={window.location.origin + '/viewmeeting?meetingId=' + this.state.meetingID}>
+            <Button
+              variant="outlined"
+              size="large"
+              style={{
+                backgroundColor: "#ff3366",
+                color: 'white',
+                marginRight: 10
+              }}
+            >
+              Copy meeting link
             </Button>
+          </CopyToClipboard>
         </div>
       </div>
     );
