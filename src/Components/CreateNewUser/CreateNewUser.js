@@ -7,11 +7,10 @@ import { Meeting, Member, getRandomId } from '../../EarthBase';
 
 class CreateNewUser extends Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
         const query_values = queryString.parse(this.props.location.search);
-        console.log(query_values);
-        
+
         this.state = {
             name: '',
             email: '',
@@ -23,9 +22,9 @@ class CreateNewUser extends Component {
         this.memberDB = new Member();
     }
 
-    render(){
-        return(
-            <Dialog open  className="box">
+    render() {
+        return (
+            <Dialog open className="box">
                 <DialogTitle>Input Meeting Participant Information</DialogTitle>
                 <DialogContent>
                     <DialogContentText>Please enter your name and email.</DialogContentText>
@@ -46,14 +45,14 @@ class CreateNewUser extends Component {
                         label="Email"
                         type="email"
                         fullWidth
-                        variant="outlined" 
+                        variant="outlined"
                         onChange={this.handleEmailFieldChange}
                     />
                 </DialogContent>
-                
+
                 <DialogActions>
                     <Button color="secondary"
-                    href="/">
+                        href="/">
                         Cancel
                     </Button>
                     <Button color="primary" onClick={this.handleNextClick} autoFocus>
@@ -78,57 +77,56 @@ class CreateNewUser extends Component {
     }
 
     handleNextClick = (e) => {
-        if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.state.email)){
-            if(this.state.user_id == null || this.state.user_id == undefined){
+        if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.state.email)) {
+            if (this.state.user_id == null || this.state.user_id == undefined) {
                 let memberId = getRandomId();
                 var that = this;
-                try{
+                try {
                     this.memberDB.createMember(memberId, this.state.meeting_id, this.state.name, this.state.email, ' ').then(
-                        function(result){
+                        function (result) {
                             that.props.history.push('/viewmeeting?meetingId=' + that.state.meeting_id + '&userId=' + memberId);
                         },
-                        function(error){
+                        function (error) {
                             console.log("error");
                         }
                     );
-                    
+
                 }
-                catch(e){
+                catch (e) {
                     console.log("error");
                 }
             }
-            else{
-                try{
+            else {
+                try {
                     this.memberDB.createMember(this.state.user_id, this.state.meeting_id, this.state.name, this.state.email, ' ');
                     this.props.history.push('/viewmeeting?meetingId=' + this.state.meeting_id + '&userId=' + this.state.user_id);
                 }
-                catch(e){
+                catch (e) {
                     console.log("error");
                 }
             }
         }
-        else{
+        else {
             alert("Not a valid email address!");
         }
-        
-        
-        
+
+
+
     }
 
 }
 
 const mapStateToProps = (state, ownProps) => {
     return {
-  
+
     };
-  };
-  
-  const mapDispatchToProps = {
-  
-  };
-  
-  export default connect(
+};
+
+const mapDispatchToProps = {
+
+};
+
+export default connect(
     mapStateToProps,
     mapDispatchToProps
-  )(CreateNewUser);
-  
+)(CreateNewUser);

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import {Meeting, Member} from "../../EarthBase";
+import { Meeting, Member } from "../../EarthBase";
 import Paper from '@material-ui/core/Paper';
 import { Checkbox } from '@material-ui/core';
 import FormGroup from '@material-ui/core/FormGroup';
@@ -23,7 +23,7 @@ export class RemoveMembers extends Component {
 
         this.meetingDB = new Meeting();
         this.memberDB = new Member();
-        this.state ={
+        this.state = {
             meetingID: undefined,
             members: [],
             checked: [],
@@ -64,7 +64,7 @@ export class RemoveMembers extends Component {
 
             let checkBox = {}
             members.map(mem => {
-                checkBox[mem[0]]= false;
+                checkBox[mem[0]] = false;
             })
 
             this.setState({
@@ -86,14 +86,13 @@ export class RemoveMembers extends Component {
         this.memberDB.deleteMember(memberID, meetingID);
     }
 
-    checkBoxHandle(){
+    checkBoxHandle() {
         const checkBox = this.state.checkBox;
         this.setState()
     }
 
-    remove(){
+    remove() {
         const checkBox = this.state.checkBox;
-        console.log(checkBox)
         Object.entries(checkBox).forEach(c => {
             if (c[1] === true) {
                 this.removeMembers(c[0])
@@ -103,7 +102,7 @@ export class RemoveMembers extends Component {
 
     renderClips() {
         const members = this.state.members;
-        if (members === []) return (<div/>)
+        if (members === []) return (<div />)
 
         return (
             <div>
@@ -118,22 +117,22 @@ export class RemoveMembers extends Component {
                             fontSize: 25,
                         }}>Members</FormLabel>
 
-                        <FormGroup style={{textAlign:'center', width: '100%'}}>
+                        <FormGroup style={{ textAlign: 'center', width: '100%' }}>
                             {
                                 members.map(d => {
                                     let id = d[0]
                                     let name = d[2][1]
                                     return (
                                         <>
-                                        <FormControlLabel
-                                            id={id}
-                                            value={id}
-                                            control={<Checkbox color="primary" checked={this.state.checkBox[id]} onChange={(e) => this.setState(
-                                                {checkBox: update(this.state.checkBox, {[id]: {$set: e.target.checked}})})} />}
-                                            label={name}
-                                            labelPlacement="start"
-                                        />
-                                    </>
+                                            <FormControlLabel
+                                                id={id}
+                                                value={id}
+                                                control={<Checkbox color="primary" checked={this.state.checkBox[id]} onChange={(e) => this.setState(
+                                                    { checkBox: update(this.state.checkBox, { [id]: { $set: e.target.checked } }) })} />}
+                                                label={name}
+                                                labelPlacement="start"
+                                            />
+                                        </>
                                     );
                                 })
                             }
@@ -141,13 +140,13 @@ export class RemoveMembers extends Component {
                     </FormControl>
                 </Container>
 
-                <Button variant="outlined" color="default" onClick={this.remove.bind(this)} style={{margin:'5%'}}>
+                <Button variant="outlined" color="default" onClick={this.remove.bind(this)} style={{ margin: '5%' }}>
                     Remove User
                 </Button>
             </div>
         );
     }
-/* removeMembers(d[0]) */
+    /* removeMembers(d[0]) */
 
     render() {
 

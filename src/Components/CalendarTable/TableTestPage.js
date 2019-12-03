@@ -50,7 +50,6 @@ export class TableTestPage extends Component {
 
   setData(data) {
     // this is the up to date data.  use this to update your data
-    console.log(data);
     // e.g. this.MY_DATA = data
   }
 

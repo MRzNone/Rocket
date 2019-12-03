@@ -3,13 +3,12 @@ function rankings(Meetings) {
     let rankings = {};
     const obj = extractTime(Meetings);
     const sortedArr = Object.keys(obj).reduce((arr, key) => {
-        arr.push({key: key, value: obj[key]});
+        arr.push({ key: key, value: obj[key] });
 
         return arr;
     }, [])
         .sort((a, b) => a.value.length - b.value.length);
 
-    console.log(sortedArr);
     rankings = obj;
     return rankings;
 }

@@ -28,17 +28,16 @@ class CreateMeeting extends Component {
         const meetingId = getRandomId();
         const { earliestTime, latestTime, timeInterval, meetingName } = this.state;
 
-        console.log(this.state);
-        
+
         if (latestTime < earliestTime) {
             alert("Latest time has to be after earliest time");
             return;
         }
-        if(this.selectedDates.length == 0){
+        if (this.selectedDates.length == 0) {
             alert("Please select a date");
             return;
         }
-        if(meetingName.length === 0 || !meetingName.trim() ){
+        if (meetingName.length === 0 || !meetingName.trim()) {
             alert("Please enter a meeting name");
             return;
         }
@@ -62,10 +61,10 @@ class CreateMeeting extends Component {
 
     render() {
         return (
-            <div style={{padding:'35px'}}>
+            <div style={{ padding: '35px' }}>
                 <div className="forms">
                     <form id="inputs">
-                        <div id="times" style={{margin:'auto'}}>
+                        <div id="times" style={{ margin: 'auto' }}>
                             <input
                                 type="text"
                                 id="titleName"

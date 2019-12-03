@@ -16,7 +16,6 @@ class MeetingResponse extends Component {
             meeting_id: query_values.meetingId,
             user_id: query_values.userId
         }
-        console.log(this.state.user_id);
 
         this.meetingDB = new Meeting();
 

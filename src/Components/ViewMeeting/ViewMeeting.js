@@ -58,7 +58,6 @@ export class ViewMeeting extends Component {
     const userId = params.userId;
 
     if (meetingID !== undefined && userId === undefined) {
-      console.log("HERE");
       this.props.history.push('/meetinglogin?meetingId=' + meetingID);
       return;
     }
@@ -85,12 +84,14 @@ export class ViewMeeting extends Component {
   redirectToEdit = () => {
     const { userId, meetingID } = this.state;
     const { meeting } = this.props;
-    if(userId === meeting.hostId) {this.props.history.push({
-    pathname: '/editMeeting',
-    search: '?meetingId=' + meetingID + "&userId=" + userId,
-    })}
+    if (userId === meeting.hostId) {
+      this.props.history.push({
+        pathname: '/editMeeting',
+        search: '?meetingId=' + meetingID + "&userId=" + userId,
+      })
+    }
     else {
-        alert("Sorry, you don't have the permission to edit this meeting.")
+      alert("Sorry, you don't have the permission to edit this meeting.")
     }
   }
 
@@ -143,9 +144,11 @@ export class ViewMeeting extends Component {
 
           <Button
             color="default"
-            style={{ marginRight: 70,
-            fontSize: 20,
-            color: '#ff3366'}}
+            style={{
+              marginRight: 70,
+              fontSize: 20,
+              color: '#ff3366'
+            }}
             onClick={() => this.props.history.push("/")}
           >
             Back to Main
@@ -155,12 +158,12 @@ export class ViewMeeting extends Component {
 
 
       </div>
-      
+
     );
   }
 
   renderToolBar() {
-      const { meetingID, userId } = this.state;
+    const { meetingID, userId } = this.state;
     return (
       <div
         style={{
@@ -173,40 +176,40 @@ export class ViewMeeting extends Component {
           flexDirection: 'row',
           flex: 0.9,
           marginLeft: 80
-         
+
         }}>
-         <Button
+          <Button
+            variant="outlined"
+            size="large"
+            style={{
+              backgroundColor: "#ff3366",
+              color: 'white',
+              marginRight: 10
+
+            }}
+          >
+            Notes
+              </Button>
+          <h4>Results:</h4>
+
+
+
+        </div>
+        <div style={{
+          left: 0
+
+        }}>
+          <Popup modal trigger={
+            <Button
               variant="outlined"
               size="large"
               style={{
                 backgroundColor: "#ff3366",
-                color:'white',
-                marginRight:10
-               
+                color: 'white',
+                marginRight: 10
               }}
+
             >
-              Notes
-              </Button>
-              <h4>Results:</h4>
-
-
-
-          </div>
-          <div style={{
-            left: 0
-         
-        }}>
-              <Popup modal trigger={
-            <Button
-              variant="outlined"
-              size="large" 
-              style={{
-                backgroundColor: "#ff3366",
-                color:'white',
-                marginRight:10
-              }}
-
-              >
               Import Schedule
                 </Button>}>
             {close => (
@@ -228,8 +231,8 @@ export class ViewMeeting extends Component {
             onClick={this.redirectToEdit.bind(this)}
             style={{
               backgroundColor: "#ff3366",
-              color:'white',
-              marginRight:10
+              color: 'white',
+              marginRight: 10
             }}
           >
             Edit Meeting
@@ -237,12 +240,12 @@ export class ViewMeeting extends Component {
 
           <Button
             variant="outlined"
-              size="large"
-              style={{
-                backgroundColor: "#ff3366",
-                color:'white',
-                marginRight:10
-              }}
+            size="large"
+            style={{
+              backgroundColor: "#ff3366",
+              color: 'white',
+              marginRight: 10
+            }}
 
 
             onClick={() => this.copyToClip()}
@@ -291,8 +294,6 @@ export class ViewMeeting extends Component {
       timeWindow, members } = this.props.meeting;
 
     if (!(this.state.userId in members)) {
-      console.log(members);
-      console.log(this.state.userId);
       console.error("Invalid user");
       this.props.history.push("/");
       return;
@@ -403,7 +404,7 @@ export class ViewMeeting extends Component {
 
 
     return (
-      
+
       <div>
         {/* Header */}
         {this.renderHeader()}

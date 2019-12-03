@@ -10,7 +10,6 @@ class MeetingLogin extends Component {
     constructor(props) {
         super(props);
         const query_values = queryString.parse(this.props.location.search);
-        console.log(query_values);
 
         this.state = {
             email: '',
@@ -64,7 +63,7 @@ class MeetingLogin extends Component {
     }
 
     handleNextClick = (e) => {
-        if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.state.email)){
+        if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.state.email)) {
             var that = this;
 
             this.meetingDB.fetchMeetingData(this.state.meeting_id).then(function (result) {
@@ -83,11 +82,11 @@ class MeetingLogin extends Component {
 
             });
         }
-        else{
+        else {
             alert("Not a valid email!");
         }
 
-        }
+    }
 
 
 }
