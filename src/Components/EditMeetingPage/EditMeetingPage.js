@@ -14,9 +14,63 @@ class EditMeetingPage extends Component {
         const params = new URLSearchParams(window.location.search);
         const meetingID = params.get("meetingId");
         const userID = params.get("userId");
+        const { meeting } = this.props;
+        //const { meetingID } = this.state;
+
 
         return (
             <div>
+                <div style={{
+                    flex: 0.5,
+                    justifyContent: 'flex-end',
+                    display: 'flex',
+                    background: '#28282a',
+                    marginBottom: 50,
+                    flexDirection: 'row',
+                }}>
+
+                    <div style={{
+                        flexDirection: 'row',
+                        display: 'flex',
+                        flex: 1,
+                    }}>
+                        <div style={{
+                            marginRight: 50,
+                            marginLeft: 10,
+                            alignSelf: 'center',
+                            color: 'white',
+                            fontSize: 25
+                        }}>
+                            <h4>Meeting: {meeting.name}</h4>
+                        </div>
+
+                        <div style={{
+                            alignSelf: 'center',
+                            color: 'white',
+                            fontSize: 15
+                        }}>
+                            <h4>Id: {meetingID}</h4>
+                        </div>
+                    </div>
+
+
+                    <Button
+                        color="default"
+                        style={{
+                            marginRight: 70,
+                            fontSize: 20,
+                            color: '#ff3366'
+                        }}
+                        onClick={() => this.props.history.push({
+                            pathname: '/viewMeeting',
+                            search: '?meetingId=' + meetingID + "&userId=" + userID
+                        })}
+                    >
+                        Back to Meeting
+                    </Button>
+
+                </div>
+
                 <div style={{
                     marginTop: '15vh',
                     marginLeft: '10vh',
@@ -29,20 +83,6 @@ class EditMeetingPage extends Component {
                         <Grid item xs={8}>
                             <Selects/>
                             <EditNotes/>
-                            <Button variant="outlined" color="default" onClick={() => this.props.history.push({
-                                pathname: '/sendResult',
-                                search: '?meetingId=' + meetingID + "&userId=" + userID,
-                            })}
-                                    style={{margin:'5%'}}>
-                                Share Meeting Results
-                            </Button>
-
-                            <Button variant="outlined" color="default" style={{margin:'5%'}} onClick={() => this.props.history.push({
-                                pathname: '/viewMeeting',
-                                search: '?meetingId=' + meetingID + "&userId=" + userID,
-                            })}
-                            > Back to Meeting
-                            </Button>
                         </Grid>
                     </Grid>
                 </div>

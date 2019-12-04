@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {Meeting, Member} from "../../EarthBase";
 import TextField from '@material-ui/core/TextField';
-import Button from "@material-ui/core/Button";
+import {Button} from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 
 
@@ -56,6 +56,10 @@ export class EditNotes extends Component{
     }
 
     render() {
+        const params = new URLSearchParams(window.location.search);
+        const meetingID = params.get("meetingId");
+        const userID = params.get("userId");
+
         return (
             <div>
                 <form noValidate autoComplete="off">
@@ -63,8 +67,9 @@ export class EditNotes extends Component{
                         id="outlined-multiline-static"
                         multiline
                         rows="16"
-                        defaultValue={"Note: " + this.state.notes}
+                        defaultValue={this.state.notes}
                         variant="outlined"
+                        placeholder="Notes:"
                         style={{
                             width:'100%',
                             flexWrap: 'wrap',
@@ -73,10 +78,35 @@ export class EditNotes extends Component{
                     />
                 </form>
                 <div style={{margin: -10, marginTop:0}}>
-                <Button variant="outlined" color="default" onClick={this.updateNotes.bind(this)} style={{margin:'5%'}}>
-                    Save Changes
-                </Button>
+                    <Button
+                        variant="outlined"
+                        style={{
+                            background: "#ff3366",
+                            color: 'white',
+                            margin: '1.5%',
+                            fontSize: 10
+                        }}
+                        onClick={this.updateNotes.bind(this)}
+                    >
+                        Save Changes
+                    </Button>
 
+                    <Button
+                        variant="outlined"
+                        size="large"
+                        style={{
+                            backgroundColor: "#ff3366",
+                            color: 'white',
+                            margin: '5%',
+                            padding: 5,
+                            fontSize: 10
+                        }}
+                        onClick={() => this.props.history.push({
+                        pathname: '/sendResult',
+                        search: '?meetingId=' + meetingID + "&userId=" + userID,
+                    })}>
+                        Share Meeting Results
+                    </Button>
                 </div>
             </div>
         );
