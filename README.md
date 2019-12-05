@@ -1,3 +1,6 @@
+# Demo version for CSE 110:
+Click me: [http://ec2-34-210-53-106.us-west-2.compute.amazonaws.com:8080](http://ec2-34-210-53-106.us-west-2.compute.amazonaws.com:8080)
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Dependencies
