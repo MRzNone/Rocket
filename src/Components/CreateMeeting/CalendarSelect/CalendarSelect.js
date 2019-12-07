@@ -11,6 +11,20 @@ function indexOfDate(arr, day) {
     return -1;
 }
 
+
+function getCurrentMonth(){
+    let newDate = new Date();
+    return newDate.getMonth() + 1;
+}
+
+
+function convertDate(d){
+    let date = d.toString()
+    let parts = date.split(" ");
+    let months = {Jan: "01",Feb: "02",Mar: "03",Apr: "04",May: "05",Jun: "06",Jul: "07",Aug: "08",Sep: "09",Oct: "10",Nov: "11",Dec: "12"};
+    return [parts[3],months[parts[1]],parts[2]];// YYYY-MM-DD
+}
+
 class Calendar extends React.Component {
     constructor(props) {
         super(props);
@@ -30,9 +44,18 @@ class Calendar extends React.Component {
             month } =
             this.state;
 
-        this.setState({
-            month: month.subtract(1, 'month')
-        });
+        let newDate = new Date();
+        let actualMonth = getCurrentMonth();
+        let date = convertDate(this.state['month']['_d']);
+
+
+        console.log(date);
+        if (actualMonth != date[1] ){
+            this.setState({
+                month: month.subtract(1, 'month')
+            });
+        }
+
 
     }
 
@@ -64,6 +87,7 @@ class Calendar extends React.Component {
         });
 
     }
+
 
     renderWeeks() {
         let weeks = [];
@@ -196,13 +220,14 @@ class Day extends React.Component {
             selected } =
             this.props;
 
+        console.log(select);
+
         return (
             React.createElement("span", {
                 key: date.toString(),
                 className: "day" + (isToday ? " today" : "") + (isCurrentMonth ? "" : " different-month") + (indexOfDate(selected, day) !== -1 ? " selected" : ""),
                 onClick: () => select(day)
             }, number));
-
     }
 }
 
