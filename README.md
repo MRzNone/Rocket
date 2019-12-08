@@ -1,5 +1,5 @@
 # Demo version for CSE 110:
-Click me: [http://ec2-34-210-53-106.us-west-2.compute.amazonaws.com:8080](http://ec2-34-210-53-106.us-west-2.compute.amazonaws.com:8080)
+DEMO: [http://ec2-34-210-53-106.us-west-2.compute.amazonaws.com:8080](http://ec2-34-210-53-106.us-west-2.compute.amazonaws.com:8080)
 
 VIDEO: https://www.youtube.com/watch?v=Q8USxEYhckU&feature=youtu.be
 
