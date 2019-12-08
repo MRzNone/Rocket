@@ -111,7 +111,7 @@ export class RemoveMembers extends Component {
 
         return (
             <div>
-                <div style={{height: '42vh', overflow: 'scroll'}}>
+                <div style={{ height: '42vh', overflow: 'scroll' }}>
                     <Paper style={{
                         display: 'flex',
                         justifyContent: 'center',
@@ -134,7 +134,7 @@ export class RemoveMembers extends Component {
                                         let id = d[0]
                                         let name = d[2][1]
                                         return (
-                                            <div>
+                                            <div key={id} >
                                                 <FormControlLabel
                                                     id={id}
                                                     value={id}
@@ -153,16 +153,16 @@ export class RemoveMembers extends Component {
                     </Paper>
                 </div>
                 <Button variant="outlined"
-                        size="large"
-                        style={{
-                            backgroundColor: "#ff3366",
-                            color: 'white',
-                            margin: '8%',
-                            marginLeft: '25%',
-                            padding: 5,
-                            fontSize: 10
-                        }}
-                        onClick={this.remove.bind(this)} >
+                    size="large"
+                    style={{
+                        backgroundColor: "#ff3366",
+                        color: 'white',
+                        margin: '8%',
+                        marginLeft: '25%',
+                        padding: 5,
+                        fontSize: 10
+                    }}
+                    onClick={this.remove.bind(this)} >
                     Remove User
                 </Button>
             </div>

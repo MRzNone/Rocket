@@ -1,20 +1,20 @@
 import emailjs from 'emailjs-com';
-import {connect} from "react-redux";
+import { connect } from "react-redux";
 import React, { Component } from 'react';
-import {Meeting, Member} from "../../EarthBase";
+import { Meeting, Member } from "../../EarthBase";
 import Button from "@material-ui/core/Button";
 
 
 /**
  * Send Results.
  */
-export class SendResult extends Component{
+export class SendResult extends Component {
 
     constructor(props) {
         super(props);
 
         this.meetingDB = new Meeting();
-        this.state ={
+        this.state = {
             meetingID: undefined,
             hostID: undefined,
             members: [],
@@ -69,7 +69,7 @@ export class SendResult extends Component{
         this.fetchData();
     }
 
-    send (email, name) {
+    send(email, name) {
         let templateParams = {
             email: email,
             meeting_name: this.state.name,
@@ -89,6 +89,7 @@ export class SendResult extends Component{
     render() {
         const params = new URLSearchParams(window.location.search);
         const meetingID = params.get("meetingId");
+        const userID = params.get("userId");
         const members = this.state.members;
 
         return (
@@ -96,9 +97,9 @@ export class SendResult extends Component{
                 {members.map(e => {
                     this.send(e[1][1], e[2][1])
                 })}
-                <Button variant="outlined" color="default" style={{margin:'5%'}} onClick={() => this.props.history.push({
+                <Button variant="outlined" color="default" style={{ margin: '5%' }} onClick={() => this.props.history.push({
                     pathname: '/editMeeting',
-                    search: '?meetingId=' + meetingID,
+                    search: '?meetingId=' + meetingID + "&userId=" + userID
                 })}> Back </Button>
 
             </>

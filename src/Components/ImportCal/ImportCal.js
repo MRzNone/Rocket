@@ -1,17 +1,17 @@
-import React, {Component} from "react";
-import {GoogleLogin} from 'react-google-login';
+import React, { Component } from "react";
+import { GoogleLogin } from 'react-google-login';
 import queryString from 'query-string';
 import moment from "moment";
 import connect from "react-redux/es/connect/connect";
 
 import "./ImportCal.css";
-import {Member} from "../../EarthBase/Member.js";
-import {Meeting} from "../../EarthBase/Meeting.js";
-import {fetchMeetingData, updateAllOtherCal, updateSelectCal} from "../../action";
+import { Member } from "../../EarthBase/Member.js";
+import { Meeting } from "../../EarthBase/Meeting.js";
+import { fetchMeetingData, updateAllOtherCal, updateSelectCal } from "../../action";
 
-import {Button, Checkbox, FormControlLabel, TextField, Typography} from "@material-ui/core";
-import {Dialog, DialogTitle, DialogContent} from "@material-ui/core";
-import {createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import { Button, Checkbox, FormControlLabel, TextField, Typography } from "@material-ui/core";
+import { Dialog, DialogTitle, DialogContent } from "@material-ui/core";
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 
 /* global gapi */
 
@@ -52,17 +52,17 @@ export class ImportCal extends Component {
 
     /****************** Initialization *******************/
 
-    loadClient () {
+    loadClient() {
         return gapi.client.load("https://content.googleapis.com/discovery/v1/apis/calendar/v3/rest")
             .then(function () {
-                    console.log("GAPI client loaded");
-                },
+                console.log("GAPI client loaded");
+            },
                 function (err) {
                     console.error("Error loading GAPI client", err);
                 });
     }
 
-    loadGapi (script) {
+    loadGapi(script) {
         if (!script.getAttribute('gapi_processed')) {
             setTimeout(() => {
                 this.loadGapi(script)
@@ -93,12 +93,12 @@ export class ImportCal extends Component {
                 this.close();
             }
 
-            let latest=new Date(Math.max.apply(null, dates));
-            let earliest=new Date(Math.min.apply(null, dates));
+            let latest = new Date(Math.max.apply(null, dates));
+            let earliest = new Date(Math.min.apply(null, dates));
 
             latest.setDate(latest.getDate() + 1);
-            const lastDate =latest.toISOString().split('.')[0]+"Z";
-            const firstDate = earliest.toISOString().split('.')[0]+"Z";
+            const lastDate = latest.toISOString().split('.')[0] + "Z";
+            const firstDate = earliest.toISOString().split('.')[0] + "Z";
             const minTime = new Date(timeWindow[0] * 60000).toISOString().substr(11, 5);
             const maxTime = new Date(timeWindow[1] * 60000).toISOString().substr(11, 5);
 
@@ -149,8 +149,8 @@ export class ImportCal extends Component {
 
     loginSuccess = (response) => {
         this.setState({
-            auth : response.getAuthResponse(),
-            mode : "google"
+            auth: response.getAuthResponse(),
+            mode: "google"
         });
 
         // Change Page
@@ -164,7 +164,7 @@ export class ImportCal extends Component {
     loginFailure = (response) => {
 
         if (this.state.mode === "google") {
-            this.setState({mode : "none"});
+            this.setState({ mode: "none" });
         }
         if (this.state.mode !== "file") {
             document.getElementById("import_submit").disabled = true;
@@ -252,7 +252,7 @@ export class ImportCal extends Component {
         fr.onload = (e) => {
             try {
                 let content = fr.result;
-                const uInts = (new Uint8Array(content)).subarray(0,8);
+                const uInts = (new Uint8Array(content)).subarray(0, 8);
                 let signature = [];
                 uInts.forEach((byte) => {
                     signature.push(byte.toString(16))
@@ -261,8 +261,8 @@ export class ImportCal extends Component {
 
                 if (signature === "424547494E3A5643") {     // ics
                     this.setState({
-                        uploadFile : file,
-                        mode : "file"
+                        uploadFile: file,
+                        mode: "file"
                     });
 
                     submit_btn.disabled = false;
@@ -271,7 +271,7 @@ export class ImportCal extends Component {
 
                 } else {
                     if (this.state.mode === "file")
-                        this.setState({mode : "none"});
+                        this.setState({ mode: "none" });
 
                     if (this.state.mode !== "google")
                         submit_btn.disabled = true;
@@ -346,7 +346,7 @@ export class ImportCal extends Component {
                 callback(events);
             } catch (err) {
                 console.log(err);
-                this.setState({mode : "none"});
+                this.setState({ mode: "none" });
                 submit_btn.disabled = true;
                 out.innerHTML = "Failed to process file: " + this.state.uploadFile.name;
                 out.style.color = "red";
@@ -354,7 +354,7 @@ export class ImportCal extends Component {
         };
         fr.onerror = (e) => {
             console.log(e);
-            this.setState({mode : "none"});
+            this.setState({ mode: "none" });
             submit_btn.disabled = true;
             out.innerHTML = "Failed to process file: " + this.state.uploadFile.name;
             out.style.color = "red";
@@ -445,8 +445,8 @@ export class ImportCal extends Component {
                 start = block.startMoment;
                 end = block.endMoment;
                 key = start.format("YYYY-MM-DD");
-                let minMoment = moment(start).set({'hour' : min_h, 'minute' : min_m});
-                let maxMoment = moment(start).set({'hour' : max_h, 'minute' : max_m});
+                let minMoment = moment(start).set({ 'hour': min_h, 'minute': min_m });
+                let maxMoment = moment(start).set({ 'hour': max_h, 'minute': max_m });
 
                 if (!this.state.eventMap.has(key)) {
                     continue;
@@ -463,7 +463,7 @@ export class ImportCal extends Component {
                     .diff(moment(key).startOf('day'), 'minutes');
 
                 if (min <= start && max >= end) {
-                    eventList.push([ start, end ]);
+                    eventList.push([start, end]);
                 }
             }
             block = null;
@@ -490,10 +490,8 @@ export class ImportCal extends Component {
         let eventMap = this.state.eventMap;
         const timeWindow = this.state.timeWindow;
         let start_index, end_index, i = 0;
-        let interval = (timeWindow[1]-timeWindow[0])/this.state.rowNum;
+        let interval = (timeWindow[1] - timeWindow[0]) / this.state.rowNum;
         let timeTable = Array(this.state.rowNum).fill().map(() => Array(this.state.columnNum).fill(1));
-
-        //console.log(eventMap);
 
         for (const [date, events] of eventMap.entries()) {              // For each key in eventMap
             for (const event of events) {
@@ -518,9 +516,9 @@ export class ImportCal extends Component {
     setValue = (event, key, defVal) => {
         let elem = event.target;
         if (elem.value.length !== 0 && elem.checkValidity())
-            this.setState({[key] : elem.value});
+            this.setState({ [key]: elem.value });
         else
-            this.setState({[key] : defVal});
+            this.setState({ [key]: defVal });
     }
 
     toggleHidden = (id, action) => {
@@ -562,13 +560,13 @@ export class ImportCal extends Component {
                                             >Upload File (ics)
                                             </Button>
                                         </label>
-                                        <input type="file" id="uploadFile" accept=".ics" onChange={(e) => {this.selectUpload(e)}}/>
+                                        <input type="file" id="uploadFile" accept=".ics" onChange={(e) => { this.selectUpload(e) }} />
 
                                         <GoogleLogin
                                             render={renderProps => (
                                                 <Button className="mode" id="calGoogle" onClick={renderProps.onClick}
-                                                        disabled={renderProps.disabled} color="primary" variant="outlined"
-                                                        size="large" display="block">Google Calendar</Button>)}
+                                                    disabled={renderProps.disabled} color="primary" variant="outlined"
+                                                    size="large" display="block">Google Calendar</Button>)}
                                             clientId="926207137800-ogujdec6vo9oo1fun7mreedha60l7ude.apps.googleusercontent.com"
                                             discoveryDocs="https://content.googleapis.com/discovery/v1/apis/calendar/v3/rest"
                                             buttonText="Login"
@@ -578,7 +576,7 @@ export class ImportCal extends Component {
                                             onRequest={this.loadClient}
                                             onSuccess={this.loginSuccess}
                                             onFailure={this.loginFailure}
-                                            cookiePolicy={'single_host_origin'}/>
+                                            cookiePolicy={'single_host_origin'} />
                                     </fieldset>
 
                                     <Typography>Import Options</Typography>
@@ -593,10 +591,10 @@ export class ImportCal extends Component {
                                                 />}
                                             label="Add offset time (min): "
                                         />
-                                        <Typography style={{display: 'inline-block'}}>
+                                        <Typography style={{ display: 'inline-block' }}>
                                             <output onClick={() => this.toggleHidden("time_offset")}>{this.state.offset}</output>
                                         </Typography>
-                                        <br/>
+                                        <br />
 
                                         <div id="time_offset" hidden>
                                             <FormControlLabel
@@ -604,14 +602,14 @@ export class ImportCal extends Component {
                                                 label="Change Value (min) :"
                                                 control={
                                                     <TextField id="ntoff"
-                                                               name="offset"
-                                                               variant="standard"
-                                                               onChange={(e) => this.setValue(e, "offset", 30)}
-                                                               inputProps={{
-                                                                   maxLength: 3,
-                                                                   pattern: "[0-9]*",
-                                                                   style: {fontSize: 12}
-                                                               }}
+                                                        name="offset"
+                                                        variant="standard"
+                                                        onChange={(e) => this.setValue(e, "offset", 30)}
+                                                        inputProps={{
+                                                            maxLength: 3,
+                                                            pattern: "[0-9]*",
+                                                            style: { fontSize: 12 }
+                                                        }}
                                                     />}
                                             />
                                         </div>
@@ -639,7 +637,9 @@ export class ImportCal extends Component {
                         </Dialog>
                     </ThemeProvider>
                 </div>
-            )}};
+            )
+        }
+    };
 }
 
 // From View Meeting

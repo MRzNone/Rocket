@@ -78,11 +78,11 @@ class EditMeetingPage extends Component {
                 }}>
                     <Grid container spacing={3}>
                         <Grid item xs={4}>
-                            <RemoveMembers/>
+                            <RemoveMembers />
                         </Grid>
                         <Grid item xs={8}>
-                            <Result/>
-                            <EditNotes/>
+                            <Result />
+                            <EditNotes history={this.props.history} />
                         </Grid>
                     </Grid>
                 </div>

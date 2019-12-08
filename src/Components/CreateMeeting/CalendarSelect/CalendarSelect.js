@@ -12,17 +12,17 @@ function indexOfDate(arr, day) {
 }
 
 
-function getCurrentMonth(){
+function getCurrentMonth() {
     let newDate = new Date();
     return newDate.getMonth() + 1;
 }
 
 
-function convertDate(d){
+function convertDate(d) {
     let date = d.toString()
     let parts = date.split(" ");
-    let months = {Jan: "01",Feb: "02",Mar: "03",Apr: "04",May: "05",Jun: "06",Jul: "07",Aug: "08",Sep: "09",Oct: "10",Nov: "11",Dec: "12"};
-    return [parts[3],months[parts[1]],parts[2]];// YYYY-MM-DD
+    let months = { Jan: "01", Feb: "02", Mar: "03", Apr: "04", May: "05", Jun: "06", Jul: "07", Aug: "08", Sep: "09", Oct: "10", Nov: "11", Dec: "12" };
+    return [parts[3], months[parts[1]], parts[2]];// YYYY-MM-DD
 }
 
 class Calendar extends React.Component {
@@ -48,9 +48,7 @@ class Calendar extends React.Component {
         let actualMonth = getCurrentMonth();
         let date = convertDate(this.state['month']['_d']);
 
-
-        console.log(date);
-        if (actualMonth != date[1] ){
+        if (actualMonth != date[1]) {
             this.setState({
                 month: month.subtract(1, 'month')
             });
@@ -219,8 +217,6 @@ class Day extends React.Component {
             select,
             selected } =
             this.props;
-
-        console.log(select);
 
         return (
             React.createElement("span", {

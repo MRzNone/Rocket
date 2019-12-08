@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import {Meeting, Member} from "../../EarthBase";
+import { Meeting, Member } from "../../EarthBase";
 import TextField from '@material-ui/core/TextField';
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
@@ -9,13 +9,13 @@ import Grid from "@material-ui/core/Grid";
 /**
  * Enter Results.
  */
-export class Result extends Component{
+export class Result extends Component {
 
     constructor(props) {
         super(props);
 
         this.meetingDB = new Meeting();
-        this.state ={
+        this.state = {
             meetingID: undefined,
             userID: undefined,
             finalTime: '',
@@ -41,7 +41,7 @@ export class Result extends Component{
             this.setState({
                 meetingID: meetingID,
                 userID: userID,
-                finalTime: finalTime,
+                finalTime: finalTime !== null ? finalTime : '',
             })
         });
     }
@@ -57,8 +57,6 @@ export class Result extends Component{
 
     render() {
         const params = new URLSearchParams(window.location.search);
-        const meetingID = params.get("meetingId");
-        const userID = params.get("userId");
 
         return (
             <div>
@@ -74,9 +72,9 @@ export class Result extends Component{
                             width: 150,
                             flexWrap: 'wrap',
                         }}
-                        onKeyPress= {(e) => {
+                        onKeyPress={(e) => {
                             if (e.key === 'Enter') {
-                                this.setState({finalTime: e.target.value})
+                                this.setState({ finalTime: e.target.value })
                             }
                         }}
                         onChange={(e) => this.setState({ finalTime: e.target.value })}

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import {Meeting, Member} from "../../EarthBase";
+import { Meeting, Member } from "../../EarthBase";
 import TextField from '@material-ui/core/TextField';
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
@@ -9,13 +9,13 @@ import Grid from "@material-ui/core/Grid";
 /**
  * Edit Notes.
  */
-export class EditNotes extends Component{
+export class EditNotes extends Component {
 
     constructor(props) {
         super(props);
 
         this.meetingDB = new Meeting();
-        this.state ={
+        this.state = {
             meetingID: undefined,
             userID: undefined,
             notes: '',
@@ -48,7 +48,7 @@ export class EditNotes extends Component{
 
     updateNotes(data) {     // NOTE: Modified by ImportCal.js
         const meetingID = this.state.meetingID
-            this.meetingDB.updateMeetingNote(meetingID, this.state.notes);
+        this.meetingDB.updateMeetingNote(meetingID, this.state.notes);
     }
 
     componentDidMount() {
@@ -71,13 +71,13 @@ export class EditNotes extends Component{
                         variant="outlined"
                         placeholder="Notes:"
                         style={{
-                            width:'100%',
+                            width: '100%',
                             flexWrap: 'wrap',
                         }}
-                        input onChange={(e) => this.setState({ notes: e.target.value })}
+                        onChange={(e) => this.setState({ notes: e.target.value })}
                     />
                 </form>
-                <div style={{margin: -10, marginTop:0}}>
+                <div style={{ margin: -10, marginTop: 0 }}>
                     <Button
                         variant="outlined"
                         style={{
@@ -102,9 +102,9 @@ export class EditNotes extends Component{
                             fontSize: 10
                         }}
                         onClick={() => this.props.history.push({
-                        pathname: '/sendResult',
-                        search: '?meetingId=' + meetingID + "&userId=" + userID,
-                    })}>
+                            pathname: '/sendResult',
+                            search: '?meetingId=' + meetingID + "&userId=" + userID,
+                        })}>
                         Share Meeting Results
                     </Button>
                 </div>
