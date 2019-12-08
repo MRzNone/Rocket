@@ -41,7 +41,6 @@ body {
 .calendar header .month-display {
     align-items: center;
     height: 40px;
-    /*background: #2875C7;*/
     background: #28282a;
 }
 .calendar header .month-label {
@@ -59,7 +58,7 @@ body {
     align-items: center;
 }
 .calendar header .arrow:hover {
-    /* background: #1f5c9d; */
+
 }
 .calendar .week {
     border-top: solid 1px #CCCCCC;
@@ -101,8 +100,8 @@ body {
 .calendar .day.different-month {
     color: #C0C0C0;
 }
+
 .calendar .day.selected {
-    /*background: #2875C7;*/
     background: #2f63af;
     color: #FFFFFF;
 }
@@ -112,38 +111,6 @@ body {
 }
 
 
-/* .arrow.fa.fa-angle-left {
-    position: absolute;
-    border: solid transparent;
-    border-width: 0 0 35px 35px;
-    transition: -24s;
-    padding: 10px;
-    box-shadow: 1px -1px 0 1px plum inset;
-    transform: rotate(45deg);
-    }    */
-    
-    /* position: absolute; */
-    /* position: relative; */
-    /* align-content: flex-start;
-    border: solid transparent; */
-
-    /* border-width: 0 0 35px 35px; */
-    /* transition: -24s; */
-    /* width: 5px; */
-    /* height: 1px; */
-    /* float: left; */
-    /* padding: 10px; */
-    /* left: 0; */
-
-    /* box-shadow: 1px -1px 0 1px plum inset;
-    transform: rotate(45deg); */
-
-
-
-
-/* .arrow.fa.fa-angle-left:hover {
-    box-shadow: 2px -2px 0 2px lavender inset;
-}  */
 
 .arrow.fa.fa-angle-right {
     
@@ -164,7 +131,3 @@ body {
 
 
 }
-
-/* .arrow.fa.fa-angle-right:hover {
-    box-shadow: 2px -2px 0 2px lavender inset;
-}  */

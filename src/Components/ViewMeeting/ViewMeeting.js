@@ -178,22 +178,7 @@ export class ViewMeeting extends Component {
           marginLeft: 80
 
         }}>
-          <Button
-            variant="outlined"
-            size="large"
-            style={{
-              backgroundColor: "#ff3366",
-              color: 'white',
-              marginRight: 10
-
-            }}
-          >
-            Notes
-              </Button>
-          <h4>Results:</h4>
-
-
-
+          
         </div>
         <div style={{
           left: 0
