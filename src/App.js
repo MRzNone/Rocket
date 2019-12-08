@@ -72,8 +72,8 @@ function App() {
           <Route path="/createnewuser" component={CreateNewUser} />
           <Route path="/viewmeeting" component={ViewMeeting} />
           <Route path="/createmeeting" component={CreateMeeting} />
-            <Route path="/editMeeting" component={EditMeetingPage} />
-            <Route path="/sendResult" component={SendResult} />
+          <Route path="/editMeeting" component={EditMeetingPage} />
+          <Route path="/sendResult" component={SendResult} />
           <Route component={LostPage} />
         </Switch>
       </Router>

@@ -7,9 +7,9 @@ import Grid from "@material-ui/core/Grid";
 
 
 /**
- * Edit Notes.
+ * Enter Results.
  */
-export class EditNotes extends Component{
+export class Result extends Component{
 
     constructor(props) {
         super(props);
@@ -18,7 +18,7 @@ export class EditNotes extends Component{
         this.state ={
             meetingID: undefined,
             userID: undefined,
-            notes: '',
+            finalTime: '',
         };
     };
 
@@ -36,19 +36,19 @@ export class EditNotes extends Component{
 
         this.meetingDB.fetchMeetingData(meetingID).then(data => {
 
-            const notes = data.notes;
+            const finalTime = data.finalTime;
 
             this.setState({
                 meetingID: meetingID,
                 userID: userID,
-                notes: notes,
+                finalTime: finalTime,
             })
         });
     }
 
-    updateNotes(data) {     // NOTE: Modified by ImportCal.js
+    updateResult(data) {     // NOTE: Modified by ImportCal.js
         const meetingID = this.state.meetingID
-            this.meetingDB.updateMeetingNote(meetingID, this.state.notes);
+        this.meetingDB.updateFinalResult(meetingID, this.state.finalTime);
     }
 
     componentDidMount() {
@@ -64,49 +64,39 @@ export class EditNotes extends Component{
             <div>
                 <form noValidate autoComplete="off">
                     <TextField
-                        id="outlined-multiline-static"
-                        multiline
-                        rows="16"
-                        defaultValue={this.state.notes}
-                        variant="outlined"
-                        placeholder="Notes:"
+                        id="standard-textarea"
+                        label="Final Meeting Time"
+                        placeholder="e.x. 2019-12-05 17:00"
+                        margin="normal"
+                        value={this.state.finalTime}
                         style={{
-                            width:'100%',
+                            width: 150,
                             flexWrap: 'wrap',
                         }}
-                        input onChange={(e) => this.setState({ notes: e.target.value })}
+                        onKeyPress= {(e) => {
+                            if (e.key === 'Enter') {
+                                this.setState({finalTime: e.target.value})
+                            }
+                        }}
+                        onChange={(e) => this.setState({ finalTime: e.target.value })}
                     />
                 </form>
-                <div style={{margin: -10, marginTop:0}}>
+                <div >
                     <Button
                         variant="outlined"
                         style={{
                             background: "#ff3366",
                             color: 'white',
-                            margin: '1.5%',
+                            marginLeft: 200,
+                            marginTop: -40,
+                            marginBottom: 10,
                             fontSize: 10
                         }}
-                        onClick={this.updateNotes.bind(this)}
+                        onClick={this.updateResult.bind(this)}
                     >
-                        Save Changes
+                        Save Final Time
                     </Button>
 
-                    <Button
-                        variant="outlined"
-                        size="large"
-                        style={{
-                            backgroundColor: "#ff3366",
-                            color: 'white',
-                            margin: '5%',
-                            padding: 5,
-                            fontSize: 10
-                        }}
-                        onClick={() => this.props.history.push({
-                        pathname: '/sendResult',
-                        search: '?meetingId=' + meetingID + "&userId=" + userID,
-                    })}>
-                        Share Meeting Results
-                    </Button>
                 </div>
             </div>
         );
@@ -126,5 +116,5 @@ const mapDispatchToProps = {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(EditNotes);
+)(Result);
 

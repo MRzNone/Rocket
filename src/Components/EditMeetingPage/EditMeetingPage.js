@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import RemoveMembers from './RemoveMembers';
 import EditNotes from './EditNotes';
-import Selects from './Selects'
+import Result from './Result'
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import 'date-fns';
@@ -81,7 +81,7 @@ class EditMeetingPage extends Component {
                             <RemoveMembers/>
                         </Grid>
                         <Grid item xs={8}>
-                            <Selects/>
+                            <Result/>
                             <EditNotes/>
                         </Grid>
                     </Grid>

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Meeting, Member } from "../../EarthBase";
 import Paper from '@material-ui/core/Paper';
-import { Checkbox } from '@material-ui/core';
+import Checkbox from '@material-ui/core/Checkbox';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
@@ -101,65 +101,70 @@ export class RemoveMembers extends Component {
     }
 
     renderClips() {
+
+    }
+    /* removeMembers(d[0]) */
+
+    render() {
         const members = this.state.members;
         if (members === []) return (<div />)
 
         return (
             <div>
-                <Container maxWidth="xl">
-                    <FormControl component="fieldset" style={{
-                        marginTop: '3vh',
-                        marginLeft: '5vh',
-                        paddingTop: '2vh'
+                <div style={{height: '42vh', overflow: 'scroll'}}>
+                    <Paper style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        padding: 10,
+                        width: '40vh',
                     }}>
-                        <FormLabel component="legend" style={{
-                            textAlign: 'center',
-                            fontSize: 25,
-                        }}>Members</FormLabel>
+                        <FormControl component="fieldset" style={{
+                            marginTop: '3vh',
+                            marginLeft: '3vh',
+                            paddingTop: '2vh',
+                        }}>
+                            <FormLabel component="legend" style={{
+                                textAlign: 'center',
+                                fontSize: 25,
+                            }}>Members</FormLabel>
 
-                        <FormGroup style={{ textAlign: 'center', width: '100%' }}>
-                            {
-                                members.map(d => {
-                                    let id = d[0]
-                                    let name = d[2][1]
-                                    return (
-                                        <>
-                                            <FormControlLabel
-                                                id={id}
-                                                value={id}
-                                                control={<Checkbox color="primary" checked={this.state.checkBox[id]} onChange={(e) => this.setState(
-                                                    { checkBox: update(this.state.checkBox, { [id]: { $set: e.target.checked } }) })} />}
-                                                label={name}
-                                                labelPlacement="start"
-                                            />
-                                        </>
-                                    );
-                                })
-                            }
-                        </FormGroup>
-                    </FormControl>
-                </Container>
+                            <FormGroup>
+                                {
+                                    members.map(d => {
+                                        let id = d[0]
+                                        let name = d[2][1]
+                                        return (
+                                            <div>
+                                                <FormControlLabel
+                                                    id={id}
+                                                    value={id}
+                                                    control={<Checkbox color="primary" checked={this.state.checkBox[id]} onChange={(e) => this.setState(
+                                                        { checkBox: update(this.state.checkBox, { [id]: { $set: e.target.checked } }) })} />}
+                                                    label={name}
+                                                    labelPlacement="start"
+                                                />
+                                            </div>
+                                        );
+                                    })
+                                }
+                            </FormGroup>
+                        </FormControl>
 
-                <Button variant="outlined" color="default" onClick={this.remove.bind(this)} style={{ margin: '5%' }}>
+                    </Paper>
+                </div>
+                <Button variant="outlined"
+                        size="large"
+                        style={{
+                            backgroundColor: "#ff3366",
+                            color: 'white',
+                            margin: '8%',
+                            marginLeft: '25%',
+                            padding: 5,
+                            fontSize: 10
+                        }}
+                        onClick={this.remove.bind(this)} >
                     Remove User
                 </Button>
-            </div>
-        );
-    }
-    /* removeMembers(d[0]) */
-
-    render() {
-
-        return (
-            <div>
-                <Paper style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    flexWrap: 'wrap',
-                    padding: 10,
-                }}>
-                    {this.renderClips()}
-                </Paper>
             </div>
         );
     }

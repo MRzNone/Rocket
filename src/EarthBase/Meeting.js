@@ -4,7 +4,6 @@ import { Member } from '.';
 export class Meeting {
     constructor() {
         this.db = firebase.firestore();
-
         this.memberDB = new Member();
     }
 
@@ -56,6 +55,12 @@ export class Meeting {
     updateMeetingNote(meetingId, newNote) {
         this.db.collection("Meeting").doc(meetingId).update({
             notes: newNote
+        });
+    }
+
+    updateFinalResult(meetingId, result) {
+        this.db.collection("Meeting").doc(meetingId).update({
+            finalTime: result
         });
     }
 
