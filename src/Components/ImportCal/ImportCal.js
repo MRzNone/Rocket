@@ -276,7 +276,7 @@ export class ImportCal extends Component {
                     if (this.state.mode !== "google")
                         submit_btn.disabled = true;
 
-                    out.innerHTML = "Invalid iCalendar file: " + file.name;
+                    out.innerHTML = "Not a valid Calendar file";
                     out.style.color = "red";
                 }
             } catch (err) {
