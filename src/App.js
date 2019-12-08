@@ -1,10 +1,12 @@
 import React from 'react';
 import './App.css';
+
 import {
     BrowserRouter as Router,
     Switch,
     Route,
 } from "react-router-dom";
+
 import * as firebase from "firebase";
 import NewLandPage from './Components/NewLandPage/landPage';
 import { Provider } from 'react-redux';
@@ -17,32 +19,11 @@ import MeetingResponse from './Components/MeetingResponse/MeetingResponse';
 import LostPage from './Components/LostPage/LostPage';
 import JoinMeeting from './Components/JoinMeeting/JoinMeeting';
 import MeetingLogin from './Components/MeetingLogin/MeetingLogin';
-// import { createMuiTheme } from '@material-ui/core/styles';
-// import { MuiThemeProvider } from 'material-ui/core/styles';
 import CreateNewUser from './Components/CreateNewUser/CreateNewUser';
 import ViewMeeting from './Components/ViewMeeting/ViewMeeting';
 import EditMeetingPage from "./Components/EditMeetingPage/EditMeetingPage";
 import CreateMeeting from "./Components/CreateMeeting/CreateMeeting";
 import SendResult from "./Components/EditMeetingPage/SendResult";
-
-// import 'typeface-roboto';
-
-// const theme = createMuiTheme({
-//   palette: {
-//     primary: {
-//       light: '#757ce8',
-//       main: '#3f50b5',
-//       dark: '#002884',
-//       contrastText: '#fff',
-//     },
-//     secondary: {
-//       light: '#ff7961',
-//       main: '#f44336',
-//       dark: '#ba000d',
-//       contrastText: '#000',
-//     },
-//   },
-// });
 
 function App() {
     const firebaseConfig = {
@@ -60,7 +41,6 @@ function App() {
     firebase.initializeApp(firebaseConfig);
 
   return (
-    // <MuiThemeProvider theme={theme}>
     <Provider store={createStore(reducers, applyMiddleware(thunk))}>
       <Router>
         <Switch>
@@ -78,7 +58,6 @@ function App() {
         </Switch>
       </Router>
     </Provider>
-    // </MuiThemeProvider>
   );
 }
 
