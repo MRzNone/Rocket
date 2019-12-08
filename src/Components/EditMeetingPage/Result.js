@@ -68,6 +68,7 @@ export class Result extends Component{
                         label="Final Meeting Time"
                         placeholder="e.x. 2019-12-05 17:00"
                         margin="normal"
+                        multiline
                         value={this.state.finalTime}
                         style={{
                             width: 150,
