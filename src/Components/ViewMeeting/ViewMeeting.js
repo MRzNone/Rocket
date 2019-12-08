@@ -178,7 +178,7 @@ export class ViewMeeting extends Component {
           marginLeft: 80
 
         }}>
-          
+
         </div>
         <div style={{
           left: 0
@@ -284,9 +284,15 @@ export class ViewMeeting extends Component {
     }
 
     const colNum = dates.length;
+
+    const sortedDates = dates.sort(function (a, b) {
+      return a > b ? 1 : -1;
+    });
+
     // prepare colTitles
-    const colTitles = dates.map(
-      date => (date.getMonth() + 1) + "/" + date.getDate()
+    const colTitles = sortedDates.map(
+      date => (date.getMonth() + 1) + "/"
+        + date.getDate() + "/" + date.getFullYear()
     );
 
     // prepare rowTitles

@@ -199,7 +199,7 @@ class CalendarSelectTable extends Component {
     return (
       <div style={{
         ...Style.rowTitleContainer,
-        height: rowNum * (CELL_HEIGHT + 0.5),
+        height: rowNum * CELL_HEIGHT,
       }}>
         {titles}
       </div >

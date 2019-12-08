@@ -128,10 +128,9 @@ class CalendarDispTable extends Component {
     }
 
     return (
-      <div style={{
-        ...Style.rowTitleContainer,
-        height: rowNum * (CELL_HEIGHT + 0.5),
-      }}>
+      <div
+        style={Style.rowTitleCell}
+      >
         {titles}
       </div >
     );
